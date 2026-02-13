@@ -20,8 +20,6 @@
  */
 
 using System.Windows.Forms;
-using Dapplo.Windows.Messages.Enumerations;
-using log4net;
 
 namespace Greenshot.Base.Core
 {
@@ -31,7 +29,6 @@ namespace Greenshot.Base.Core
     /// </summary>
     public class WmInputLangChangeRequestFilter : IMessageFilter
     {
-        private static readonly ILog LOG = LogManager.GetLogger(typeof(WmInputLangChangeRequestFilter));
 
         /// <summary>
         /// This will do some filtering
@@ -50,10 +47,20 @@ namespace Greenshot.Base.Core
         /// <returns>true if the message should be filtered</returns>
         public static bool PreFilterMessageExternal(ref Message m)
         {
-            WindowsMessages message = (WindowsMessages) m.Msg;
-            if (message != WindowsMessages.WM_INPUTLANGCHANGEREQUEST && message != WindowsMessages.WM_INPUTLANGCHANGE) return false;
+            // Optimize by comparing raw message value first to avoid enum casting overhead
+            // WM_INPUTLANGCHANGEREQUEST = 0x0050, WM_INPUTLANGCHANGE = 0x0051
+            const int WM_INPUTLANGCHANGEREQUEST = 0x0050;
+            const int WM_INPUTLANGCHANGE = 0x0051;
+            
+            int msg = m.Msg;
+            if (msg != WM_INPUTLANGCHANGEREQUEST && msg != WM_INPUTLANGCHANGE)
+            {
+                return false;
+            }
 
-            LOG.DebugFormat("Filtering: {0}, {1:X} - {2:X} - {3:X}", message, m.LParam.ToInt64(), m.WParam.ToInt64(), m.HWnd.ToInt64());
+            // Removed excessive logging that could cause CPU overhead
+            // LOG.DebugFormat("Filtering: {0}, {1:X} - {2:X} - {3:X}", message, m.LParam.ToInt64(), m.WParam.ToInt64(), m.HWnd.ToInt64());
+            
             // For now we always return true
             return true;
             // But it could look something like this:
