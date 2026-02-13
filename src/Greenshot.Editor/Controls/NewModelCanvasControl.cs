@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Editor.Drawing.NewModel.Models;
 using Greenshot.Editor.Drawing.NewModel.Renderers;
@@ -107,10 +108,9 @@ namespace Greenshot.Editor.Controls
             // Check if clicked on an adorner of a selected shape
             foreach (var state in _editorStates.Where(s => s.IsSelected && s.ShowAdorners))
             {
-                var adorners = (state.Shape as IAdornerConfiguration)?.GetAdorners(state.Shape) 
-                    ?? GetDefaultAdorners(state.Shape.Bounds);
+                var adorners = ((state.Shape as IAdornerConfiguration)?.GetAdorners(state.Shape) ?? GetDefaultAdorners(state.Shape.Bounds)).ToArray();
 
-                for (int i = 0; i < adorners.Count; i++)
+                for (int i = 0; i < adorners.Length; i++)
                 {
                     var adorner = adorners[i];
                     var adornerRect = new Rectangle(adorner.Position.X - 4, adorner.Position.Y - 4, 8, 8);
@@ -244,9 +244,17 @@ namespace Greenshot.Editor.Controls
                     break;
             }
 
+
             // Ensure minimum size
-            if (bounds.Width < 10) bounds.Width = 10;
-            if (bounds.Height < 10) bounds.Height = 10;
+            if (bounds.Width < 10)
+            {
+                bounds = bounds.ChangeWidth(10);
+            }
+
+            if (bounds.Height < 10)
+            {
+                bounds = bounds.ChangeHeight(10);
+            }
 
             shape.Bounds = bounds;
         }
