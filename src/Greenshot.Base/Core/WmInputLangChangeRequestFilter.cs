@@ -57,9 +57,6 @@ namespace Greenshot.Base.Core
                 return false;
             }
 
-            // Removed excessive logging that could cause CPU overhead
-            // LOG.DebugFormat("Filtering: {0}, {1:X} - {2:X} - {3:X}", message, m.LParam.ToInt64(), m.WParam.ToInt64(), m.HWnd.ToInt64());
-            
             // For now we always return true
             return true;
             // But it could look something like this:
