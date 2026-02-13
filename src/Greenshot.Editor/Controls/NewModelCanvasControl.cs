@@ -54,6 +54,7 @@ namespace Greenshot.Editor.Controls
         {
             DoubleBuffered = true;
             BackColor = Color.White;
+            TabStop = true; // Allow keyboard input
         }
 
         public void SetCanvas(ShapeCanvas canvas, CanvasRenderer renderer)
@@ -105,6 +106,9 @@ namespace Greenshot.Editor.Controls
             _lastMousePosition = e.Location;
             _dragStartPosition = e.Location;
 
+            bool ctrlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+            bool shiftPressed = (ModifierKeys & Keys.Shift) == Keys.Shift;
+
             // Check if clicked on an adorner of a selected shape
             foreach (var state in _editorStates.Where(s => s.IsSelected && s.ShowAdorners))
             {
@@ -128,24 +132,53 @@ namespace Greenshot.Editor.Controls
             var clickedShape = HitTest(e.Location);
             if (clickedShape != null)
             {
-                // Toggle selection
                 var existingState = _editorStates.FirstOrDefault(s => s.Shape.Id == clickedShape.Id);
-                if (existingState != null)
+
+                if (ctrlPressed)
                 {
-                    existingState.IsSelected = !existingState.IsSelected;
-                    if (!existingState.IsSelected)
+                    // Ctrl+Click: Toggle selection of this shape
+                    if (existingState != null)
                     {
                         _editorStates.Remove(existingState);
+                    }
+                    else
+                    {
+                        var newState = new ShapeEditorState(clickedShape)
+                        {
+                            IsSelected = true,
+                            ShowAdorners = true
+                        };
+                        _editorStates.Add(newState);
+                    }
+                }
+                else if (shiftPressed)
+                {
+                    // Shift+Click: Add to selection
+                    if (existingState == null)
+                    {
+                        var newState = new ShapeEditorState(clickedShape)
+                        {
+                            IsSelected = true,
+                            ShowAdorners = true
+                        };
+                        _editorStates.Add(newState);
                     }
                 }
                 else
                 {
-                    var newState = new ShapeEditorState(clickedShape)
+                    // Normal click: Select only this shape
+                    if (existingState == null)
                     {
-                        IsSelected = true,
-                        ShowAdorners = true
-                    };
-                    _editorStates.Add(newState);
+                        // Clear previous selection and select this shape
+                        _editorStates.Clear();
+                        var newState = new ShapeEditorState(clickedShape)
+                        {
+                            IsSelected = true,
+                            ShowAdorners = true
+                        };
+                        _editorStates.Add(newState);
+                    }
+                    // If already selected, keep it selected (for dragging)
                 }
 
                 _draggedShape = clickedShape;
@@ -154,9 +187,12 @@ namespace Greenshot.Editor.Controls
             }
             else
             {
-                // Clicked on empty space - clear selection
-                _editorStates.Clear();
-                Invalidate();
+                // Clicked on empty space - clear selection unless Ctrl/Shift is pressed
+                if (!ctrlPressed && !shiftPressed)
+                {
+                    _editorStates.Clear();
+                    Invalidate();
+                }
             }
         }
 
@@ -193,6 +229,44 @@ namespace Greenshot.Editor.Controls
             _isDragging = false;
             _draggedShape = null;
             _draggedAdornerIndex = -1;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Handle Ctrl+A for select all
+            if (keyData == (Keys.Control | Keys.A))
+            {
+                if (_canvas != null)
+                {
+                    _editorStates.Clear();
+                    foreach (var shape in _canvas.Shapes)
+                    {
+                        var state = new ShapeEditorState(shape)
+                        {
+                            IsSelected = true,
+                            ShowAdorners = true
+                        };
+                        _editorStates.Add(state);
+                    }
+                    Invalidate();
+                    return true;
+                }
+            }
+
+            // Handle Delete key
+            if (keyData == Keys.Delete)
+            {
+                var selectedShapes = _editorStates.Where(s => s.IsSelected).Select(s => s.Shape).ToList();
+                foreach (var shape in selectedShapes)
+                {
+                    _canvas?.RemoveShape(shape);
+                }
+                _editorStates.Clear();
+                Invalidate();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private IShape HitTest(Point location)

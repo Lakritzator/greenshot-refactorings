@@ -77,12 +77,9 @@ namespace Greenshot.Editor.Forms
             _renderer = new CanvasRenderer();
             _styleManager = new StyleManager();
 
-            // Create layers
-            _backgroundLayer = new Layer("Background", 0, isVisible: true, isLocked: true);
-            _defaultLayer = new Layer("Default", 100, isVisible: true, isLocked: false);
-
-            _canvas.AddLayer(_backgroundLayer);
-            _canvas.AddLayer(_defaultLayer);
+            // Use the layers that ShapeCanvas automatically creates
+            _backgroundLayer = _canvas.BackgroundLayer;
+            _defaultLayer = _canvas.DefaultLayer;
 
             // Create default styles
             _styleManager.RegisterStyle("Default", new ShapeStyle(Color.Red, 2, Color.Empty, false));
