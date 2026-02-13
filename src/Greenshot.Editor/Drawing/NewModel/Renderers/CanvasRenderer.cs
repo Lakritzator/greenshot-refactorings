@@ -45,6 +45,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             RegisterRenderer(new RectangleRenderer());
             RegisterRenderer(new EllipseRenderer());
             RegisterRenderer(new TextRenderer());
+            RegisterRenderer(new ArrowRenderer());
             RegisterRenderer(new ImageRenderer());
             RegisterRenderer(new CursorRenderer());
             RegisterRenderer(new SpeechBubbleRenderer());

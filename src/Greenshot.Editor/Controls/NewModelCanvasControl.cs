@@ -224,10 +224,20 @@ namespace Greenshot.Editor.Controls
                 else
                 {
                     // Normal click: Select only this shape
+                    // Clear other selections if multiple shapes were selected
+                    var otherStates = _editorStates.Where(s => s.Shape.Id != clickedShape.Id).ToList();
+                    if (otherStates.Any())
+                    {
+                        // Remove other selections
+                        foreach (var state in otherStates)
+                        {
+                            _editorStates.Remove(state);
+                        }
+                    }
+
+                    // Ensure this shape is selected
                     if (existingState == null)
                     {
-                        // Clear previous selection and select this shape
-                        _editorStates.Clear();
                         var newState = new ShapeEditorState(clickedShape)
                         {
                             IsSelected = true,
@@ -235,7 +245,12 @@ namespace Greenshot.Editor.Controls
                         };
                         _editorStates.Add(newState);
                     }
-                    // If already selected, keep it selected (for dragging)
+                    else
+                    {
+                        // Already in the list, make sure it's selected
+                        existingState.IsSelected = true;
+                        existingState.ShowAdorners = true;
+                    }
                 }
 
                 _draggedShape = clickedShape;
@@ -375,18 +390,39 @@ namespace Greenshot.Editor.Controls
                     break;
             }
 
+            // Ensure minimum size and handle flipped bounds
+            int minSize = 10;
+            int left = bounds.Left;
+            int top = bounds.Top;
+            int width = bounds.Width;
+            int height = bounds.Height;
 
-            // Ensure minimum size
-            if (bounds.Width < 10)
+            // Fix negative width (adorner moved past opposite side)
+            if (width < 0)
             {
-                bounds = bounds.ChangeWidth(10);
+                left = left + width;
+                width = -width;
             }
 
-            if (bounds.Height < 10)
+            // Fix negative height (adorner moved past opposite side)
+            if (height < 0)
             {
-                bounds = bounds.ChangeHeight(10);
+                top = top + height;
+                height = -height;
             }
 
+            // Enforce minimum size
+            if (width < minSize)
+            {
+                width = minSize;
+            }
+
+            if (height < minSize)
+            {
+                height = minSize;
+            }
+
+            bounds = new NativeRect(left, top, width, height);
             shape.Bounds = bounds;
         }
 

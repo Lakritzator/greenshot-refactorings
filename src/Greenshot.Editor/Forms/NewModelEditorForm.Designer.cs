@@ -33,6 +33,7 @@ partial class NewModelEditorForm
     private ToolStripButton btnAddRectangle;
     private ToolStripButton btnAddEllipse;
     private ToolStripButton btnAddText;
+    private ToolStripButton btnAddArrow;
     private ToolStripSeparator toolStripSeparator1;
     private ToolStripButton btnBlurFilter;
     private ToolStripButton btnHighlightFilter;
@@ -54,6 +55,7 @@ partial class NewModelEditorForm
         this.btnAddRectangle = new ToolStripButton();
         this.btnAddEllipse = new ToolStripButton();
         this.btnAddText = new ToolStripButton();
+        this.btnAddArrow = new ToolStripButton();
         this.toolStripSeparator1 = new ToolStripSeparator();
         this.btnBlurFilter = new ToolStripButton();
         this.btnHighlightFilter = new ToolStripButton();
@@ -80,6 +82,7 @@ partial class NewModelEditorForm
             this.btnAddRectangle,
             this.btnAddEllipse,
             this.btnAddText,
+            this.btnAddArrow,
             this.toolStripSeparator1,
             this.btnBlurFilter,
             this.btnHighlightFilter,
@@ -115,6 +118,13 @@ partial class NewModelEditorForm
         this.btnAddText.Size = new System.Drawing.Size(35, 22);
         this.btnAddText.Text = "Text";
         this.btnAddText.Click += new System.EventHandler(this.BtnAddText_Click);
+
+        // btnAddArrow
+        this.btnAddArrow.DisplayStyle = ToolStripItemDisplayStyle.Text;
+        this.btnAddArrow.Name = "btnAddArrow";
+        this.btnAddArrow.Size = new System.Drawing.Size(50, 22);
+        this.btnAddArrow.Text = "Arrow";
+        this.btnAddArrow.Click += new System.EventHandler(this.BtnAddArrow_Click);
 
         // toolStripSeparator1
         this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -283,6 +293,16 @@ partial class NewModelEditorForm
         _canvas.AddShape(text);
         _canvasControl.Invalidate();
         statusLabel.Text = "Text added";
+    }
+
+    private void BtnAddArrow_Click(object sender, System.EventArgs e)
+    {
+        var style = _styleManager.GetStyle(cmbStyles.SelectedItem?.ToString() ?? "Default");
+        var arrow = new ArrowShape(new System.Drawing.Point(350, 50), new System.Drawing.Point(450, 150), style, ArrowShape.ArrowHeadCombination.EndPoint);
+        arrow.LayerId = _defaultLayer.Id;
+        _canvas.AddShape(arrow);
+        _canvasControl.Invalidate();
+        statusLabel.Text = "Arrow added";
     }
 
     private void BtnBlurFilter_Click(object sender, System.EventArgs e)
