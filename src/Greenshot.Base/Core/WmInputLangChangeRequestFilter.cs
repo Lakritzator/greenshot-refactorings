@@ -29,6 +29,9 @@ namespace Greenshot.Base.Core
     /// </summary>
     public class WmInputLangChangeRequestFilter : IMessageFilter
     {
+        // Windows message constants for input language changes
+        private const int WM_INPUTLANGCHANGEREQUEST = 0x0050;
+        private const int WM_INPUTLANGCHANGE = 0x0051;
 
         /// <summary>
         /// This will do some filtering
@@ -48,10 +51,6 @@ namespace Greenshot.Base.Core
         public static bool PreFilterMessageExternal(ref Message m)
         {
             // Optimize by comparing raw message value first to avoid enum casting overhead
-            // WM_INPUTLANGCHANGEREQUEST = 0x0050, WM_INPUTLANGCHANGE = 0x0051
-            const int WM_INPUTLANGCHANGEREQUEST = 0x0050;
-            const int WM_INPUTLANGCHANGE = 0x0051;
-            
             int msg = m.Msg;
             if (msg != WM_INPUTLANGCHANGEREQUEST && msg != WM_INPUTLANGCHANGE)
             {
