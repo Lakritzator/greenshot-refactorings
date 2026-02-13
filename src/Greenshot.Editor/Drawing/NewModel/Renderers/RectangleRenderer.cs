@@ -22,7 +22,6 @@
 using System.Drawing;
 using Greenshot.Editor.Drawing.NewModel.Models;
 using System.Drawing.Drawing2D;
-using Greenshot.Editor.Drawing.NewModel.Models;
 
 namespace Greenshot.Editor.Drawing.NewModel.Renderers
 {

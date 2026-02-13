@@ -23,8 +23,6 @@ using System.Collections.Generic;
 using Greenshot.Editor.Drawing.NewModel.Models;
 using Greenshot.Editor.Drawing.NewModel.Renderers;
 using System.Drawing;
-using Greenshot.Editor.Drawing.NewModel.Models;
-using Greenshot.Editor.Drawing.NewModel.Renderers;
 using Dapplo.Windows.Common.Structs;
 
 namespace Greenshot.Editor.Drawing.NewModel.Examples

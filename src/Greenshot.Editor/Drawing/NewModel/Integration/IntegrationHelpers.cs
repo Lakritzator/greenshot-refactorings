@@ -22,7 +22,6 @@
 using System.Drawing;
 using Greenshot.Editor.Drawing.NewModel.Models;
 using System.Linq;
-using Greenshot.Editor.Drawing.NewModel.Models;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Editor.Drawing.Fields;
 

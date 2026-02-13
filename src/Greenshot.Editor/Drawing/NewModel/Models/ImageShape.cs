@@ -48,7 +48,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
             Style = style ?? ShapeStyle.Default();
         }
 
-        private ImageShape(Guid id, NativeRect bounds, IImageData imageData, IShapeStyle style, Guid? layerId)
+        protected ImageShape(Guid id, NativeRect bounds, IImageData imageData, IShapeStyle style, Guid? layerId)
         {
             Id = id;
             Bounds = bounds;

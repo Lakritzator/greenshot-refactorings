@@ -42,10 +42,9 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         }
 
         private CursorShape(Guid id, NativeRect bounds, IImageData imageData, Point hotspot, IShapeStyle style, Guid? layerId)
-            : base(bounds, imageData, style)
+            : base(id, bounds, imageData, style, layerId)
         {
             Hotspot = hotspot;
-            LayerId = layerId;
         }
 
         public override IShape Clone()

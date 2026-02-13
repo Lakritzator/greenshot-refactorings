@@ -72,7 +72,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             }
 
             // Get canvas bounds for filter rendering
-            var canvasBounds = CalculateCanvasBounds(canvas);
+            var canvasBounds = CalculateContentBounds(canvas);
 
             // Render shapes ordered by layer
             foreach (var shape in canvas.GetShapesOrderedByLayer())
@@ -98,7 +98,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             }
 
             // Get canvas bounds for filter rendering
-            var canvasBounds = CalculateCanvasBounds(canvas);
+            var canvasBounds = CalculateContentBounds(canvas);
 
             // Create a lookup for editor states by shape ID
             var stateMap = editorStates?.ToDictionary(s => s.Shape.Id) ?? new Dictionary<Guid, ShapeEditorState>();
@@ -154,9 +154,9 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
         }
 
         /// <summary>
-        /// Calculates the bounding rectangle for the entire canvas
+        /// Calculates the bounding rectangle for all shapes on the canvas
         /// </summary>
-        private NativeRect CalculateCanvasBounds(ShapeCanvas canvas)
+        private NativeRect CalculateContentBounds(ShapeCanvas canvas)
         {
             if (!canvas.Shapes.Any())
             {

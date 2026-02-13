@@ -38,9 +38,8 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         }
 
         private BackgroundShape(Guid id, NativeRect bounds, IImageData imageData, IShapeStyle style, Guid? layerId)
-            : base(bounds, imageData, style)
+            : base(id, bounds, imageData, style, layerId)
         {
-            LayerId = layerId;
         }
 
         public override IShape Clone()
