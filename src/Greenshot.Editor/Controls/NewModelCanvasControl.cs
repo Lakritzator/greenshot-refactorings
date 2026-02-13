@@ -294,9 +294,14 @@ namespace Greenshot.Editor.Controls
                     else
                     {
                         // For other shapes, move bounds
-                        var newBounds = _draggedShape.Bounds;
-                        newBounds.Offset(dx, dy);
-                        _draggedShape.Bounds = newBounds;
+                        // NativeRect is a struct, so we need to create a new one with offset values
+                        var oldBounds = _draggedShape.Bounds;
+                        _draggedShape.Bounds = new NativeRect(
+                            oldBounds.X + dx,
+                            oldBounds.Y + dy,
+                            oldBounds.Width,
+                            oldBounds.Height
+                        );
                     }
                 }
 
@@ -358,13 +363,54 @@ namespace Greenshot.Editor.Controls
             
             foreach (var shape in shapes)
             {
-                if (shape.Bounds.Contains(location.X, location.Y))
+                // Special hit test for arrows - check distance from line instead of bounds
+                if (shape is ArrowShape arrow)
+                {
+                    double distance = DistanceToLineSegment(location, arrow.StartPoint, arrow.EndPoint);
+                    if (distance <= 5) // 5 pixel tolerance
+                    {
+                        return shape;
+                    }
+                }
+                else if (shape.Bounds.Contains(location.X, location.Y))
                 {
                     return shape;
                 }
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Calculate distance from a point to a line segment
+        /// </summary>
+        private double DistanceToLineSegment(Point p, Point lineStart, Point lineEnd)
+        {
+            double dx = lineEnd.X - lineStart.X;
+            double dy = lineEnd.Y - lineStart.Y;
+            
+            if (dx == 0 && dy == 0)
+            {
+                // Line start and end are the same point
+                double pdx = p.X - lineStart.X;
+                double pdy = p.Y - lineStart.Y;
+                return Math.Sqrt(pdx * pdx + pdy * pdy);
+            }
+
+            // Calculate the parameter t that describes where the closest point on the line segment is
+            double t = ((p.X - lineStart.X) * dx + (p.Y - lineStart.Y) * dy) / (dx * dx + dy * dy);
+            
+            // Clamp t to the line segment
+            t = Math.Max(0, Math.Min(1, t));
+            
+            // Calculate the closest point on the line segment
+            double closestX = lineStart.X + t * dx;
+            double closestY = lineStart.Y + t * dy;
+            
+            // Return distance from p to the closest point
+            double distX = p.X - closestX;
+            double distY = p.Y - closestY;
+            return Math.Sqrt(distX * distX + distY * distY);
         }
 
         private void ResizeShape(IShape shape, int adornerIndex, int dx, int dy)

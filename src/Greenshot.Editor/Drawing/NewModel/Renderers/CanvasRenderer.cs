@@ -96,9 +96,20 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             RenderLayerByLayer(graphics, canvas, canvasBounds, stateMap);
 
             // Render adorners for selected shapes on top of everything
+            // But only for shapes on visible layers
+            var visibleLayerIds = canvas.Layers.Where(l => l.IsVisible).Select(l => l.Id).ToHashSet();
             foreach (var state in stateMap.Values)
             {
-                _adornerRenderer.RenderAdorners(graphics, state);
+                // Only render adorners if the shape's layer is visible
+                if (state.Shape.LayerId.HasValue && visibleLayerIds.Contains(state.Shape.LayerId.Value))
+                {
+                    _adornerRenderer.RenderAdorners(graphics, state);
+                }
+                else if (!state.Shape.LayerId.HasValue)
+                {
+                    // Shapes without a layer are always visible
+                    _adornerRenderer.RenderAdorners(graphics, state);
+                }
             }
         }
 
