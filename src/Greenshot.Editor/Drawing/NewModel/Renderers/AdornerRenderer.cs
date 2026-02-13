@@ -74,15 +74,27 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
                 return;
             }
 
-            // Draw adorners (resize handles)
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopLeft));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopCenter));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopRight));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.MiddleLeft));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.MiddleRight));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomLeft));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomCenter));
-            DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomRight));
+            // Check if shape provides custom adorners
+            if (state.Shape is IAdornerConfiguration adornerConfig)
+            {
+                // Use custom adorners from the shape
+                foreach (var customAdorner in adornerConfig.GetAdorners(state.Shape))
+                {
+                    DrawCustomAdorner(graphics, customAdorner);
+                }
+            }
+            else
+            {
+                // Draw standard adorners (resize handles) for shapes without custom configuration
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopLeft));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopCenter));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.TopRight));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.MiddleLeft));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.MiddleRight));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomLeft));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomCenter));
+                DrawAdorner(graphics, GetAdornerRect(bounds, AdornerPosition.BottomRight));
+            }
         }
 
         private void DrawAdorner(Graphics graphics, Rectangle adornerRect)
@@ -95,6 +107,29 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             using (var borderPen = new Pen(AdornerBorderColor, 1))
             {
                 graphics.DrawRectangle(borderPen, adornerRect);
+            }
+        }
+
+        /// <summary>
+        /// Draws a custom adorner with specified color and size
+        /// </summary>
+        private void DrawCustomAdorner(Graphics graphics, CustomAdorner adorner)
+        {
+            var rect = new Rectangle(
+                adorner.Position.X - adorner.Size / 2,
+                adorner.Position.Y - adorner.Size / 2,
+                adorner.Size,
+                adorner.Size
+            );
+
+            using (var fillBrush = new SolidBrush(adorner.Color))
+            {
+                graphics.FillRectangle(fillBrush, rect);
+            }
+
+            using (var borderPen = new Pen(AdornerBorderColor, 1))
+            {
+                graphics.DrawRectangle(borderPen, rect);
             }
         }
 
