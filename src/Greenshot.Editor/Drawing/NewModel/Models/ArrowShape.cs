@@ -45,7 +45,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         public Guid Id { get; set; }
         public NativeRect Bounds { get; set; }
         public IShapeStyle Style { get; set; }
-        public Guid LayerId { get; set; }
+        public Guid? LayerId { get; set; }
         
         /// <summary>
         /// Which arrow heads to display (none, start, end, or both)
@@ -90,7 +90,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
 
         private void UpdateBounds()
         {
-            Bounds = NativeRect.FromLTRB(
+            Bounds = Rectangle.FromLTRB(
                 Math.Min(_actualStartPoint.X, _actualEndPoint.X),
                 Math.Min(_actualStartPoint.Y, _actualEndPoint.Y),
                 Math.Max(_actualStartPoint.X, _actualEndPoint.X),

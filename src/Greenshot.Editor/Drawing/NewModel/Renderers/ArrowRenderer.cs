@@ -33,6 +33,11 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
     {
         private static readonly AdjustableArrowCap ARROW_CAP = new AdjustableArrowCap(4, 6);
 
+        public bool CanRender(IShape shape)
+        {
+            return shape is ArrowShape;
+        }
+
         public void Render(Graphics graphics, IShape shape)
         {
             if (!(shape is ArrowShape arrow)) return;
@@ -40,7 +45,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
 
             var lineColor = arrow.Style.LineColor;
             var lineThickness = arrow.Style.LineThickness;
-            var hasShadow = arrow.Style.HasShadow;
+            var hasShadow = arrow.Style.Shadow;
 
             if (lineThickness <= 0) return;
 
