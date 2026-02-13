@@ -107,7 +107,7 @@ namespace Greenshot.Editor.Controls
             // Check if clicked on an adorner of a selected shape
             foreach (var state in _editorStates.Where(s => s.IsSelected && s.ShowAdorners))
             {
-                var adorners = (state.Shape as IAdornerConfiguration)?.GetAdorners() 
+                var adorners = (state.Shape as IAdornerConfiguration)?.GetAdorners(state.Shape) 
                     ?? GetDefaultAdorners(state.Shape.Bounds);
 
                 for (int i = 0; i < adorners.Count; i++)
@@ -257,14 +257,14 @@ namespace Greenshot.Editor.Controls
             var color = Color.White;
 
             // 8 standard adorner positions
-            adorners.Add(new CustomAdorner(new Point(bounds.Left, bounds.Top), color, 8)); // Top-left
-            adorners.Add(new CustomAdorner(new Point(bounds.Left + bounds.Width / 2, bounds.Top), color, 8)); // Top-center
-            adorners.Add(new CustomAdorner(new Point(bounds.Right, bounds.Top), color, 8)); // Top-right
-            adorners.Add(new CustomAdorner(new Point(bounds.Right, bounds.Top + bounds.Height / 2), color, 8)); // Right-center
-            adorners.Add(new CustomAdorner(new Point(bounds.Right, bounds.Bottom), color, 8)); // Bottom-right
-            adorners.Add(new CustomAdorner(new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), color, 8)); // Bottom-center
-            adorners.Add(new CustomAdorner(new Point(bounds.Left, bounds.Bottom), color, 8)); // Bottom-left
-            adorners.Add(new CustomAdorner(new Point(bounds.Left, bounds.Top + bounds.Height / 2), color, 8)); // Left-center
+            adorners.Add(new CustomAdorner("top-left", new Point(bounds.Left, bounds.Top), color, 8)); // Top-left
+            adorners.Add(new CustomAdorner("top-center", new Point(bounds.Left + bounds.Width / 2, bounds.Top), color, 8)); // Top-center
+            adorners.Add(new CustomAdorner("top-right", new Point(bounds.Right, bounds.Top), color, 8)); // Top-right
+            adorners.Add(new CustomAdorner("middle-right", new Point(bounds.Right, bounds.Top + bounds.Height / 2), color, 8)); // Right-center
+            adorners.Add(new CustomAdorner("bottom-right", new Point(bounds.Right, bounds.Bottom), color, 8)); // Bottom-right
+            adorners.Add(new CustomAdorner("bottom-center", new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), color, 8)); // Bottom-center
+            adorners.Add(new CustomAdorner("bottom-left", new Point(bounds.Left, bounds.Bottom), color, 8)); // Bottom-left
+            adorners.Add(new CustomAdorner("middle-left", new Point(bounds.Left, bounds.Top + bounds.Height / 2), color, 8)); // Left-center
 
             return adorners;
         }

@@ -21,9 +21,7 @@
 
 using System.Drawing;
 using System.Linq;
-using System.Windows.Documents;
 using Dapplo.Windows.Common.Structs;
-using ExCSS;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Editor.Drawing.Fields;
