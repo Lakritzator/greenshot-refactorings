@@ -20,10 +20,15 @@
  */
 
 using System.Drawing;
-using Greenshot.Editor.Drawing.NewModel.Models;
 using System.Linq;
+using System.Windows.Documents;
 using Dapplo.Windows.Common.Structs;
+using ExCSS;
+using Greenshot.Base.Interfaces;
+using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Editor.Drawing.Fields;
+using Greenshot.Editor.Drawing.NewModel.Models;
+using Greenshot.Editor.Drawing.NewModel.Renderers;
 
 namespace Greenshot.Editor.Drawing.NewModel.Integration
 {
@@ -37,7 +42,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Integration
         /// Converts a DrawableContainer to the new IShape representation.
         /// This allows gradual migration - existing containers can be converted to new shapes.
         /// </summary>
-        public static IShape ConvertToShape(DrawableContainer container)
+        public static IShape ConvertToShape(IDrawableContainer container)
         {
             if (container == null)
             {
@@ -109,44 +114,45 @@ namespace Greenshot.Editor.Drawing.NewModel.Integration
         /// <summary>
         /// Extracts style information from a DrawableContainer's fields
         /// </summary>
-        private static IShapeStyle ExtractStyleFromContainer(DrawableContainer container)
+        private static IShapeStyle ExtractStyleFromContainer(IDrawableContainer container)
         {
             var lineColor = Color.Black;
             var lineThickness = 1;
             var fillColor = Color.Empty;
             var shadow = false;
 
+            var fieldHolder = container as IFieldHolder;
             // Extract from fields if available
-            if (container.HasField(FieldType.LINE_COLOR))
+            if (fieldHolder.HasField(FieldType.LINE_COLOR))
             {
-                var field = container.GetField(FieldType.LINE_COLOR);
+                var field = fieldHolder.GetField(FieldType.LINE_COLOR);
                 if (field != null && field.HasValue)
                 {
                     lineColor = (Color)field.Value;
                 }
             }
 
-            if (container.HasField(FieldType.LINE_THICKNESS))
+            if (fieldHolder.HasField(FieldType.LINE_THICKNESS))
             {
-                var field = container.GetField(FieldType.LINE_THICKNESS);
+                var field = fieldHolder.GetField(FieldType.LINE_THICKNESS);
                 if (field != null && field.HasValue)
                 {
                     lineThickness = (int)field.Value;
                 }
             }
 
-            if (container.HasField(FieldType.FILL_COLOR))
+            if (fieldHolder.HasField(FieldType.FILL_COLOR))
             {
-                var field = container.GetField(FieldType.FILL_COLOR);
+                var field = fieldHolder.GetField(FieldType.FILL_COLOR);
                 if (field != null && field.HasValue)
                 {
                     fillColor = (Color)field.Value;
                 }
             }
 
-            if (container.HasField(FieldType.SHADOW))
+            if (fieldHolder.HasField(FieldType.SHADOW))
             {
-                var field = container.GetField(FieldType.SHADOW);
+                var field = fieldHolder.GetField(FieldType.SHADOW);
                 if (field != null && field.HasValue)
                 {
                     shadow = (bool)field.Value;
@@ -204,7 +210,10 @@ namespace Greenshot.Editor.Drawing.NewModel.Integration
         {
             if (font != null)
             {
-                container.Font = font;
+                container.SetFieldValue(FieldType.FONT_FAMILY, font.FontFamily.Name);
+                container.SetFieldValue(FieldType.FONT_BOLD, font.Bold);
+                container.SetFieldValue(FieldType.FONT_ITALIC, font.Italic);
+                container.SetFieldValue(FieldType.FONT_SIZE, font.Size);
             }
         }
 
@@ -235,9 +244,9 @@ namespace Greenshot.Editor.Drawing.NewModel.Integration
         /// <summary>
         /// Converts a ShapeCanvas back to DrawableContainerList for the existing surface
         /// </summary>
-        public static DrawableContainerList ConvertCanvasToSurface(ShapeCanvas canvas, ISurface surface)
+        public static IDrawableContainerList ConvertCanvasToSurface(ShapeCanvas canvas, ISurface surface)
         {
-            var containerList = new DrawableContainerList(surface);
+            var containerList = surface.Elements;
 
             if (canvas == null)
             {

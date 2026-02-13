@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
+using Greenshot.Base.Interfaces;
 using Greenshot.Editor.Controls;
 using Greenshot.Editor.Drawing;
 using Greenshot.Editor.Drawing.NewModel.Integration;
@@ -77,17 +78,17 @@ namespace Greenshot.Editor.Forms
             _styleManager = new StyleManager();
 
             // Create layers
-            _backgroundLayer = new Layer(Guid.NewGuid(), "Background", 0, isVisible: true, isLocked: true);
-            _defaultLayer = new Layer(Guid.NewGuid(), "Default", 100, isVisible: true, isLocked: false);
+            _backgroundLayer = new Layer("Background", 0, isVisible: true, isLocked: true);
+            _defaultLayer = new Layer("Default", 100, isVisible: true, isLocked: false);
 
             _canvas.AddLayer(_backgroundLayer);
             _canvas.AddLayer(_defaultLayer);
 
             // Create default styles
-            _styleManager.AddStyle("Default", new ShapeStyle(Color.Red, 2, Color.Empty, false));
-            _styleManager.AddStyle("BlueFilled", new ShapeStyle(Color.Blue, 2, Color.LightBlue, true));
-            _styleManager.AddStyle("GreenHighlight", new ShapeStyle(Color.Green, 3, Color.FromArgb(100, Color.GreenYellow), true));
-            _styleManager.AddStyle("BlackText", new ShapeStyle(Color.Black, 1, Color.Empty, false));
+            _styleManager.RegisterStyle("Default", new ShapeStyle(Color.Red, 2, Color.Empty, false));
+            _styleManager.RegisterStyle("BlueFilled", new ShapeStyle(Color.Blue, 2, Color.LightBlue, true));
+            _styleManager.RegisterStyle("GreenHighlight", new ShapeStyle(Color.Green, 3, Color.FromArgb(100, Color.GreenYellow), true));
+            _styleManager.RegisterStyle("BlackText", new ShapeStyle(Color.Black, 1, Color.Empty, false));
         }
 
         private void LoadFromSurface(ISurface surface)
@@ -103,7 +104,7 @@ namespace Greenshot.Editor.Forms
                 // Clone the background image to avoid disposing issues
                 if (surface.Image != null)
                 {
-                    var clonedImage = CloneImage(surface.Image);
+                    var clonedImage = CloneImage(surface.Image) as Bitmap;
                     var imageData = new BitmapImageData(clonedImage);
                     var bounds = new NativeRect(0, 0, clonedImage.Width, clonedImage.Height);
                     var backgroundShape = new BackgroundShape(bounds, imageData);

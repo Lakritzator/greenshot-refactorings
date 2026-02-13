@@ -34,12 +34,12 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         public bool IsLocked { get; set; }
         public int ZIndex { get; set; }
 
-        public Layer(string name, int zIndex = 0)
+        public Layer(string name, int zIndex = 0, bool isVisible = true, bool isLocked = false)
         {
             Id = Guid.NewGuid();
             Name = name ?? "Layer";
-            IsVisible = true;
-            IsLocked = false;
+            IsVisible = isVisible;
+            IsLocked = isLocked;
             ZIndex = zIndex;
         }
 
