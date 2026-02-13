@@ -24,19 +24,20 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Dapplo.Windows.Common.Structs;
-using Greenshot.Editor.Drawing.NewModel.Filters;
 using Greenshot.Editor.Drawing.NewModel.Models;
 
 namespace Greenshot.Editor.Drawing.NewModel.Renderers
 {
     /// <summary>
-    /// Coordinates rendering of shapes, filters, and their editor state.
-    /// Uses registered renderers to draw shapes and adorners.
+    /// Coordinates rendering of shapes and their editor state.
+    /// Renders layer-by-layer with special handling for inverted filter shapes.
     /// </summary>
     public class CanvasRenderer
     {
         private readonly List<IShapeRenderer> _shapeRenderers = new List<IShapeRenderer>();
         private readonly AdornerRenderer _adornerRenderer = new AdornerRenderer();
+        private readonly BlurFilterRenderer _blurFilterRenderer = new BlurFilterRenderer();
+        private readonly HighlightFilterRenderer _highlightFilterRenderer = new HighlightFilterRenderer();
 
         public CanvasRenderer()
         {
@@ -47,6 +48,8 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             RegisterRenderer(new ImageRenderer());
             RegisterRenderer(new CursorRenderer());
             RegisterRenderer(new SpeechBubbleRenderer());
+            RegisterRenderer(_blurFilterRenderer);
+            RegisterRenderer(_highlightFilterRenderer);
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
         }
 
         /// <summary>
-        /// Renders all shapes in a canvas ordered by layers
+        /// Renders all shapes in a canvas layer-by-layer
         /// </summary>
         public void RenderCanvas(Graphics graphics, ShapeCanvas canvas)
         {
@@ -72,20 +75,8 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
                 return;
             }
 
-            // Get canvas bounds for filter rendering
             var canvasBounds = CalculateContentBounds(canvas);
-
-            // Render shapes ordered by layer
-            foreach (var shape in canvas.GetShapesOrderedByLayer())
-            {
-                RenderShape(graphics, shape);
-            }
-
-            // Render filters (applied after shapes in their respective layers)
-            foreach (var filter in canvas.Filters)
-            {
-                filter.Apply(graphics, canvasBounds);
-            }
+            RenderLayerByLayer(graphics, canvas, canvasBounds, null);
         }
 
         /// <summary>
@@ -98,28 +89,63 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
                 return;
             }
 
-            // Get canvas bounds for filter rendering
             var canvasBounds = CalculateContentBounds(canvas);
-
-            // Create a lookup for editor states by shape ID
             var stateMap = editorStates?.ToDictionary(s => s.Shape.Id) ?? new Dictionary<Guid, ShapeEditorState>();
 
-            // Render shapes ordered by layer
-            foreach (var shape in canvas.GetShapesOrderedByLayer())
-            {
-                RenderShape(graphics, shape);
-            }
+            RenderLayerByLayer(graphics, canvas, canvasBounds, stateMap);
 
-            // Render filters
-            foreach (var filter in canvas.Filters)
-            {
-                filter.Apply(graphics, canvasBounds);
-            }
-
-            // Render adorners for selected shapes on top
+            // Render adorners for selected shapes on top of everything
             foreach (var state in stateMap.Values)
             {
                 _adornerRenderer.RenderAdorners(graphics, state);
+            }
+        }
+
+        /// <summary>
+        /// Renders canvas layer-by-layer with special handling for inverted filters
+        /// </summary>
+        private void RenderLayerByLayer(Graphics graphics, ShapeCanvas canvas, NativeRect canvasBounds, Dictionary<Guid, ShapeEditorState> stateMap)
+        {
+            var layers = canvas.Layers.OrderBy(l => l.ZIndex).ThenBy(l => l.Id).ToList();
+
+            foreach (var layer in layers)
+            {
+                if (!layer.IsVisible)
+                {
+                    continue;
+                }
+
+                var shapesInLayer = canvas.Shapes.Where(s => s.LayerId == layer.Id).ToList();
+
+                // Separate inverted filters from other shapes
+                var invertedBlurFilters = shapesInLayer.OfType<BlurFilterShape>().Where(f => f.IsInverted).ToList();
+                var invertedHighlightFilters = shapesInLayer.OfType<HighlightFilterShape>().Where(f => f.IsInverted).ToList();
+                var otherShapes = shapesInLayer.Where(s => !(s is IFilterShape f && f.IsInverted)).ToList();
+
+                // Render non-inverted shapes first
+                foreach (var shape in otherShapes)
+                {
+                    RenderShape(graphics, shape);
+                }
+
+                // Render inverted blur filters in batch (combined into one operation)
+                if (invertedBlurFilters.Any())
+                {
+                    _blurFilterRenderer.RenderInvertedBatch(graphics, invertedBlurFilters, canvasBounds);
+                }
+
+                // Render inverted highlight filters in batch (combined into one operation)
+                if (invertedHighlightFilters.Any())
+                {
+                    _highlightFilterRenderer.RenderInvertedBatch(graphics, invertedHighlightFilters, canvasBounds);
+                }
+            }
+
+            // Render shapes without layer assignment
+            var unassignedShapes = canvas.Shapes.Where(s => s.LayerId == null).ToList();
+            foreach (var shape in unassignedShapes)
+            {
+                RenderShape(graphics, shape);
             }
         }
 

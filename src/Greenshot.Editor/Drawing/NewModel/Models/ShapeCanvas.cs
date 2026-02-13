@@ -22,19 +22,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Greenshot.Editor.Drawing.NewModel.Filters;
 
 namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Manages a collection of shapes, layers, and filters on a canvas.
+    /// Manages a collection of shapes and layers on a canvas.
     /// Pure data container - no rendering or UI logic.
+    /// Filters are now shapes (IFilterShape) and are managed just like other shapes.
     /// </summary>
     public class ShapeCanvas
     {
         private readonly List<IShape> _shapes = new List<IShape>();
         private readonly List<Layer> _layers = new List<Layer>();
-        private readonly List<IFilter> _filters = new List<IFilter>();
         private Layer _backgroundLayer;
         private Layer _defaultLayer;
 
@@ -50,7 +49,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         }
 
         /// <summary>
-        /// All shapes on the canvas
+        /// All shapes on the canvas (includes filter shapes)
         /// </summary>
         public IReadOnlyList<IShape> Shapes => _shapes.AsReadOnly();
 
@@ -58,11 +57,6 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         /// All layers on the canvas
         /// </summary>
         public IReadOnlyList<Layer> Layers => _layers.AsReadOnly();
-
-        /// <summary>
-        /// All filters on the canvas
-        /// </summary>
-        public IReadOnlyList<IFilter> Filters => _filters.AsReadOnly();
 
         /// <summary>
         /// The background layer (implicit, always exists)
@@ -179,33 +173,11 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         }
 
         /// <summary>
-        /// Adds a filter to the canvas
-        /// </summary>
-        public void AddFilter(IFilter filter)
-        {
-            if (filter == null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
-
-            _filters.Add(filter);
-        }
-
-        /// <summary>
-        /// Removes a filter from the canvas
-        /// </summary>
-        public bool RemoveFilter(IFilter filter)
-        {
-            return _filters.Remove(filter);
-        }
-
-        /// <summary>
         /// Clears all shapes from the canvas
         /// </summary>
         public void Clear()
         {
             _shapes.Clear();
-            _filters.Clear();
         }
 
         /// <summary>
