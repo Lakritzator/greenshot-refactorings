@@ -119,36 +119,36 @@ namespace Greenshot.Editor.Drawing.NewModel
             if (container.HasField(FieldType.LINE_COLOR))
             {
                 var field = container.GetField(FieldType.LINE_COLOR);
-                if (field is Field colorField)
+                if (field != null && field.HasValue)
                 {
-                    lineColor = (Color)colorField.Value;
+                    lineColor = (Color)field.Value;
                 }
             }
 
             if (container.HasField(FieldType.LINE_THICKNESS))
             {
                 var field = container.GetField(FieldType.LINE_THICKNESS);
-                if (field is Field thicknessField)
+                if (field != null && field.HasValue)
                 {
-                    lineThickness = (int)thicknessField.Value;
+                    lineThickness = (int)field.Value;
                 }
             }
 
             if (container.HasField(FieldType.FILL_COLOR))
             {
                 var field = container.GetField(FieldType.FILL_COLOR);
-                if (field is Field fillField)
+                if (field != null && field.HasValue)
                 {
-                    fillColor = (Color)fillField.Value;
+                    fillColor = (Color)field.Value;
                 }
             }
 
             if (container.HasField(FieldType.SHADOW))
             {
                 var field = container.GetField(FieldType.SHADOW);
-                if (field is Field shadowField)
+                if (field != null && field.HasValue)
                 {
-                    shadow = (bool)shadowField.Value;
+                    shadow = (bool)field.Value;
                 }
             }
 
