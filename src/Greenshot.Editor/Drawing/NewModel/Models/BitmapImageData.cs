@@ -21,50 +21,55 @@
 
 using System;
 using System.Drawing;
-using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Pure data model for a text shape
+    /// System.Drawing implementation of IImageData for bitmap images
     /// </summary>
-    public class TextShape : IShape
+    public class BitmapImageData : IImageData
     {
-        public Guid Id { get; }
-        public NativeRect Bounds { get; set; }
-        public IShapeStyle Style { get; set; }
+        private readonly Bitmap _bitmap;
+        private bool _disposed;
+
+        public int Width => _bitmap?.Width ?? 0;
+        public int Height => _bitmap?.Height ?? 0;
+        public ImageType Type => ImageType.Bitmap;
 
         /// <summary>
-        /// The text content
+        /// Gets the underlying bitmap (for rendering)
         /// </summary>
-        public string Text { get; set; }
+        public Bitmap Bitmap => _bitmap;
 
-        /// <summary>
-        /// Font to use for rendering text
-        /// </summary>
-        public Font Font { get; set; }
-
-        public TextShape(NativeRect bounds, IShapeStyle style, string text, Font font)
+        public BitmapImageData(Bitmap bitmap)
         {
-            Id = Guid.NewGuid();
-            Bounds = bounds;
-            Style = style ?? ShapeStyle.Default();
-            Text = text ?? string.Empty;
-            Font = font ?? SystemFonts.DefaultFont;
+            _bitmap = bitmap ?? throw new ArgumentNullException(nameof(bitmap));
         }
 
-        private TextShape(Guid id, NativeRect bounds, IShapeStyle style, string text, Font font)
+        public IImageData Clone()
         {
-            Id = id;
-            Bounds = bounds;
-            Style = style;
-            Text = text;
-            Font = font;
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(BitmapImageData));
+            }
+
+            return new BitmapImageData((Bitmap)_bitmap.Clone());
         }
 
-        public IShape Clone()
+        public void Dispose()
         {
-            return new TextShape(Guid.NewGuid(), Bounds, Style, Text, (Font)Font.Clone());
+            if (!_disposed)
+            {
+                _bitmap?.Dispose();
+                _disposed = true;
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
+        ~BitmapImageData()
+        {
+            Dispose();
         }
     }
 }

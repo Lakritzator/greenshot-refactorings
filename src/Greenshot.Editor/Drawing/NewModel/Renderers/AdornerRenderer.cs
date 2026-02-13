@@ -20,9 +20,10 @@
  */
 
 using System.Drawing;
+using Greenshot.Editor.Drawing.NewModel.Models;
 using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Renderers
 {
     /// <summary>
     /// Represents an adorner position (resize handle) on a shape

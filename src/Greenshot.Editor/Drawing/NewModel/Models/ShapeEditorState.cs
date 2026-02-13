@@ -22,7 +22,7 @@
 using System;
 using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
     /// Represents the editor state for a shape (selection, adorners, etc.)

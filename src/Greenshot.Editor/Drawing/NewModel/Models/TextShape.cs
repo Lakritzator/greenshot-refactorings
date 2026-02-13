@@ -20,36 +20,53 @@
  */
 
 using System;
+using System.Drawing;
 using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Pure data model for an ellipse shape
+    /// Pure data model for a text shape
     /// </summary>
-    public class EllipseShape : IShape
+    public class TextShape : IShape
     {
         public Guid Id { get; }
         public NativeRect Bounds { get; set; }
         public IShapeStyle Style { get; set; }
+        public Guid? LayerId { get; set; }
 
-        public EllipseShape(NativeRect bounds, IShapeStyle style)
+        /// <summary>
+        /// The text content
+        /// </summary>
+        public string Text { get; set; }
+
+        /// <summary>
+        /// Font to use for rendering text
+        /// </summary>
+        public Font Font { get; set; }
+
+        public TextShape(NativeRect bounds, IShapeStyle style, string text, Font font)
         {
             Id = Guid.NewGuid();
             Bounds = bounds;
             Style = style ?? ShapeStyle.Default();
+            Text = text ?? string.Empty;
+            Font = font ?? SystemFonts.DefaultFont;
         }
 
-        private EllipseShape(Guid id, NativeRect bounds, IShapeStyle style)
+        private TextShape(Guid id, NativeRect bounds, IShapeStyle style, string text, Font font, Guid? layerId)
         {
             Id = id;
             Bounds = bounds;
             Style = style;
+            Text = text;
+            Font = font;
+            LayerId = layerId;
         }
 
         public IShape Clone()
         {
-            return new EllipseShape(Guid.NewGuid(), Bounds, Style);
+            return new TextShape(Guid.NewGuid(), Bounds, Style, Text, (Font)Font.Clone(), LayerId);
         }
     }
 }

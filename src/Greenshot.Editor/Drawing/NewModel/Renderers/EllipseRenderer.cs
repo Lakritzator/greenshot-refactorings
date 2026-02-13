@@ -20,8 +20,9 @@
  */
 
 using System.Drawing;
+using Greenshot.Editor.Drawing.NewModel.Models;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Renderers
 {
     /// <summary>
     /// Renderer for EllipseShape

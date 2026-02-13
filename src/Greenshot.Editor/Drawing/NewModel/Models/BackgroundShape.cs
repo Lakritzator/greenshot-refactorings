@@ -19,26 +19,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Drawing;
+using System;
+using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Responsible for rendering shapes to a graphics context.
-    /// Separates drawing logic from data model.
+    /// Shape representing the background/screenshot image.
+    /// Always resides in its own implicit background layer.
     /// </summary>
-    public interface IShapeRenderer
+    public class BackgroundShape : ImageShape
     {
-        /// <summary>
-        /// Renders a shape to the graphics context
-        /// </summary>
-        /// <param name="graphics">Graphics context to render to</param>
-        /// <param name="shape">Shape to render</param>
-        void Render(Graphics graphics, IShape shape);
+        public BackgroundShape(NativeRect bounds, IImageData backgroundImage)
+            : base(bounds, backgroundImage, ShapeStyle.Default())
+        {
+            // Background always in the background layer
+            LayerId = null; // Will be set to background layer by canvas
+        }
 
-        /// <summary>
-        /// Checks if this renderer can render the given shape type
-        /// </summary>
-        bool CanRender(IShape shape);
+        private BackgroundShape(Guid id, NativeRect bounds, IImageData imageData, IShapeStyle style, Guid? layerId)
+            : base(bounds, imageData, style)
+        {
+            LayerId = layerId;
+        }
+
+        public override IShape Clone()
+        {
+            return new BackgroundShape(Guid.NewGuid(), Bounds, ImageData, Style, LayerId);
+        }
     }
 }

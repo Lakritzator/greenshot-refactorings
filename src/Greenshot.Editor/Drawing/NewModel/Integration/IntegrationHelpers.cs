@@ -20,11 +20,13 @@
  */
 
 using System.Drawing;
+using Greenshot.Editor.Drawing.NewModel.Models;
 using System.Linq;
+using Greenshot.Editor.Drawing.NewModel.Models;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Editor.Drawing.Fields;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Integration
 {
     /// <summary>
     /// Integration helpers for using the new drawing system alongside the existing DrawableContainer system.

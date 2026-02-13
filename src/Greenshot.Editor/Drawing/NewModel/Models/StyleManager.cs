@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
     /// Manages a collection of reusable styles that can be applied to shapes.

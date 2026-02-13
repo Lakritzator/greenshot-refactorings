@@ -23,11 +23,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Dapplo.Windows.Common.Structs;
+using Greenshot.Editor.Drawing.NewModel.Filters;
+using Greenshot.Editor.Drawing.NewModel.Models;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Renderers
 {
     /// <summary>
-    /// Coordinates rendering of shapes and their editor state.
+    /// Coordinates rendering of shapes, filters, and their editor state.
     /// Uses registered renderers to draw shapes and adorners.
     /// </summary>
     public class CanvasRenderer
@@ -41,6 +44,8 @@ namespace Greenshot.Editor.Drawing.NewModel
             RegisterRenderer(new RectangleRenderer());
             RegisterRenderer(new EllipseRenderer());
             RegisterRenderer(new TextRenderer());
+            RegisterRenderer(new ImageRenderer());
+            RegisterRenderer(new CursorRenderer());
         }
 
         /// <summary>
@@ -57,7 +62,7 @@ namespace Greenshot.Editor.Drawing.NewModel
         }
 
         /// <summary>
-        /// Renders all shapes in a canvas
+        /// Renders all shapes in a canvas ordered by layers
         /// </summary>
         public void RenderCanvas(Graphics graphics, ShapeCanvas canvas)
         {
@@ -66,9 +71,19 @@ namespace Greenshot.Editor.Drawing.NewModel
                 return;
             }
 
-            foreach (var shape in canvas.Shapes)
+            // Get canvas bounds for filter rendering
+            var canvasBounds = CalculateCanvasBounds(canvas);
+
+            // Render shapes ordered by layer
+            foreach (var shape in canvas.GetShapesOrderedByLayer())
             {
                 RenderShape(graphics, shape);
+            }
+
+            // Render filters (applied after shapes in their respective layers)
+            foreach (var filter in canvas.Filters)
+            {
+                filter.Apply(graphics, canvasBounds);
             }
         }
 
@@ -82,13 +97,22 @@ namespace Greenshot.Editor.Drawing.NewModel
                 return;
             }
 
+            // Get canvas bounds for filter rendering
+            var canvasBounds = CalculateCanvasBounds(canvas);
+
             // Create a lookup for editor states by shape ID
             var stateMap = editorStates?.ToDictionary(s => s.Shape.Id) ?? new Dictionary<Guid, ShapeEditorState>();
 
-            // Render shapes
-            foreach (var shape in canvas.Shapes)
+            // Render shapes ordered by layer
+            foreach (var shape in canvas.GetShapesOrderedByLayer())
             {
                 RenderShape(graphics, shape);
+            }
+
+            // Render filters
+            foreach (var filter in canvas.Filters)
+            {
+                filter.Apply(graphics, canvasBounds);
             }
 
             // Render adorners for selected shapes on top
@@ -127,6 +151,31 @@ namespace Greenshot.Editor.Drawing.NewModel
 
             RenderShape(graphics, state.Shape);
             _adornerRenderer.RenderAdorners(graphics, state);
+        }
+
+        /// <summary>
+        /// Calculates the bounding rectangle for the entire canvas
+        /// </summary>
+        private NativeRect CalculateCanvasBounds(ShapeCanvas canvas)
+        {
+            if (!canvas.Shapes.Any())
+            {
+                return new NativeRect(0, 0, 0, 0);
+            }
+
+            int minX = int.MaxValue, minY = int.MaxValue;
+            int maxX = int.MinValue, maxY = int.MinValue;
+
+            foreach (var shape in canvas.Shapes)
+            {
+                var bounds = shape.Bounds;
+                minX = Math.Min(minX, bounds.Left);
+                minY = Math.Min(minY, bounds.Top);
+                maxX = Math.Max(maxX, bounds.Right);
+                maxY = Math.Max(maxY, bounds.Bottom);
+            }
+
+            return new NativeRect(minX, minY, maxX - minX, maxY - minY);
         }
     }
 }

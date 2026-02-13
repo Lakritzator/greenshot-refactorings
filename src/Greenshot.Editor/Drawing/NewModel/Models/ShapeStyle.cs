@@ -21,7 +21,7 @@
 
 using System.Drawing;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
     /// Immutable implementation of IShapeStyle

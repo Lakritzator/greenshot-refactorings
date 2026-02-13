@@ -19,55 +19,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Drawing;
+using System;
+using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Represents styling properties that can be applied to shapes.
-    /// Styles are reusable and can be shared across multiple shapes.
-    /// Immutable to allow safe sharing.
+    /// Represents the pure data model for a drawable shape.
+    /// Contains only the essential geometric and property data needed to define the shape.
+    /// No drawing logic, no UI state (selection, adorners), no parent references.
     /// </summary>
-    public interface IShapeStyle
+    public interface IShape
     {
         /// <summary>
-        /// Line/stroke color
+        /// Unique identifier for this shape instance
         /// </summary>
-        Color LineColor { get; }
+        Guid Id { get; }
 
         /// <summary>
-        /// Line/stroke thickness in pixels
+        /// Bounding rectangle for the shape
         /// </summary>
-        int LineThickness { get; }
+        NativeRect Bounds { get; set; }
 
         /// <summary>
-        /// Fill color (Color.Empty means no fill)
+        /// Style applied to this shape (can be shared across multiple shapes)
         /// </summary>
-        Color FillColor { get; }
+        IShapeStyle Style { get; set; }
 
         /// <summary>
-        /// Whether to draw a shadow
+        /// Layer ID this shape belongs to
         /// </summary>
-        bool Shadow { get; }
+        Guid? LayerId { get; set; }
 
         /// <summary>
-        /// Creates a copy of this style with modified properties
+        /// Creates a deep copy of this shape
         /// </summary>
-        IShapeStyle WithLineColor(Color color);
-
-        /// <summary>
-        /// Creates a copy of this style with modified properties
-        /// </summary>
-        IShapeStyle WithLineThickness(int thickness);
-
-        /// <summary>
-        /// Creates a copy of this style with modified properties
-        /// </summary>
-        IShapeStyle WithFillColor(Color color);
-
-        /// <summary>
-        /// Creates a copy of this style with modified properties
-        /// </summary>
-        IShapeStyle WithShadow(bool shadow);
+        IShape Clone();
     }
 }

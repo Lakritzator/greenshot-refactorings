@@ -20,35 +20,43 @@
  */
 
 using System;
-using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
-    /// Represents the pure data model for a drawable shape.
-    /// Contains only the essential geometric and property data needed to define the shape.
-    /// No drawing logic, no UI state (selection, adorners), no parent references.
+    /// Represents a layer in the canvas for organizing shapes
     /// </summary>
-    public interface IShape
+    public class Layer
     {
-        /// <summary>
-        /// Unique identifier for this shape instance
-        /// </summary>
-        Guid Id { get; }
+        public Guid Id { get; }
+        public string Name { get; set; }
+        public bool IsVisible { get; set; }
+        public bool IsLocked { get; set; }
+        public int ZIndex { get; set; }
+
+        public Layer(string name, int zIndex = 0)
+        {
+            Id = Guid.NewGuid();
+            Name = name ?? "Layer";
+            IsVisible = true;
+            IsLocked = false;
+            ZIndex = zIndex;
+        }
 
         /// <summary>
-        /// Bounding rectangle for the shape
+        /// Creates a background layer (implicit layer for background image)
         /// </summary>
-        NativeRect Bounds { get; set; }
+        public static Layer CreateBackgroundLayer()
+        {
+            return new Layer("Background", int.MinValue) { IsLocked = true };
+        }
 
         /// <summary>
-        /// Style applied to this shape (can be shared across multiple shapes)
+        /// Creates a default layer for shapes
         /// </summary>
-        IShapeStyle Style { get; set; }
-
-        /// <summary>
-        /// Creates a deep copy of this shape
-        /// </summary>
-        IShape Clone();
+        public static Layer CreateDefaultLayer()
+        {
+            return new Layer("Default", 0);
+        }
     }
 }

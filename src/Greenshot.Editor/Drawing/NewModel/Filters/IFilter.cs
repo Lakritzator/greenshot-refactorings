@@ -20,36 +20,39 @@
  */
 
 using System;
+using System.Drawing;
 using Dapplo.Windows.Common.Structs;
 
-namespace Greenshot.Editor.Drawing.NewModel
+namespace Greenshot.Editor.Drawing.NewModel.Filters
 {
     /// <summary>
-    /// Pure data model for a rectangle shape
+    /// Base interface for filters that can be applied to areas of the canvas
     /// </summary>
-    public class RectangleShape : IShape
+    public interface IFilter
     {
-        public Guid Id { get; }
-        public NativeRect Bounds { get; set; }
-        public IShapeStyle Style { get; set; }
+        /// <summary>
+        /// Unique identifier for this filter instance
+        /// </summary>
+        Guid Id { get; }
 
-        public RectangleShape(NativeRect bounds, IShapeStyle style)
-        {
-            Id = Guid.NewGuid();
-            Bounds = bounds;
-            Style = style ?? ShapeStyle.Default();
-        }
+        /// <summary>
+        /// Layer this filter belongs to
+        /// </summary>
+        Guid? LayerId { get; set; }
 
-        private RectangleShape(Guid id, NativeRect bounds, IShapeStyle style)
-        {
-            Id = id;
-            Bounds = bounds;
-            Style = style;
-        }
+        /// <summary>
+        /// The area this filter applies to
+        /// </summary>
+        NativeRect Area { get; set; }
 
-        public IShape Clone()
-        {
-            return new RectangleShape(Guid.NewGuid(), Bounds, Style);
-        }
+        /// <summary>
+        /// Whether this is an inverted filter (applies everywhere EXCEPT the area)
+        /// </summary>
+        bool IsInverted { get; set; }
+
+        /// <summary>
+        /// Applies the filter to the graphics context
+        /// </summary>
+        void Apply(Graphics graphics, NativeRect canvasBounds);
     }
 }
