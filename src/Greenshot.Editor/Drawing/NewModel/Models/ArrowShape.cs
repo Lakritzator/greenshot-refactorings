@@ -20,16 +20,19 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Dapplo.Windows.Common.Structs;
+using Greenshot.Editor.Drawing.NewModel.Renderers;
 
 namespace Greenshot.Editor.Drawing.NewModel.Models
 {
     /// <summary>
     /// Arrow shape that represents a line with optional arrow heads at start and/or end points.
     /// Unlike other shapes, arrows use start/end points rather than bounds, but store them as bounds for consistency.
+    /// Implements IAdornerConfiguration to provide only 2 adorners (start and end points).
     /// </summary>
-    public class ArrowShape : IShape
+    public class ArrowShape : IShape, IAdornerConfiguration
     {
         public enum ArrowHeadCombination
         {
@@ -48,41 +51,51 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         /// Which arrow heads to display (none, start, end, or both)
         /// </summary>
         public ArrowHeadCombination ArrowHeads { get; set; }
+        
+        /// <summary>
+        /// Actual start point of the arrow (not normalized to bounds)
+        /// </summary>
+        private Point _actualStartPoint;
+        
+        /// <summary>
+        /// Actual end point of the arrow (not normalized to bounds)
+        /// </summary>
+        private Point _actualEndPoint;
 
         /// <summary>
-        /// Start point of the arrow (stored as bounds.TopLeft)
+        /// Start point of the arrow
         /// </summary>
         public Point StartPoint
         {
-            get => new Point(Bounds.Left, Bounds.Top);
+            get => _actualStartPoint;
             set
             {
-                var endPoint = EndPoint;
-                Bounds = NativeRect.FromLTRB(
-                    Math.Min(value.X, endPoint.X),
-                    Math.Min(value.Y, endPoint.Y),
-                    Math.Max(value.X, endPoint.X),
-                    Math.Max(value.Y, endPoint.Y)
-                );
+                _actualStartPoint = value;
+                UpdateBounds();
             }
         }
 
         /// <summary>
-        /// End point of the arrow (stored as bounds.TopLeft + bounds.Size)
+        /// End point of the arrow
         /// </summary>
         public Point EndPoint
         {
-            get => new Point(Bounds.Left + Bounds.Width, Bounds.Top + Bounds.Height);
+            get => _actualEndPoint;
             set
             {
-                var startPoint = StartPoint;
-                Bounds = NativeRect.FromLTRB(
-                    Math.Min(startPoint.X, value.X),
-                    Math.Min(startPoint.Y, value.Y),
-                    Math.Max(startPoint.X, value.X),
-                    Math.Max(startPoint.Y, value.Y)
-                );
+                _actualEndPoint = value;
+                UpdateBounds();
             }
+        }
+
+        private void UpdateBounds()
+        {
+            Bounds = NativeRect.FromLTRB(
+                Math.Min(_actualStartPoint.X, _actualEndPoint.X),
+                Math.Min(_actualStartPoint.Y, _actualEndPoint.Y),
+                Math.Max(_actualStartPoint.X, _actualEndPoint.X),
+                Math.Max(_actualStartPoint.Y, _actualEndPoint.Y)
+            );
         }
 
         public ArrowShape(Point startPoint, Point endPoint, IShapeStyle style, ArrowHeadCombination arrowHeads = ArrowHeadCombination.EndPoint)
@@ -90,14 +103,9 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
             Id = Guid.NewGuid();
             Style = style;
             ArrowHeads = arrowHeads;
-            
-            // Store as bounds for consistency with other shapes
-            Bounds = NativeRect.FromLTRB(
-                Math.Min(startPoint.X, endPoint.X),
-                Math.Min(startPoint.Y, endPoint.Y),
-                Math.Max(startPoint.X, endPoint.X),
-                Math.Max(startPoint.Y, endPoint.Y)
-            );
+            _actualStartPoint = startPoint;
+            _actualEndPoint = endPoint;
+            UpdateBounds();
         }
 
         public IShape Clone()
@@ -107,6 +115,21 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
                 Id = Guid.NewGuid(),
                 LayerId = LayerId
             };
+        }
+
+        /// <summary>
+        /// Arrows only need 2 adorners: start point and end point
+        /// </summary>
+        public IEnumerable<CustomAdorner> GetAdorners(IShape shape)
+        {
+            var arrow = shape as ArrowShape;
+            if (arrow == null) yield break;
+
+            // Start point adorner (index 0)
+            yield return new CustomAdorner("start", arrow.StartPoint, Color.White, 8);
+            
+            // End point adorner (index 1)
+            yield return new CustomAdorner("end", arrow.EndPoint, Color.White, 8);
         }
     }
 }

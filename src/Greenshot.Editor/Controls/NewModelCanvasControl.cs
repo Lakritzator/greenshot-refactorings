@@ -285,9 +285,19 @@ namespace Greenshot.Editor.Controls
                 else
                 {
                     // Move shape
-                    var newBounds = _draggedShape.Bounds;
-                    newBounds.Offset(dx, dy);
-                    _draggedShape.Bounds = newBounds;
+                    if (_draggedShape is ArrowShape arrow)
+                    {
+                        // For arrows, move both start and end points
+                        arrow.StartPoint = new Point(arrow.StartPoint.X + dx, arrow.StartPoint.Y + dy);
+                        arrow.EndPoint = new Point(arrow.EndPoint.X + dx, arrow.EndPoint.Y + dy);
+                    }
+                    else
+                    {
+                        // For other shapes, move bounds
+                        var newBounds = _draggedShape.Bounds;
+                        newBounds.Offset(dx, dy);
+                        _draggedShape.Bounds = newBounds;
+                    }
                 }
 
                 _lastMousePosition = e.Location;
@@ -359,6 +369,24 @@ namespace Greenshot.Editor.Controls
 
         private void ResizeShape(IShape shape, int adornerIndex, int dx, int dy)
         {
+            // Special handling for arrows - they only have 2 adorners
+            if (shape is ArrowShape arrow)
+            {
+                if (adornerIndex == 0)
+                {
+                    // Move start point
+                    var newStart = new Point(arrow.StartPoint.X + dx, arrow.StartPoint.Y + dy);
+                    arrow.StartPoint = newStart;
+                }
+                else if (adornerIndex == 1)
+                {
+                    // Move end point
+                    var newEnd = new Point(arrow.EndPoint.X + dx, arrow.EndPoint.Y + dy);
+                    arrow.EndPoint = newEnd;
+                }
+                return;
+            }
+
             var bounds = shape.Bounds;
 
             // Standard 8-position adorner resize

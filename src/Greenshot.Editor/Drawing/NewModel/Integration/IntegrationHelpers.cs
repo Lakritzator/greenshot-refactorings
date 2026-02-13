@@ -66,9 +66,65 @@ namespace Greenshot.Editor.Drawing.NewModel.Integration
                 var font = ExtractFontFromContainer(textContainer);
                 return new TextShape(bounds, style, text, font);
             }
+            else if (container is ArrowContainer arrowContainer)
+            {
+                // Extract arrow-specific properties
+                var fieldHolder = arrowContainer as IFieldHolder;
+                ArrowShape.ArrowHeadCombination arrowHeads = ArrowShape.ArrowHeadCombination.EndPoint;
+                
+                if (fieldHolder.HasField(FieldType.ARROWHEADS))
+                {
+                    var arrowHeadsField = fieldHolder.GetField(FieldType.ARROWHEADS);
+                    if (arrowHeadsField != null && arrowHeadsField.HasValue)
+                    {
+                        var legacyHeads = (ArrowContainer.ArrowHeadCombination)arrowHeadsField.Value;
+                        arrowHeads = ConvertArrowHeadCombination(legacyHeads);
+                    }
+                }
+                
+                // ArrowContainer uses bounds, but we need start and end points
+                // LineContainer (parent of ArrowContainer) has properties for this
+                var lineContainer = arrowContainer as LineContainer;
+                Point startPoint = new Point(bounds.Left, bounds.Top);
+                Point endPoint = new Point(bounds.Right, bounds.Bottom);
+                
+                if (lineContainer != null)
+                {
+                    // Try to get actual line points if available via reflection
+                    var startField = lineContainer.GetType().GetProperty("StartPoint");
+                    var endField = lineContainer.GetType().GetProperty("EndPoint");
+                    if (startField != null && endField != null)
+                    {
+                        startPoint = (Point)startField.GetValue(lineContainer, null);
+                        endPoint = (Point)endField.GetValue(lineContainer, null);
+                    }
+                }
+                
+                return new ArrowShape(startPoint, endPoint, style, arrowHeads);
+            }
 
             // For unknown types, create a generic rectangle representation
             return new RectangleShape(bounds, style);
+        }
+        
+        /// <summary>
+        /// Converts legacy ArrowHeadCombination to new ArrowShape.ArrowHeadCombination
+        /// </summary>
+        private static ArrowShape.ArrowHeadCombination ConvertArrowHeadCombination(ArrowContainer.ArrowHeadCombination legacy)
+        {
+            switch (legacy)
+            {
+                case ArrowContainer.ArrowHeadCombination.NONE:
+                    return ArrowShape.ArrowHeadCombination.None;
+                case ArrowContainer.ArrowHeadCombination.START_POINT:
+                    return ArrowShape.ArrowHeadCombination.StartPoint;
+                case ArrowContainer.ArrowHeadCombination.END_POINT:
+                    return ArrowShape.ArrowHeadCombination.EndPoint;
+                case ArrowContainer.ArrowHeadCombination.BOTH:
+                    return ArrowShape.ArrowHeadCombination.Both;
+                default:
+                    return ArrowShape.ArrowHeadCombination.EndPoint;
+            }
         }
 
         /// <summary>
