@@ -85,15 +85,24 @@ namespace Greenshot.Editor.Controls
             {
                 if (_canvas != null)
                 {
-                    _editorStates.Clear();
+                    // Mark all existing states as selected, create new ones for shapes without states
                     foreach (var shape in _canvas.Shapes)
                     {
-                        var state = new ShapeEditorState(shape)
+                        var existingState = _editorStates.FirstOrDefault(s => s.Shape.Id == shape.Id);
+                        if (existingState != null)
                         {
-                            IsSelected = true,
-                            ShowAdorners = true
-                        };
-                        _editorStates.Add(state);
+                            existingState.IsSelected = true;
+                            existingState.ShowAdorners = true;
+                        }
+                        else
+                        {
+                            var state = new ShapeEditorState(shape)
+                            {
+                                IsSelected = true,
+                                ShowAdorners = true
+                            };
+                            _editorStates.Add(state);
+                        }
                     }
                     Invalidate();
                     return true;
@@ -108,7 +117,8 @@ namespace Greenshot.Editor.Controls
                 {
                     _canvas?.RemoveShape(shape);
                 }
-                _editorStates.Clear();
+                // Remove only the states for deleted shapes
+                _editorStates.RemoveAll(s => selectedShapes.Contains(s.Shape));
                 Invalidate();
                 return true;
             }
