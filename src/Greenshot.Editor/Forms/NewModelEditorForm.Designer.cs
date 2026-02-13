@@ -219,6 +219,7 @@ partial class NewModelEditorForm
         this.Controls.Add(this.layersPanel);
         this.Controls.Add(this.toolStrip);
         this.Controls.Add(this.statusStrip);
+        this.KeyPreview = true; // Allow form to intercept keyboard events
         this.Name = "NewModelEditorForm";
         this.Text = "New Model Editor - Beta";
         this.Load += new System.EventHandler(this.NewModelEditorForm_Load);
@@ -239,6 +240,9 @@ partial class NewModelEditorForm
 
         // Populate layers list
         RefreshLayersList();
+        
+        // Give focus to the canvas control so keyboard events work
+        _canvasControl.Focus();
     }
 
     private void RefreshLayersList()
@@ -336,5 +340,27 @@ partial class NewModelEditorForm
             _canvasControl.Invalidate();
             statusLabel.Text = $"Layer '{layer.Name}' visibility: {layer.IsVisible}";
         }
+    }
+
+    protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, Keys keyData)
+    {
+        // Forward keyboard commands to the canvas control
+        if (keyData == Keys.Delete || keyData == (Keys.Control | Keys.A))
+        {
+            // Manually invoke the canvas control's keyboard handler
+            var method = typeof(Control).GetMethod("ProcessCmdKey",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (method != null)
+            {
+                var parameters = new object[] { msg, keyData };
+                var result = method.Invoke(_canvasControl, parameters);
+                if (result is bool handled && handled)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 }

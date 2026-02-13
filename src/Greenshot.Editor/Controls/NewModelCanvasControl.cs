@@ -55,6 +55,9 @@ namespace Greenshot.Editor.Controls
             DoubleBuffered = true;
             BackColor = Color.White;
             TabStop = true; // Allow keyboard input
+            
+            // Ensure control can receive focus
+            SetStyle(ControlStyles.Selectable, true);
         }
 
         public void SetCanvas(ShapeCanvas canvas, CanvasRenderer renderer)
@@ -100,6 +103,12 @@ namespace Greenshot.Editor.Controls
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
+
+            // Ensure control has focus for keyboard input
+            if (!Focused)
+            {
+                Focus();
+            }
 
             if (_canvas == null) return;
 
