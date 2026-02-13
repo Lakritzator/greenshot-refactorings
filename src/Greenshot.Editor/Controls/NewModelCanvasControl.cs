@@ -78,6 +78,44 @@ namespace Greenshot.Editor.Controls
             Invalidate();
         }
 
+        public bool HandleKeyCommand(Keys keyData)
+        {
+            // Handle Ctrl+A for select all
+            if (keyData == (Keys.Control | Keys.A))
+            {
+                if (_canvas != null)
+                {
+                    _editorStates.Clear();
+                    foreach (var shape in _canvas.Shapes)
+                    {
+                        var state = new ShapeEditorState(shape)
+                        {
+                            IsSelected = true,
+                            ShowAdorners = true
+                        };
+                        _editorStates.Add(state);
+                    }
+                    Invalidate();
+                    return true;
+                }
+            }
+
+            // Handle Delete key
+            if (keyData == Keys.Delete)
+            {
+                var selectedShapes = _editorStates.Where(s => s.IsSelected).Select(s => s.Shape).ToList();
+                foreach (var shape in selectedShapes)
+                {
+                    _canvas?.RemoveShape(shape);
+                }
+                _editorStates.Clear();
+                Invalidate();
+                return true;
+            }
+
+            return false;
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);

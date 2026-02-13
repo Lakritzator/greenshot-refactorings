@@ -347,17 +347,9 @@ partial class NewModelEditorForm
         // Forward keyboard commands to the canvas control
         if (keyData == Keys.Delete || keyData == (Keys.Control | Keys.A))
         {
-            // Manually invoke the canvas control's keyboard handler
-            var method = typeof(Control).GetMethod("ProcessCmdKey",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (method != null)
+            if (_canvasControl.HandleKeyCommand(keyData))
             {
-                var parameters = new object[] { msg, keyData };
-                var result = method.Invoke(_canvasControl, parameters);
-                if (result is bool handled && handled)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
