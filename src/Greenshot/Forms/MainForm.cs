@@ -1170,7 +1170,14 @@ namespace Greenshot.Forms
 
                 ToolStripItem captureWindowItem = menuItem.DropDownItems.Add(title);
                 captureWindowItem.Tag = window;
-                captureWindowItem.Image = window.DisplayIcon;
+                // Clone the icon to prevent issues when cached icons are disposed on icon size change
+                var iconClone = window.DisplayIcon != null ? ImageHelper.Clone(window.DisplayIcon) : null;
+                captureWindowItem.Image = iconClone;
+                // Dispose the cloned icon when the menu item is disposed to prevent memory leaks
+                if (iconClone != null)
+                {
+                    captureWindowItem.Disposed += (sender, e) => iconClone.Dispose();
+                }
                 captureWindowItem.Click += eventHandler;
                 // Only show preview when enabled
                 if (thumbnailPreview)
