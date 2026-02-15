@@ -206,10 +206,7 @@ namespace Greenshot.Base.Core
 
                 try
                 {
-                    var cachedIcon = PluginUtils.GetCachedExeIcon(ProcessPath, 0);
-                    // Clone the cached icon to prevent issues when the cache is cleared on icon size change
-                    // This ensures each menu item has its own copy that won't be disposed by the cache
-                    return cachedIcon != null ? ImageHelper.Clone(cachedIcon) : null;
+                    return PluginUtils.GetCachedExeIcon(ProcessPath, 0);
                 }
                 catch (Exception ex)
                 {

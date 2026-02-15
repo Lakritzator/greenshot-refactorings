@@ -344,10 +344,11 @@ namespace Greenshot.Base.Core
         /// <returns>ToolStripMenuItem</returns>
         public virtual ToolStripMenuItem GetMenuItem(bool addDynamics, ContextMenuStrip menu, EventHandler destinationClickHandler)
         {
+            // Clone the icon to prevent issues when cached icons are disposed on icon size change
+            var iconClone = DisplayIcon != null ? ImageHelper.Clone(DisplayIcon) : null;
             var basisMenuItem = new ToolStripMenuItem(Description)
             {
-                // Clone the icon to prevent issues when cached icons are disposed on icon size change
-                Image = DisplayIcon != null ? ImageHelper.Clone(DisplayIcon) : null,
+                Image = iconClone,
                 Tag = this,
                 Text = Description
             };
@@ -385,11 +386,12 @@ namespace Greenshot.Base.Core
                             {
                                 foreach (IDestination subDestination in subDestinations)
                                 {
+                                    // Clone the icon to prevent issues when cached icons are disposed on icon size change
+                                    var subIconClone = subDestination.DisplayIcon != null ? ImageHelper.Clone(subDestination.DisplayIcon) : null;
                                     var destinationMenuItem = new ToolStripMenuItem(subDestination.Description)
                                     {
                                         Tag = subDestination,
-                                        // Clone the icon to prevent issues when cached icons are disposed on icon size change
-                                        Image = subDestination.DisplayIcon != null ? ImageHelper.Clone(subDestination.DisplayIcon) : null
+                                        Image = subIconClone
                                     };
                                     destinationMenuItem.Click += destinationClickHandler;
                                     AddTagEvents(destinationMenuItem, menu, subDestination.Description);
