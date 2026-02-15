@@ -352,6 +352,11 @@ namespace Greenshot.Base.Core
                 Tag = this,
                 Text = Description
             };
+            // Dispose the cloned icon when the menu item is disposed to prevent memory leaks
+            if (iconClone != null)
+            {
+                basisMenuItem.Disposed += (sender, e) => iconClone.Dispose();
+            }
             AddTagEvents(basisMenuItem, menu, Description);
             basisMenuItem.Click -= destinationClickHandler;
             basisMenuItem.Click += destinationClickHandler;
@@ -393,6 +398,11 @@ namespace Greenshot.Base.Core
                                         Tag = subDestination,
                                         Image = subIconClone
                                     };
+                                    // Dispose the cloned icon when the menu item is disposed to prevent memory leaks
+                                    if (subIconClone != null)
+                                    {
+                                        destinationMenuItem.Disposed += (sender, e) => subIconClone.Dispose();
+                                    }
                                     destinationMenuItem.Click += destinationClickHandler;
                                     AddTagEvents(destinationMenuItem, menu, subDestination.Description);
                                     basisMenuItem.DropDownItems.Add(destinationMenuItem);

@@ -171,7 +171,11 @@ public class ExternalCommandPlugin : IGreenshotPlugin
                 {
                     var icon = PluginUtils.GetCachedExeIcon(exePath, 0);
                     // Clone the icon to prevent issues when the cache is cleared
-                    _itemPlugInRoot.Image = icon != null ? ImageHelper.Clone(icon) : null;
+                    var iconClone = icon != null ? ImageHelper.Clone(icon) : null;
+                    // Dispose the previous image before assigning the new one
+                    var oldImage = _itemPlugInRoot.Image;
+                    _itemPlugInRoot.Image = iconClone;
+                    oldImage?.Dispose();
                 }
             }
             catch (Exception ex)
