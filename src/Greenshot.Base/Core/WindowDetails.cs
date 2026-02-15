@@ -185,6 +185,7 @@ namespace Greenshot.Base.Core
 
         /// <summary>
         /// Get the icon belonging to the process
+        /// Returns a new copy of the icon to prevent issues when cached icons are disposed
         /// </summary>
         public Image DisplayIcon
         {
@@ -206,7 +207,9 @@ namespace Greenshot.Base.Core
 
                 try
                 {
-                    return PluginUtils.GetCachedExeIcon(ProcessPath, 0);
+                    var cachedIcon = PluginUtils.GetCachedExeIcon(ProcessPath, 0);
+                    // Clone the cached icon to prevent issues when the cache is cleared on icon size change
+                    return cachedIcon != null ? ImageHelper.Clone(cachedIcon) : null;
                 }
                 catch (Exception ex)
                 {
