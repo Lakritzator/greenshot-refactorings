@@ -169,7 +169,9 @@ public class ExternalCommandPlugin : IGreenshotPlugin
                 string exePath = PluginUtils.GetExePath("cmd.exe");
                 if (exePath != null && File.Exists(exePath))
                 {
-                    _itemPlugInRoot.Image = PluginUtils.GetCachedExeIcon(exePath, 0);
+                    var icon = PluginUtils.GetCachedExeIcon(exePath, 0);
+                    // Clone the icon to prevent issues when the cache is cleared
+                    _itemPlugInRoot.Image = icon != null ? ImageHelper.Clone(icon) : null;
                 }
             }
             catch (Exception ex)

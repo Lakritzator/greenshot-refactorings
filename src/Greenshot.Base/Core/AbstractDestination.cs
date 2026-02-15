@@ -346,7 +346,8 @@ namespace Greenshot.Base.Core
         {
             var basisMenuItem = new ToolStripMenuItem(Description)
             {
-                Image = DisplayIcon,
+                // Clone the icon to prevent issues when cached icons are disposed on icon size change
+                Image = DisplayIcon != null ? ImageHelper.Clone(DisplayIcon) : null,
                 Tag = this,
                 Text = Description
             };
@@ -387,7 +388,8 @@ namespace Greenshot.Base.Core
                                     var destinationMenuItem = new ToolStripMenuItem(subDestination.Description)
                                     {
                                         Tag = subDestination,
-                                        Image = subDestination.DisplayIcon
+                                        // Clone the icon to prevent issues when cached icons are disposed on icon size change
+                                        Image = subDestination.DisplayIcon != null ? ImageHelper.Clone(subDestination.DisplayIcon) : null
                                     };
                                     destinationMenuItem.Click += destinationClickHandler;
                                     AddTagEvents(destinationMenuItem, menu, subDestination.Description);
