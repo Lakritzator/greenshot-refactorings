@@ -125,11 +125,11 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
             var arrow = shape as ArrowShape;
             if (arrow == null) yield break;
 
-            // Start point adorner (index 0)
-            yield return new CustomAdorner("start", arrow.StartPoint, Color.White, 8);
+            // Start point adorner (index 0) with crosshair cursor
+            yield return new CustomAdorner("start", arrow.StartPoint, Color.White, 8, System.Windows.Forms.Cursors.Cross);
             
-            // End point adorner (index 1)
-            yield return new CustomAdorner("end", arrow.EndPoint, Color.White, 8);
+            // End point adorner (index 1) with crosshair cursor
+            yield return new CustomAdorner("end", arrow.EndPoint, Color.White, 8, System.Windows.Forms.Cursors.Cross);
         }
     }
 }

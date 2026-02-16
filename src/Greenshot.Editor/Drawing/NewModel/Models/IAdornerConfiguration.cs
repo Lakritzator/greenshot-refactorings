@@ -21,6 +21,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using Dapplo.Windows.Common.Structs;
 
 namespace Greenshot.Editor.Drawing.NewModel.Models
@@ -38,7 +39,7 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
     }
 
     /// <summary>
-    /// Represents a custom adorner with position and color
+    /// Represents a custom adorner with position, color, and cursor information
     /// </summary>
     public class CustomAdorner
     {
@@ -46,13 +47,15 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
         public Point Position { get; set; }
         public Color Color { get; set; }
         public int Size { get; set; }
+        public Cursor Cursor { get; set; }
 
-        public CustomAdorner(string id, Point position, Color? color = null, int size = 7)
+        public CustomAdorner(string id, Point position, Color? color = null, int size = 7, Cursor cursor = null)
         {
             Id = id;
             Position = position;
             Color = color ?? Color.White;
             Size = size;
+            Cursor = cursor ?? Cursors.SizeAll;
         }
     }
 }

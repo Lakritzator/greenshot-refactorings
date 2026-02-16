@@ -79,18 +79,18 @@ namespace Greenshot.Editor.Drawing.NewModel.Models
 
             var bounds = bubble.Bounds;
 
-            // Standard 8 adorners for resizing the bubble body (corners and edges)
-            yield return new CustomAdorner("top-left", new Point(bounds.Left, bounds.Top), Color.White, 7);
-            yield return new CustomAdorner("top-center", new Point(bounds.Left + bounds.Width / 2, bounds.Top), Color.White, 7);
-            yield return new CustomAdorner("top-right", new Point(bounds.Right, bounds.Top), Color.White, 7);
-            yield return new CustomAdorner("middle-left", new Point(bounds.Left, bounds.Top + bounds.Height / 2), Color.White, 7);
-            yield return new CustomAdorner("middle-right", new Point(bounds.Right, bounds.Top + bounds.Height / 2), Color.White, 7);
-            yield return new CustomAdorner("bottom-left", new Point(bounds.Left, bounds.Bottom), Color.White, 7);
-            yield return new CustomAdorner("bottom-center", new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), Color.White, 7);
-            yield return new CustomAdorner("bottom-right", new Point(bounds.Right, bounds.Bottom), Color.White, 7);
+            // Standard 8 adorners for resizing the bubble body (corners and edges) with appropriate cursors
+            yield return new CustomAdorner("top-left", new Point(bounds.Left, bounds.Top), Color.White, 7, System.Windows.Forms.Cursors.SizeNWSE);
+            yield return new CustomAdorner("top-center", new Point(bounds.Left + bounds.Width / 2, bounds.Top), Color.White, 7, System.Windows.Forms.Cursors.SizeNS);
+            yield return new CustomAdorner("top-right", new Point(bounds.Right, bounds.Top), Color.White, 7, System.Windows.Forms.Cursors.SizeNESW);
+            yield return new CustomAdorner("middle-left", new Point(bounds.Left, bounds.Top + bounds.Height / 2), Color.White, 7, System.Windows.Forms.Cursors.SizeWE);
+            yield return new CustomAdorner("middle-right", new Point(bounds.Right, bounds.Top + bounds.Height / 2), Color.White, 7, System.Windows.Forms.Cursors.SizeWE);
+            yield return new CustomAdorner("bottom-left", new Point(bounds.Left, bounds.Bottom), Color.White, 7, System.Windows.Forms.Cursors.SizeNESW);
+            yield return new CustomAdorner("bottom-center", new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), Color.White, 7, System.Windows.Forms.Cursors.SizeNS);
+            yield return new CustomAdorner("bottom-right", new Point(bounds.Right, bounds.Bottom), Color.White, 7, System.Windows.Forms.Cursors.SizeNWSE);
 
-            // Special adorner for the tail tip - orange color to make it visually distinct
-            yield return new CustomAdorner("tail-tip", bubble.TailPosition, Color.Orange, 8);
+            // Special adorner for the tail tip - orange color to make it visually distinct, crosshair cursor
+            yield return new CustomAdorner("tail-tip", bubble.TailPosition, Color.Orange, 8, System.Windows.Forms.Cursors.Cross);
         }
     }
 }

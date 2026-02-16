@@ -20,6 +20,7 @@
  */
 
 using System.Drawing;
+using System.Windows.Forms;
 using Greenshot.Editor.Drawing.NewModel.Models;
 using Dapplo.Windows.Common.Structs;
 
@@ -206,6 +207,30 @@ namespace Greenshot.Editor.Drawing.NewModel.Renderers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the appropriate cursor for an adorner position
+        /// </summary>
+        public static Cursor GetCursorForAdornerPosition(AdornerPosition position)
+        {
+            switch (position)
+            {
+                case AdornerPosition.TopLeft:
+                case AdornerPosition.BottomRight:
+                    return Cursors.SizeNWSE;
+                case AdornerPosition.TopCenter:
+                case AdornerPosition.BottomCenter:
+                    return Cursors.SizeNS;
+                case AdornerPosition.TopRight:
+                case AdornerPosition.BottomLeft:
+                    return Cursors.SizeNESW;
+                case AdornerPosition.MiddleLeft:
+                case AdornerPosition.MiddleRight:
+                    return Cursors.SizeWE;
+                default:
+                    return Cursors.SizeAll;
+            }
         }
     }
 }

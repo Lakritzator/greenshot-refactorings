@@ -43,6 +43,7 @@ namespace Greenshot.Editor.Controls
         private ShapeCanvas _canvas;
         private CanvasRenderer _renderer;
         private List<ShapeEditorState> _editorStates = new List<ShapeEditorState>();
+        private Guid? _activeLayerId; // ID of the active layer (null = all layers selectable)
 
         private Point _lastMousePosition;
         private Point _dragStartPosition;
@@ -65,6 +66,11 @@ namespace Greenshot.Editor.Controls
             _canvas = canvas;
             _renderer = renderer;
             Invalidate();
+        }
+
+        public void SetActiveLayer(Guid? layerId)
+        {
+            _activeLayerId = layerId;
         }
 
         public IEnumerable<IShape> GetSelectedShapes()
@@ -180,6 +186,8 @@ namespace Greenshot.Editor.Controls
                         _isDragging = true;
                         _draggedShape = state.Shape;
                         _draggedAdornerIndex = i;
+                        // Set cursor from adorner during drag
+                        this.Cursor = adorner.Cursor;
                         return;
                     }
                 }
@@ -279,12 +287,13 @@ namespace Greenshot.Editor.Controls
 
                 if (_draggedAdornerIndex >= 0)
                 {
-                    // Resize shape using adorner
+                    // Resize shape using adorner - cursor stays from OnMouseDown
                     ResizeShape(_draggedShape, _draggedAdornerIndex, dx, dy);
                 }
                 else
                 {
-                    // Move shape
+                    // Move shape - use move cursor
+                    this.Cursor = Cursors.SizeAll;
                     if (_draggedShape is ArrowShape arrow)
                     {
                         // For arrows, move both start and end points
@@ -308,6 +317,11 @@ namespace Greenshot.Editor.Controls
                 _lastMousePosition = e.Location;
                 Invalidate();
             }
+            else
+            {
+                // Not dragging - update cursor based on what's under the mouse
+                UpdateCursorForPosition(e.Location);
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -316,6 +330,8 @@ namespace Greenshot.Editor.Controls
             _isDragging = false;
             _draggedShape = null;
             _draggedAdornerIndex = -1;
+            // Update cursor for current position
+            UpdateCursorForPosition(e.Location);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -363,6 +379,12 @@ namespace Greenshot.Editor.Controls
             
             foreach (var shape in shapes)
             {
+                // Only allow selection of shapes on the active layer (if set)
+                if (_activeLayerId.HasValue && shape.LayerId != _activeLayerId.Value)
+                {
+                    continue;
+                }
+
                 // Special hit test for arrows - check distance from line instead of bounds
                 if (shape is ArrowShape arrow)
                 {
@@ -505,17 +527,49 @@ namespace Greenshot.Editor.Controls
             var adorners = new List<CustomAdorner>();
             var color = Color.White;
 
-            // 8 standard adorner positions
-            adorners.Add(new CustomAdorner("top-left", new Point(bounds.Left, bounds.Top), color, 8)); // Top-left
-            adorners.Add(new CustomAdorner("top-center", new Point(bounds.Left + bounds.Width / 2, bounds.Top), color, 8)); // Top-center
-            adorners.Add(new CustomAdorner("top-right", new Point(bounds.Right, bounds.Top), color, 8)); // Top-right
-            adorners.Add(new CustomAdorner("middle-right", new Point(bounds.Right, bounds.Top + bounds.Height / 2), color, 8)); // Right-center
-            adorners.Add(new CustomAdorner("bottom-right", new Point(bounds.Right, bounds.Bottom), color, 8)); // Bottom-right
-            adorners.Add(new CustomAdorner("bottom-center", new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), color, 8)); // Bottom-center
-            adorners.Add(new CustomAdorner("bottom-left", new Point(bounds.Left, bounds.Bottom), color, 8)); // Bottom-left
-            adorners.Add(new CustomAdorner("middle-left", new Point(bounds.Left, bounds.Top + bounds.Height / 2), color, 8)); // Left-center
+            // 8 standard adorner positions with appropriate cursors
+            adorners.Add(new CustomAdorner("top-left", new Point(bounds.Left, bounds.Top), color, 8, Cursors.SizeNWSE)); // Top-left
+            adorners.Add(new CustomAdorner("top-center", new Point(bounds.Left + bounds.Width / 2, bounds.Top), color, 8, Cursors.SizeNS)); // Top-center
+            adorners.Add(new CustomAdorner("top-right", new Point(bounds.Right, bounds.Top), color, 8, Cursors.SizeNESW)); // Top-right
+            adorners.Add(new CustomAdorner("middle-right", new Point(bounds.Right, bounds.Top + bounds.Height / 2), color, 8, Cursors.SizeWE)); // Right-center
+            adorners.Add(new CustomAdorner("bottom-right", new Point(bounds.Right, bounds.Bottom), color, 8, Cursors.SizeNWSE)); // Bottom-right
+            adorners.Add(new CustomAdorner("bottom-center", new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), color, 8, Cursors.SizeNS)); // Bottom-center
+            adorners.Add(new CustomAdorner("bottom-left", new Point(bounds.Left, bounds.Bottom), color, 8, Cursors.SizeNESW)); // Bottom-left
+            adorners.Add(new CustomAdorner("middle-left", new Point(bounds.Left, bounds.Top + bounds.Height / 2), color, 8, Cursors.SizeWE)); // Left-center
 
             return adorners;
+        }
+
+        private void UpdateCursorForPosition(Point location)
+        {
+            // Check if hovering over an adorner of a selected shape
+            foreach (var state in _editorStates.Where(s => s.IsSelected && s.ShowAdorners))
+            {
+                var adorners = ((state.Shape as IAdornerConfiguration)?.GetAdorners(state.Shape) ?? GetDefaultAdorners(state.Shape.Bounds)).ToArray();
+
+                for (int i = 0; i < adorners.Length; i++)
+                {
+                    var adorner = adorners[i];
+                    var adornerRect = new Rectangle(adorner.Position.X - 4, adorner.Position.Y - 4, 8, 8);
+                    if (adornerRect.Contains(location))
+                    {
+                        // Set cursor from adorner
+                        this.Cursor = adorner.Cursor;
+                        return;
+                    }
+                }
+            }
+
+            // Check if hovering over a shape
+            var shape = HitTest(location);
+            if (shape != null)
+            {
+                this.Cursor = Cursors.SizeAll;
+                return;
+            }
+
+            // Default cursor
+            this.Cursor = Cursors.Default;
         }
     }
 }

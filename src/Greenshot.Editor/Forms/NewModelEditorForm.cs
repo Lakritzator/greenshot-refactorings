@@ -53,6 +53,7 @@ namespace Greenshot.Editor.Forms
 
         private Layer _defaultLayer;
         private Layer _backgroundLayer;
+        private Layer _activeLayer; // The currently active layer for adding new shapes
 
         public NewModelEditorForm()
         {
@@ -80,6 +81,7 @@ namespace Greenshot.Editor.Forms
             // Use the layers that ShapeCanvas automatically creates
             _backgroundLayer = _canvas.BackgroundLayer;
             _defaultLayer = _canvas.DefaultLayer;
+            _activeLayer = _defaultLayer; // Default layer is active by default
 
             // Create default styles
             _styleManager.RegisterStyle("Default", new ShapeStyle(Color.Red, 2, Color.Empty, false));

@@ -43,7 +43,7 @@ partial class NewModelEditorForm
     private ToolStripSeparator toolStripSeparator3;
     private ToolStripButton btnDeleteSelected;
     private Panel layersPanel;
-    private ListBox lstLayers;
+    private CheckedListBox lstLayers;
     private Label lblLayers;
     private StatusStrip statusStrip;
     private ToolStripStatusLabel statusLabel;
@@ -65,7 +65,7 @@ partial class NewModelEditorForm
         this.toolStripSeparator3 = new ToolStripSeparator();
         this.btnDeleteSelected = new ToolStripButton();
         this.layersPanel = new Panel();
-        this.lstLayers = new ListBox();
+        this.lstLayers = new CheckedListBox();
         this.lblLayers = new Label();
         this.statusStrip = new StatusStrip();
         this.statusLabel = new ToolStripStatusLabel();
@@ -199,7 +199,9 @@ partial class NewModelEditorForm
         this.lstLayers.Name = "lstLayers";
         this.lstLayers.Size = new System.Drawing.Size(200, 561);
         this.lstLayers.TabIndex = 1;
+        this.lstLayers.ItemCheck += new ItemCheckEventHandler(this.LstLayers_ItemCheck);
         this.lstLayers.SelectedIndexChanged += new System.EventHandler(this.LstLayers_SelectedIndexChanged);
+        this.lstLayers.MouseDoubleClick += new MouseEventHandler(this.LstLayers_MouseDoubleClick);
 
         // _canvasControl
         _canvasControl.Dock = DockStyle.Fill;
@@ -247,6 +249,7 @@ partial class NewModelEditorForm
     {
         // Initialize canvas control with our model
         _canvasControl.SetCanvas(_canvas, _renderer);
+        _canvasControl.SetActiveLayer(_activeLayer.Id); // Set active layer for selection
 
         // Populate layers list
         RefreshLayersList();
@@ -260,67 +263,82 @@ partial class NewModelEditorForm
         lstLayers.Items.Clear();
         foreach (var layer in _canvas.Layers.OrderBy(l => l.ZIndex))
         {
-            lstLayers.Items.Add(layer);
+            int index = lstLayers.Items.Add(layer);
+            // Set checkbox state based on layer visibility
+            lstLayers.SetItemChecked(index, layer.IsVisible);
         }
         lstLayers.DisplayMember = "Name";
+        
+        // Highlight active layer (selected index)
+        if (_activeLayer != null)
+        {
+            for (int i = 0; i < lstLayers.Items.Count; i++)
+            {
+                if (lstLayers.Items[i] is Layer layer && layer.Id == _activeLayer.Id)
+                {
+                    lstLayers.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
     }
 
     private void BtnAddRectangle_Click(object sender, System.EventArgs e)
     {
         var style = _styleManager.GetStyle(cmbStyles.SelectedItem?.ToString() ?? "Default");
         var rect = new RectangleShape(new Dapplo.Windows.Common.Structs.NativeRect(50, 50, 150, 100), style);
-        rect.LayerId = _defaultLayer.Id;
+        rect.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(rect);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Rectangle added";
+        statusLabel.Text = $"Rectangle added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnAddEllipse_Click(object sender, System.EventArgs e)
     {
         var style = _styleManager.GetStyle(cmbStyles.SelectedItem?.ToString() ?? "Default");
         var ellipse = new EllipseShape(new Dapplo.Windows.Common.Structs.NativeRect(200, 50, 150, 100), style);
-        ellipse.LayerId = _defaultLayer.Id;
+        ellipse.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(ellipse);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Ellipse added";
+        statusLabel.Text = $"Ellipse added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnAddText_Click(object sender, System.EventArgs e)
     {
         var style = _styleManager.GetStyle("BlackText");
         var text = new TextShape(new Dapplo.Windows.Common.Structs.NativeRect(100, 200, 200, 50), style, "Sample Text", new System.Drawing.Font("Arial", 12));
-        text.LayerId = _defaultLayer.Id;
+        text.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(text);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Text added";
+        statusLabel.Text = $"Text added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnAddArrow_Click(object sender, System.EventArgs e)
     {
         var style = _styleManager.GetStyle(cmbStyles.SelectedItem?.ToString() ?? "Default");
         var arrow = new ArrowShape(new System.Drawing.Point(350, 50), new System.Drawing.Point(450, 150), style, ArrowShape.ArrowHeadCombination.EndPoint);
-        arrow.LayerId = _defaultLayer.Id;
+        arrow.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(arrow);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Arrow added";
+        statusLabel.Text = $"Arrow added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnBlurFilter_Click(object sender, System.EventArgs e)
     {
         var blur = new BlurFilterShape(new Dapplo.Windows.Common.Structs.NativeRect(300, 150, 100, 80), 8);
-        blur.LayerId = _defaultLayer.Id;
+        blur.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(blur);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Blur filter added";
+        statusLabel.Text = $"Blur filter added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnHighlightFilter_Click(object sender, System.EventArgs e)
     {
         var highlight = new HighlightFilterShape(new Dapplo.Windows.Common.Structs.NativeRect(400, 150, 120, 90), System.Drawing.Color.FromArgb(128, System.Drawing.Color.Black));
-        highlight.LayerId = _defaultLayer.Id;
+        highlight.LayerId = _activeLayer.Id; // Add to active layer
         _canvas.AddShape(highlight);
         _canvasControl.Invalidate();
-        statusLabel.Text = "Highlight filter added";
+        statusLabel.Text = $"Highlight filter added to layer '{_activeLayer.Name}'";
     }
 
     private void BtnApplyStyle_Click(object sender, System.EventArgs e)
@@ -351,14 +369,46 @@ partial class NewModelEditorForm
         statusLabel.Text = $"{selectedShapes.Count()} shape(s) deleted";
     }
 
+    private void LstLayers_ItemCheck(object sender, ItemCheckEventArgs e)
+    {
+        // ItemCheck fires before the checkbox state changes, so schedule the update
+        this.BeginInvoke(new Action(() =>
+        {
+            if (lstLayers.Items[e.Index] is Layer layer)
+            {
+                layer.IsVisible = lstLayers.GetItemChecked(e.Index);
+                _canvasControl.Invalidate();
+                statusLabel.Text = $"Layer '{layer.Name}' visibility: {layer.IsVisible}";
+            }
+        }));
+    }
+
     private void LstLayers_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-        if (lstLayers.SelectedItem is Layer layer)
+        // Selection changed - this will be used to show which layer is active
+        // We'll use double-click or a separate button to set the active layer
+    }
+
+    private void LstLayers_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        // Double-click sets the active layer
+        int index = lstLayers.IndexFromPoint(e.Location);
+        if (index >= 0 && index < lstLayers.Items.Count)
         {
-            // Toggle layer visibility
-            layer.IsVisible = !layer.IsVisible;
-            _canvasControl.Invalidate();
-            statusLabel.Text = $"Layer '{layer.Name}' visibility: {layer.IsVisible}";
+            if (lstLayers.Items[index] is Layer layer)
+            {
+                // Don't allow setting background layer as active
+                if (layer.Id == _backgroundLayer.Id)
+                {
+                    statusLabel.Text = "Cannot set background layer as active";
+                    return;
+                }
+
+                _activeLayer = layer;
+                _canvasControl.SetActiveLayer(layer.Id); // Tell canvas control about active layer
+                lstLayers.SelectedIndex = index;
+                statusLabel.Text = $"Active layer set to '{layer.Name}'";
+            }
         }
     }
 
