@@ -37,16 +37,17 @@ Plugin files are named `language_box-en-US.xml` and their keys are namespaced as
 
 ### Requirements
 
-1. **Fast loading** — use `System.Text.Json` for efficient deserialization; only load the selected language plus default fallback
-2. **Low memory usage** — lazy loading per-module, shared backing store, no XML DOM
+1. **Fast loading** — use `File.ReadLines` for line-by-line INI parsing; no DOM, no serialisation library; only load the selected language plus default fallback
+2. **Low memory usage** — single `Dictionary<string, string>` backing store; no metadata stored in files; language display name from `CultureInfo` at runtime
 3. **No reflection / Interface-based with source generation** — define translations as a C# interface; a Roslyn source generator emits the implementation
 4. **Property changed support** — generated implementation raises `INotifyPropertyChanged` so WPF/Avalonia bindings update automatically
-5. **Small files** — JSON format; one key per line; easy for LLMs to translate
-6. **Multi-line support** — JSON native newlines via `\n`; alternatively, JSON arrays joined at load time
-7. **ISO codes, dialect support** — fallback chain: `zh-TW` → `zh` → `en-US`; metadata parsed from filename without loading the file body
-8. **Available-language discovery** — filenames encode the IETF code; a single `Directory.GetFiles` gives all available languages without parsing file contents
-9. **WPF / Avalonia compatibility** — XAML markup extension (`{t:Translate Key=cancel}`) and `IValueConverter`
+5. **Small files** — INI format (`key=value`); one key per line; no metadata in file body; easy for LLMs to translate
+6. **Multi-line support** — use `\n` escape in the value for embedded newlines; `\t` for tab; `\\` for a literal backslash
+7. **ISO codes, dialect support** — fallback chain: `zh-TW` → `zh` → `en-US`; IETF code and prefix derived entirely from filename without reading the file body; language display name from .NET `CultureInfo.NativeName`
+8. **Available-language discovery** — filenames encode the IETF code; a single `Directory.GetFiles` gives all available languages without reading file contents
+9. **WPF / Avalonia compatibility** — XAML markup extension (`{t:Translate cancel}`) and `INotifyPropertyChanged` binding via generated class
 10. **Windows Forms** — helper that applies translations to all `ITranslatable` controls in a form at load time and on language change
+11. **Plugin registration** — plugins call `AddPath(directoryPath)` from their initialise method; no other registration step is required; multiple callers share one `ITranslationManager` instance
 
 ---
 
@@ -57,47 +58,42 @@ Plugin files are named `language_box-en-US.xml` and their keys are namespaced as
 | `Greenshot.Translations` | `Greenshot.Translations` | `net481;net6.0;net8.0` |
 | `Greenshot.Translations.Generator` | `Greenshot.Translations.Generator` | `netstandard2.0` (Roslyn source gen) |
 
+No external NuGet dependencies — only BCL APIs are used.
+
 ---
 
-## JSON Translation File Format
+## INI Translation File Format
 
-**Filename convention:** `{ietf}.json` (main app) or `{prefix}.{ietf}.json` (plugin)
+**Filename convention:** `{ietf}.ini` (main app) or `{prefix}.{ietf}.ini` (plugin)
 
-**Main application:** `en-US.json`
-```json
-{
-  "ietf": "en-US",
-  "description": "English",
-  "version": "1.0",
-  "resources": {
-    "about_bugs": "Please report bugs to",
-    "about_license": "Copyright © 2004-2026 Thomas Braun, Jens Klingen, Robin Krom\nGreenshot comes with ABSOLUTELY NO WARRANTY.",
-    "cancel": "Cancel",
-    "ok": "OK",
-    "settings_tooltip_language": "Select your preferred language"
-  }
-}
+**Main application:** `en-US.ini`
+```ini
+# Greenshot translations — English (en-US)
+# Lines starting with # or ; are comments and are ignored.
+# Use \n for embedded newlines, \t for tabs, \\ for a literal backslash.
+
+cancel=Cancel
+ok=OK
+about_bugs=Please report bugs to
+settings_tooltip_language=Select your preferred language
+about_license=Copyright © 2004-2026 Thomas Braun, Jens Klingen, Robin Krom\nGreenshot comes with ABSOLUTELY NO WARRANTY.
 ```
 
-**Plugin file:** `box.en-US.json`
-```json
-{
-  "ietf": "en-US",
-  "prefix": "box",
-  "description": "English",
-  "version": "1.0",
-  "resources": {
-    "configure": "Configure Box",
-    "upload_menu_item": "Upload to Box",
-    "upload_success": "Successfully uploaded image to Box!"
-  }
-}
+**Plugin file:** `box.en-US.ini`
+```ini
+# Box plugin translations — English (en-US)
+# Keys are accessed as "box.configure", "box.upload_menu_item", etc.
+
+configure=Configure Box
+upload_menu_item=Upload to Box
+upload_success=Successfully uploaded image to Box!
 ```
 
 ### Discovery rules
-- Files matching `*.json` in a registered path whose name ends with a valid IETF tag are valid language files
+- Files matching `*.ini` in a registered path whose name matches the IETF pattern are valid translation files
 - The IETF code is extracted from the filename without reading the file body
-- Prefix is extracted from the part before the first `.` when two dots exist
+- Prefix is extracted from the stem segment before the first `.` when two dots exist (e.g. `box` from `box.en-US.ini`)
+- The language display name is resolved from `CultureInfo.GetCultureInfo(ietf).NativeName` at runtime — never stored in the file
 
 ---
 
@@ -214,20 +210,20 @@ public interface ITranslationManager : ITranslationProvider, ITranslationDiscove
 ```csharp
 public sealed class TranslationFile
 {
-    public string Ietf { get; init; }          // "en-US"
-    public string Description { get; init; }   // "English" (from file header)
-    public string Prefix { get; init; }        // "box" or null for main app
+    public string Ietf { get; init; }          // "en-US"  — from filename
+    public string Prefix { get; init; }        // "box" or null for main app — from filename
     public string FilePath { get; init; }      // full path
-    public Version Version { get; init; }
+    // Language display name from CultureInfo.NativeName — never stored in the file
+    public string DisplayName => CultureInfo.GetCultureInfo(Ietf).NativeName;
 }
 ```
 
 ---
 
-## `JsonTranslationProvider` Implementation Sketch
+## `IniTranslationProvider` Implementation Sketch
 
 ```csharp
-public sealed class JsonTranslationProvider : ITranslationManager
+public sealed class IniTranslationProvider : ITranslationManager
 {
     private readonly List<string> _searchPaths = new();
     private Dictionary<string, string> _resources = new(StringComparer.OrdinalIgnoreCase);
@@ -262,7 +258,7 @@ public sealed class JsonTranslationProvider : ITranslationManager
         foreach (var dir in _searchPaths)
         {
             if (!Directory.Exists(dir)) continue;
-            foreach (var file in Directory.GetFiles(dir, "*.json"))
+            foreach (var file in Directory.GetFiles(dir, "*.ini"))
             {
                 if (TryParseFileName(file, out var tf))
                     result.Add(tf);
@@ -275,9 +271,11 @@ public sealed class JsonTranslationProvider : ITranslationManager
     {
         _resources = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        // Load fallback first, then overlay selected language
+        // Load fallback first (en-US), then overlay the selected language chain
         if (_currentLanguage != FallbackLanguage)
             LoadAll(FallbackLanguage);
+
+        // Dialect chain: zh → zh-TW (most specific last)
         LoadAll(_currentLanguage);
     }
 
@@ -285,8 +283,8 @@ public sealed class JsonTranslationProvider : ITranslationManager
     {
         foreach (var dir in _searchPaths)
         {
-            // Match both "en-US.json" and "box.en-US.json"
-            foreach (var file in Directory.GetFiles(dir, $"*{ietf}.json"))
+            // Match both "en-US.ini" and "box.en-US.ini"
+            foreach (var file in Directory.GetFiles(dir, $"*{ietf}.ini"))
             {
                 LoadFile(file);
             }
@@ -295,20 +293,22 @@ public sealed class JsonTranslationProvider : ITranslationManager
 
     private void LoadFile(string filePath)
     {
-        using var stream = File.OpenRead(filePath);
-        var doc = JsonDocument.Parse(stream);
+        // Derive prefix from filename; no metadata is read from file body
+        TryParseFileName(filePath, out var tf);
+        var prefix = tf?.Prefix;
 
-        string prefix = null;
-        if (doc.RootElement.TryGetProperty("prefix", out var prefixProp))
-            prefix = prefixProp.GetString();
-
-        if (!doc.RootElement.TryGetProperty("resources", out var resources))
-            return;
-
-        foreach (var entry in resources.EnumerateObject())
+        foreach (var line in File.ReadLines(filePath))
         {
-            var key = prefix is null ? entry.Name : $"{prefix}.{entry.Name}";
-            _resources[key] = entry.Value.GetString() ?? string.Empty;
+            var trimmed = line.TrimStart();
+            if (trimmed.Length == 0 || trimmed[0] == '#' || trimmed[0] == ';')
+                continue;
+            var eq = trimmed.IndexOf('=');
+            if (eq <= 0) continue;
+            var key = trimmed.Substring(0, eq).TrimEnd();
+            var rawValue = trimmed.Substring(eq + 1);
+            var value = rawValue.Replace(@"\n", "\n").Replace(@"\t", "\t").Replace(@"\\", "\\");
+            var fullKey = prefix is null ? key : $"{prefix}.{key}";
+            _resources[fullKey] = value;
         }
     }
 
@@ -323,7 +323,7 @@ public sealed class JsonTranslationProvider : ITranslationManager
 
     private static bool TryParseFileName(string filePath, out TranslationFile result)
     {
-        // Expected names: "en-US.json" or "box.en-US.json"
+        // Expected names: "en-US.ini" or "box.en-US.ini"
         result = null;
         var name = Path.GetFileNameWithoutExtension(filePath);
         // … regex extraction …
@@ -353,9 +353,9 @@ public class TranslateExtension : MarkupExtension
             && target.TargetProperty is DependencyProperty depProp)
         {
             // Set binding so property updates on language change
-            var binding = new Binding(Key)
+            var binding = new Binding($"[{Key}]")
             {
-                Source = TranslationManagerLocator.Current,
+                Source = TranslationManagerLocator.Indexer,
                 Mode = BindingMode.OneWay
             };
             return binding.ProvideValue(serviceProvider);
@@ -462,8 +462,8 @@ de-x-franconia  →  de  →  en-US
 nn-NO  →  no  →  en-US
 ```
 
-Implementation note: when looking for `zh-TW.json` and it doesn't exist,
-strip the region to get `zh.json`; if that doesn't exist, use `en-US.json`.
+Implementation note: when looking for `zh-TW.ini` and it doesn't exist,
+strip the region to get `zh.ini`; if that doesn't exist, use `en-US.ini`.
 
 ---
 
@@ -471,13 +471,13 @@ strip the region to get `zh.json`; if that doesn't exist, use `en-US.json`.
 
 ```
 Languages/
-├── en-US.json          ← main app English
-├── de-DE.json          ← main app German
-├── zh-TW.json
-├── box.en-US.json      ← Box plugin English
-├── box.de-DE.json
-├── imgur.en-US.json
-└── confluence.en-US.json
+├── en-US.ini          ← main app English
+├── de-DE.ini          ← main app German
+├── zh-TW.ini
+├── box.en-US.ini      ← Box plugin English
+├── box.de-DE.ini
+├── imgur.en-US.ini
+└── confluence.en-US.ini
 ```
 
 `GetAvailableLanguages()` returns distinct IETF codes from all filenames — no file
@@ -494,8 +494,8 @@ content is read until a language is actually selected.
 | `Language.GetString("box", LangKey.Configure)` | `boxTranslations.Configure` |
 | `Language.LanguageChanged += handler` | `provider.LanguageChanged += handler` |
 | `GreenshotForm.ApplyLanguage()` | `FormsTranslationHelper.ApplyTranslations(this, provider)` |
-| `language-en-US.xml` | `en-US.json` |
-| `language_box-en-US.xml` | `box.en-US.json` |
+| `language-en-US.xml` | `en-US.ini` |
+| `language_box-en-US.xml` | `box.en-US.ini` |
 
 ---
 
@@ -510,11 +510,11 @@ You are implementing a C# translation/localization library called Greenshot.Tran
 
 ## Requirements
 
-1. Fast loading — use System.Text.Json (JsonDocument) for efficient deserialization;
-   only load the selected language + default fallback (en-US) at any given time.
+1. Fast loading — use File.ReadLines for line-by-line INI parsing; no DOM, no serialisation
+   library; only load the selected language + default fallback (en-US) at any given time.
 
-2. Low memory usage — avoid loading all languages at once; use Dictionary<string,string>
-   as the in-memory store; do not use an XML DOM.
+2. Low memory usage — single Dictionary<string,string> as the in-memory store.
+   No metadata is stored inside translation files.
 
 3. No reflection — use a Roslyn IIncrementalGenerator source generator instead.
    Users declare a C# interface annotated with [TranslationGroup("prefix")].
@@ -523,51 +523,54 @@ You are implementing a C# translation/localization library called Greenshot.Tran
 4. Property changed support — the generated class raises PropertyChanged for every
    property when the active language changes, so WPF/Avalonia bindings refresh.
 
-5. Small JSON files — one key per line; multi-line values use \n in the JSON string.
+5. Small INI files — key=value format, one per line, no metadata.
    File format:
-   {
-     "ietf": "en-US",
-     "description": "English",
-     "version": "1.0",
-     "prefix": "box",       // optional, omit for main app
-     "resources": {
-       "cancel": "Cancel",
-       "about_license": "Line 1\nLine 2"
-     }
-   }
+     # comment lines start with # or ;
+     cancel=Cancel
+     about_license=Line 1\nLine 2
+   The language display name comes from CultureInfo.NativeName — not stored in the file.
+   File versioning is managed with the source code — not stored in the file.
 
-6. Multi-line support — JSON native \n; values are returned as-is (no joining needed).
+6. Multi-line support — \n in a value is converted to a real newline on load;
+   \t to tab; \\ to a literal backslash.
 
 7. ISO codes with dialect fallback — filename encodes IETF tag:
-   "en-US.json", "box.en-US.json".
+   "en-US.ini", "box.en-US.ini".
    Fallback chain: zh-TW → zh → en-US.
 
 8. Language discovery from filenames — no file content needed to enumerate languages;
-   a single Directory.GetFiles("*.json") call gives all available IETF codes.
+   a single Directory.GetFiles("*.ini") call gives all available IETF codes.
+   DisplayName resolved from CultureInfo at runtime.
 
 9. WPF compatibility — provide a MarkupExtension {t:Translate key} that creates
-   a Binding to the generated INotifyPropertyChanged implementation.
+   a Binding to a TranslationIndexer (INotifyPropertyChanged indexer wrapper).
    Also document how to use the generated class as a DataContext.
 
 10. Avalonia compatibility — same MarkupExtension pattern, using Avalonia APIs.
 
 11. Windows Forms — provide a static FormsTranslationHelper.ApplyTranslations(Form, ITranslationProvider)
     that recursively visits all controls implementing ITranslatable, sets their Text,
-    and re-applies on LanguageChanged.
+    and re-applies on LanguageChanged (using BeginInvoke for thread safety).
+
+12. Plugin registration — plugins call AddPath(directoryPath) from their initialise method.
+    The host application creates the IniTranslationProvider, passes it to each plugin,
+    and each plugin registers its own Languages directory. No other registration needed.
 
 ## Project Structure
 
 Create two projects:
 
-### Greenshot.Translations (target: net481;net6.0;net8.0)
+### Greenshot.Translations (target: net481;net6.0;net8.0, no external NuGet dependencies)
 - Core/ITranslationProvider.cs        — interface with GetString, TryGetString, HasKey, LanguageChanged
-- Core/ITranslationDiscovery.cs       — interface with GetAvailableLanguages, AddPath
+- Core/ITranslationDiscovery.cs       — interface with GetAvailableLanguages, AddPath (plugin registration)
 - Core/ITranslationManager.cs         — extends both, adds CurrentLanguage, FallbackLanguage
-- Core/TranslationFile.cs             — record: Ietf, Description, Prefix, FilePath, Version
-- Core/JsonTranslationProvider.cs     — implementation using System.Text.Json
+- Core/TranslationFile.cs             — record: Ietf, Prefix, FilePath, DisplayName (from CultureInfo)
+- Core/IniTranslationProvider.cs      — INI implementation; uses only BCL APIs
 - Attributes/TranslationGroupAttribute.cs — [TranslationGroup("prefix")] for source generator
 - Wpf/TranslateExtension.cs           — MarkupExtension for WPF
-- Avalonia/TranslateExtension.cs      — MarkupExtension for Avalonia (separate file, conditionally compiled)
+- Wpf/TranslationIndexer.cs           — INotifyPropertyChanged indexer (raises Indexer on language change)
+- Wpf/TranslationManagerLocator.cs    — app-level singleton; also exposes Indexer for bindings
+- Avalonia/TranslateExtension.cs      — MarkupExtension for Avalonia (separate file)
 - Forms/ITranslatable.cs              — interface: string TranslationKey { get; }
 - Forms/FormsTranslationHelper.cs     — static helper applying translations to a form
 - Forms/TranslatableButton.cs         — example Button : ITranslatable
@@ -581,7 +584,7 @@ Create two projects:
 Input: any interface decorated with [TranslationGroup]
 Output: partial class named {InterfaceName without 'I'} (e.g. IGreenshotTranslations → GreenshotTranslations)
 
-Key mapping: PascalCase property name → snake_case JSON key
+Key mapping: PascalCase property name → snake_case INI key
   AboutBugs → about_bugs
   SettingsTooltipLanguage → settings_tooltip_language
 
@@ -589,7 +592,7 @@ The generated class:
 - Has a constructor accepting ITranslationProvider
 - Subscribes to ITranslationProvider.LanguageChanged
 - Raises PropertyChanged for all properties on language change
-- Each property returns _provider.GetString("key")
+- Each property returns _provider.GetString("key") (or "prefix.key" for plugins)
 
 ## Coding conventions (match Greenshot style)
 - Allman braces
@@ -602,8 +605,8 @@ The generated class:
 - Full compilable source for both projects
 - XML doc comments on all public members
 - README.md with:
-  - Installation (NuGet)
-  - Quick-start: define interface, register provider, use in XAML and WinForms
+  - Quick-start: create IniTranslationProvider, register paths, define interface, use in XAML and WinForms
+  - Plugin registration pattern
   - Language file authoring guide
   - LLM translation prompt template
   - Migration guide from Greenshot's old Language.cs system
@@ -616,13 +619,15 @@ The generated class:
 A complete implementation of this library should satisfy the following checks:
 
 - [ ] `GetAvailableLanguages()` returns correct IETF codes by reading only filenames
+- [ ] `TranslationFile.DisplayName` returns the native language name from `CultureInfo`
 - [ ] Switching `CurrentLanguage` fires `LanguageChanged` and clears/reloads the cache
 - [ ] Missing key returns `"###key###"` sentinel (not an exception)
 - [ ] Dialect fallback: requesting `zh-TW` falls back through `zh` to `en-US`
 - [ ] Multi-line values (with `\n`) are returned correctly
-- [ ] Prefix keys work: `box.configure` finds the value from `box.en-US.json`
+- [ ] Prefix keys work: `box.configure` finds the value from `box.en-US.ini`
+- [ ] Plugin calls `AddPath` from its initialise method; no other registration needed
 - [ ] Source generator produces valid C# for any `[TranslationGroup]` interface
 - [ ] Generated class raises `PropertyChanged` when language changes
 - [ ] WPF binding updates label text when `CurrentLanguage` changes
 - [ ] `FormsTranslationHelper.ApplyTranslations` sets `Text` on all `ITranslatable` controls
-- [ ] Build succeeds on `net481`, `net6.0`, and `net8.0`
+- [ ] Build succeeds on `net481`, `net6.0`, and `net8.0` with no external NuGet dependencies

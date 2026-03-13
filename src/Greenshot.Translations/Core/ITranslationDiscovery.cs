@@ -26,6 +26,15 @@ namespace Greenshot.Translations.Core
     /// <summary>
     /// Discovers available translation files by inspecting filenames in
     /// registered directories, without reading file contents.
+    ///
+    /// <para>
+    /// <b>Plugin registration:</b> each plugin calls <see cref="AddPath"/>
+    /// from its initialise method, passing the directory that contains its
+    /// INI translation files.  No other registration step is required.
+    /// The host application creates the <see cref="ITranslationManager"/>
+    /// and passes it to each plugin during initialisation so all plugins
+    /// share a single provider instance.
+    /// </para>
     /// </summary>
     public interface ITranslationDiscovery
     {
@@ -37,10 +46,13 @@ namespace Greenshot.Translations.Core
         IReadOnlyList<TranslationFile> GetAvailableLanguages();
 
         /// <summary>
-        /// Registers an additional directory that will be scanned when
-        /// <see cref="GetAvailableLanguages"/> is called or a language is loaded.
-        /// Duplicate paths are silently ignored.
+        /// Registers a directory to be scanned for translation files.
+        /// Call this once per component (host app or plugin) from the
+        /// component's initialise method.  Duplicate paths are silently ignored.
         /// </summary>
+        /// <param name="directoryPath">
+        /// Absolute path to the directory containing <c>*.ini</c> translation files.
+        /// </param>
         void AddPath(string directoryPath);
     }
 }

@@ -20,12 +20,21 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Greenshot.Translations.Core
 {
     /// <summary>
     /// Immutable metadata record describing a single translation file.
-    /// Populated from the filename alone — no file content is read.
+    /// All information is derived from the filename alone — no file content
+    /// is read during discovery.
+    ///
+    /// <para>
+    /// The human-readable language name (<see cref="DisplayName"/>) is
+    /// resolved at runtime from <see cref="CultureInfo"/> and does not need
+    /// to be stored inside the file.  Versioning is handled alongside the
+    /// source code, not inside individual translation files.
+    /// </para>
     /// </summary>
     public sealed class TranslationFile : IEquatable<TranslationFile>
     {
@@ -36,14 +45,8 @@ namespace Greenshot.Translations.Core
         public string Ietf { get; init; }
 
         /// <summary>
-        /// Human-readable language name read from the file header on first
-        /// load, e.g. <c>"English"</c>.  May be <c>null</c> before loading.
-        /// </summary>
-        public string Description { get; init; }
-
-        /// <summary>
         /// Plugin namespace prefix extracted from the filename, e.g. <c>"box"</c>
-        /// for <c>box.en-US.json</c>.  <c>null</c> for main-application files.
+        /// for <c>box.en-US.ini</c>.  <c>null</c> for main-application files.
         /// </summary>
         public string Prefix { get; init; }
 
@@ -51,10 +54,27 @@ namespace Greenshot.Translations.Core
         public string FilePath { get; init; }
 
         /// <summary>
-        /// Version declared inside the file header, e.g. <c>1.0</c>.
-        /// May be <c>null</c> before the file has been loaded.
+        /// Native display name for the language, resolved from
+        /// <see cref="CultureInfo"/> using <see cref="Ietf"/>.
+        /// For example <c>"English (United States)"</c> for <c>"en-US"</c>.
+        /// Falls back to the raw <see cref="Ietf"/> tag when the culture is
+        /// not recognised by the runtime.
         /// </summary>
-        public Version Version { get; init; }
+        public string DisplayName
+        {
+            get
+            {
+                if (Ietf is null) return string.Empty;
+                try
+                {
+                    return CultureInfo.GetCultureInfo(Ietf).NativeName;
+                }
+                catch (CultureNotFoundException)
+                {
+                    return Ietf;
+                }
+            }
+        }
 
         /// <inheritdoc/>
         public bool Equals(TranslationFile other)
@@ -75,3 +95,4 @@ namespace Greenshot.Translations.Core
         public override string ToString() => $"{Ietf} [{Prefix ?? "main"}] ({FilePath})";
     }
 }
+

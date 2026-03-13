@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>Greenshot.Translations</RootNamespace>
     <AssemblyName>Greenshot.Translations</AssemblyName>
-    <Description>A fast, low-memory, reflection-free translation library for Greenshot, with source-generator support, JSON translation files, WPF/Avalonia markup extensions, and Windows Forms helpers.</Description>
+    <Description>A fast, low-memory, reflection-free translation library for Greenshot, with source-generator support, INI translation files, WPF markup extensions, and Windows Forms helpers.</Description>
     <PackageTags>localization;translation;i18n;wpf;winforms;avalonia;source-generator</PackageTags>
   </PropertyGroup>
 
@@ -18,10 +18,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
