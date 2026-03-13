@@ -1,0 +1,20 @@
+{
+  "ietf": "de-DE",
+  "description": "Deutsch",
+  "version": "1.0",
+  "resources": {
+    "about_bugs": "Bitte Fehler melden bei",
+    "about_donations": "Wenn Ihnen Greenshot gef\u00e4llt, unterst\u00fctzen Sie uns gerne:",
+    "about_license": "Copyright \u00a9 2004-2026 Thomas Braun, Jens Klingen, Robin Krom\nGreenshot wird OHNE JEGLICHE GEW\u00c4HRLEISTUNG geliefert. Dies ist freie Software, die Sie unter bestimmten Bedingungen weitergeben d\u00fcrfen.",
+    "about_title": "\u00dcber Greenshot",
+    "application_title": "Greenshot - das revolution\u00e4re Screenshot-Werkzeug",
+    "cancel": "Abbrechen",
+    "ok": "OK",
+    "settings_tooltip_language": "Bevorzugte Sprache w\u00e4hlen",
+    "contextmenu_about": "\u00dcber Greenshot",
+    "contextmenu_capturearea": "Bereich aufnehmen",
+    "contextmenu_capturefullscreen": "Vollbild aufnehmen",
+    "error": "Fehler",
+    "error_save": "Beim Speichern der Datei ist ein Fehler aufgetreten"
+  }
+}
