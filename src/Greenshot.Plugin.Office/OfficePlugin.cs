@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using Dapplo.Ini;
 using Greenshot.Base.Core;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
@@ -134,16 +135,16 @@ namespace Greenshot.Plugin.Office
         /// <summary>
         /// Implementation of RegisterConfiguration phase: no configuration to register for Office plugin.
         /// </summary>
-        public void RegisterConfiguration()
+        public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
         {
         }
 
         /// <summary>
         /// Implementation of RegisterServices phase: register DI services after config is loaded.
         /// </summary>
-        public void RegisterServices()
+        public void RegisterServices(IServiceLocator serviceLocator)
         {
-            SimpleServiceProvider.Current.AddService(Destinations());
+            serviceLocator.AddService(Destinations());
         }
 
         /// <summary>

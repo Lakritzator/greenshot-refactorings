@@ -122,17 +122,20 @@ public class ExternalCommandPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI sections before file is loaded.
     /// </summary>
-    public void RegisterConfiguration()
+    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
     {
-        CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
-        ExternalCommandConfig = IniConfig.GetIniSection<IExternalCommandConfiguration>();
+        var externalCommandSection = new ExternalCommandConfigurationImpl();
+        iniConfig.AddSection(externalCommandSection);
+        ExternalCommandConfig = externalCommandSection;
+        // CoreConfiguration is registered by the host; retrieve it after Load() in RegisterServices.
     }
 
     /// <summary>
     /// Implementation of RegisterServices phase: register DI services after config is loaded.
     /// </summary>
-    public void RegisterServices()
+    public void RegisterServices(IServiceLocator serviceLocator)
     {
+        CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         var commandsToDelete = new List<string>();
         foreach (string command in ExternalCommandConfig.Commands)
         {
@@ -147,7 +150,7 @@ public class ExternalCommandPlugin : IGreenshotPlugin
             ExternalCommandConfig.Delete(command);
         }
 
-        SimpleServiceProvider.Current.AddService(Destinations());
+        serviceLocator.AddService(Destinations());
     }
 
     /// <summary>

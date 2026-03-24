@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
+using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 
 namespace Greenshot.Plugin.Imgur;
@@ -75,15 +76,17 @@ public class ImgurPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public void RegisterConfiguration()
+    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
     {
-        _config = IniConfig.GetIniSection<IImgurConfiguration>();
+        var section = new ImgurConfigurationImpl();
+        iniConfig.AddSection(section);
+        _config = section;
     }
 
     /// <summary>
     /// Implementation of RegisterServices phase: register DI services after config is loaded.
     /// </summary>
-    public void RegisterServices()
+    public void RegisterServices(IServiceLocator serviceLocator)
     {
         _resources = new ComponentResourceManager(typeof(ImgurPlugin));
     }

@@ -68,18 +68,20 @@ public class DropboxPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public void RegisterConfiguration()
+    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
     {
-        _config = IniConfig.GetIniSection<IDropboxConfiguration>();
+        var section = new DropboxConfigurationImpl();
+        iniConfig.AddSection(section);
+        _config = section;
     }
 
     /// <summary>
     /// Implementation of RegisterServices phase: register DI services after config is loaded.
     /// </summary>
-    public void RegisterServices()
+    public void RegisterServices(IServiceLocator serviceLocator)
     {
         _resources = new ComponentResourceManager(typeof(DropboxPlugin));
-        SimpleServiceProvider.Current.AddService<IDestination>(new DropboxDestination(this));
+        serviceLocator.AddService<IDestination>(new DropboxDestination(this));
     }
 
     /// <summary>

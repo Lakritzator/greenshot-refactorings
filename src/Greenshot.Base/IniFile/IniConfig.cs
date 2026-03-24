@@ -23,6 +23,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Dapplo.Ini;
+using Greenshot.Base.Core;
 using log4net;
 
 namespace Greenshot.Base.IniFile
@@ -99,6 +100,8 @@ namespace Greenshot.Base.IniFile
         /// <summary>
         /// Initialises with explicit application and configuration names.
         /// Builds the <see cref="Dapplo.Ini.IniConfig"/> (no file I/O yet).
+        /// The host's own <see cref="Greenshot.Base.Core.CoreConfigurationImpl"/> is registered here
+        /// so that it is always part of the config before plugins add their own sections.
         /// </summary>
         public static void Init(string appName, string configName)
         {
@@ -109,6 +112,9 @@ namespace Greenshot.Base.IniFile
             var writeLocation = CreateIniLocation(configName + IniExtension, false);
             var writeDir = Path.GetDirectoryName(writeLocation) ?? ".";
             var fileName = Path.GetFileName(writeLocation);
+
+            // Fixed-values file (admin-controlled, read-only — overrides user and defaults).
+            var fixedFile = CreateIniLocation(configName + FixedPostfix + IniExtension, true);
 
             var builder = IniConfigRegistry.ForFile(fileName)
                 .AddSearchPath(writeDir);
@@ -121,7 +127,15 @@ namespace Greenshot.Base.IniFile
                 builder.AddDefaultsFile(defaultsFile);
             }
 
-            _iniConfig = builder.Create();
+            if (File.Exists(fixedFile))
+            {
+                builder.AddConstantsFile(fixedFile);
+            }
+
+            // Register the core host section so it is always present when plugins add theirs.
+            _iniConfig = builder
+                .RegisterSection(new CoreConfigurationImpl())
+                .Create();
         }
 
         /// <summary>
@@ -235,7 +249,7 @@ namespace Greenshot.Base.IniFile
         /// Exposes the underlying <see cref="Dapplo.Ini.IniConfig"/> so that
         /// plugin registration code can call <c>AddSection&lt;T&gt;</c> directly.
         /// </summary>
-        internal static Dapplo.Ini.IniConfig GetActiveConfig()
+        public static Dapplo.Ini.IniConfig GetActiveConfig()
         {
             EnsureInitialized();
             return _iniConfig;

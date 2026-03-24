@@ -1,4 +1,6 @@
 ﻿using System;
+using Dapplo.Ini;
+using Greenshot.Base.Interfaces;
 
 namespace Greenshot.Base.Interfaces.Plugin
 {
@@ -9,19 +11,21 @@ namespace Greenshot.Base.Interfaces.Plugin
     {
         /// <summary>
         /// Phase 1 — called before the INI file is read.
-        /// The plugin should register its configuration section(s) with the IniConfigRegistry
-        /// so that all sections are loaded in a single pass.
+        /// The plugin receives the shared <see cref="Dapplo.Ini.IniConfig"/> and must register
+        /// its configuration section(s) by calling <c>iniConfig.AddSection(new XxxImpl())</c>.
         /// Translations may also be registered here.
+        /// No file I/O has occurred at this point.
         /// </summary>
-        void RegisterConfiguration();
+        /// <param name="iniConfig">The application-wide Dapplo.Ini config object.</param>
+        void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig);
 
         /// <summary>
         /// Phase 2 — called after the INI file has been loaded.
-        /// The plugin should register its services in the dependency-injection container
-        /// (e.g. <c>SimpleServiceProvider.Current.AddService(…)</c>).
+        /// The plugin should register its services into the supplied DI container.
         /// Configuration values are safe to read at this point.
         /// </summary>
-        void RegisterServices();
+        /// <param name="serviceLocator">The application-wide service locator.</param>
+        void RegisterServices(IServiceLocator serviceLocator);
 
         /// <summary>
         /// Phase 3 — called after all services have been registered.

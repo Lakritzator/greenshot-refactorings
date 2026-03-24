@@ -101,15 +101,17 @@ public class ConfluencePlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public void RegisterConfiguration()
+    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
     {
-        _config = IniConfig.GetIniSection<IConfluenceConfiguration>();
+        var section = new ConfluenceConfigurationImpl();
+        iniConfig.AddSection(section);
+        _config = section;
     }
 
     /// <summary>
     /// Implementation of RegisterServices phase: register DI services after config is loaded.
     /// </summary>
-    public void RegisterServices()
+    public void RegisterServices(IServiceLocator serviceLocator)
     {
         try
         {

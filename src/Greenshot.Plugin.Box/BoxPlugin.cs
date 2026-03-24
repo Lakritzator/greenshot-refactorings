@@ -71,18 +71,20 @@ public class BoxPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public void RegisterConfiguration()
+    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
     {
-        _config = IniConfig.GetIniSection<IBoxConfiguration>();
+        var section = new BoxConfigurationImpl();
+        iniConfig.AddSection(section);
+        _config = section;
     }
 
     /// <summary>
     /// Implementation of RegisterServices phase: register DI services after config is loaded.
     /// </summary>
-    public void RegisterServices()
+    public void RegisterServices(IServiceLocator serviceLocator)
     {
         _resources = new ComponentResourceManager(typeof(BoxPlugin));
-        SimpleServiceProvider.Current.AddService<IDestination>(new BoxDestination(this));
+        serviceLocator.AddService<IDestination>(new BoxDestination(this));
     }
 
     /// <summary>

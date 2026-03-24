@@ -257,11 +257,12 @@ namespace Greenshot.Helpers
             }
 
             // ── Phase 1: Register configuration sections (no file I/O) ───────────
+            var activeIniConfig = IniConfig.GetActiveConfig();
             foreach (var plugin in plugins)
             {
                 try
                 {
-                    plugin.RegisterConfiguration();
+                    plugin.RegisterConfiguration(activeIniConfig);
                 }
                 catch (Exception e)
                 {
@@ -278,7 +279,7 @@ namespace Greenshot.Helpers
             {
                 try
                 {
-                    plugin.RegisterServices();
+                    plugin.RegisterServices(SimpleServiceProvider.Current);
                 }
                 catch (Exception e)
                 {
