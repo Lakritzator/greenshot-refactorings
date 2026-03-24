@@ -44,8 +44,8 @@ public static class ImgurUtils
     /// <returns></returns>
     public static bool IsHistoryLoadingNeeded()
     {
-        Log.InfoFormat("Checking if imgur cache loading needed, configuration has {0} imgur hashes, loaded are {1} hashes.", Config.ImgurUploadHistory.Count, Config.runtimeImgurHistory.Count);
-        return Config.runtimeImgurHistory.Count != Config.ImgurUploadHistory.Count;
+        Log.InfoFormat("Checking if imgur cache loading needed, configuration has {0} imgur hashes, loaded are {1} hashes.", Config.ImgurUploadHistory.Count, Config.RuntimeImgurHistory.Count);
+        return Config.RuntimeImgurHistory.Count != Config.ImgurUploadHistory.Count;
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public static class ImgurUtils
         // Load the ImUr history
         foreach (string hash in Config.ImgurUploadHistory.Keys.ToList())
         {
-            if (Config.runtimeImgurHistory.ContainsKey(hash))
+            if (Config.RuntimeImgurHistory.ContainsKey(hash))
             {
                 // Already loaded
                 continue;
@@ -76,13 +76,13 @@ public static class ImgurUtils
                 if (imgurInfo != null)
                 {
                     RetrieveImgurThumbnail(imgurInfo);
-                    Config.runtimeImgurHistory[hash] = imgurInfo;
+                    Config.RuntimeImgurHistory[hash] = imgurInfo;
                 }
                 else
                 {
                     Log.InfoFormat("Deleting unknown ImgUr {0} from config, delete hash was {1}.", hash, deleteHash);
                     Config.ImgurUploadHistory.Remove(hash);
-                    Config.runtimeImgurHistory.Remove(hash);
+                    Config.RuntimeImgurHistory.Remove(hash);
                     saveNeeded = true;
                 }
             }
@@ -104,7 +104,7 @@ public static class ImgurUtils
                     {
                         Log.InfoFormat("ImgUr image for hash {0} is no longer available, removing it from the history", hash);
                         Config.ImgurUploadHistory.Remove(hash);
-                        Config.runtimeImgurHistory.Remove(hash);
+                        Config.RuntimeImgurHistory.Remove(hash);
                         redirected = true;
                     }
                 }
@@ -250,7 +250,7 @@ public static class ImgurUtils
         }
 
         // Make sure we remove it from the history, if no error occurred
-        Config.runtimeImgurHistory.Remove(imgurInfo.Hash);
+        Config.RuntimeImgurHistory.Remove(imgurInfo.Hash);
         Config.ImgurUploadHistory.Remove(imgurInfo.Hash);
         imgurInfo.Image = null;
     }
