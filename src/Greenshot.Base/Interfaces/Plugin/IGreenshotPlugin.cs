@@ -8,10 +8,31 @@ namespace Greenshot.Base.Interfaces.Plugin
     public interface IGreenshotPlugin : IDisposable
     {
         /// <summary>
-        /// Is called after the plugin is instantiated, the Plugin should keep a copy of the host and pluginAttribute.
+        /// Phase 1 — called before the INI file is read.
+        /// The plugin should register its configuration section(s) with the IniConfigRegistry
+        /// so that all sections are loaded in a single pass.
+        /// Translations may also be registered here.
         /// </summary>
-        /// <returns>true if plugin is initialized, false if not (doesn't show)</returns>
-        bool Initialize();
+        void RegisterConfiguration();
+
+        /// <summary>
+        /// Phase 2 — called after the INI file has been loaded.
+        /// The plugin should register its services in the dependency-injection container
+        /// (e.g. <c>SimpleServiceProvider.Current.AddService(…)</c>).
+        /// Configuration values are safe to read at this point.
+        /// </summary>
+        void RegisterServices();
+
+        /// <summary>
+        /// Phase 3 — called after all services have been registered.
+        /// The plugin may perform its remaining start-up work here; both configuration
+        /// and all registered services are guaranteed to be available.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the plugin started successfully and should be shown;
+        /// <c>false</c> to indicate that the plugin is not active.
+        /// </returns>
+        bool Start();
 
         /// <summary>
         /// Unload of the plugin
