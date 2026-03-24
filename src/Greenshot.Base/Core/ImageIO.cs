@@ -46,7 +46,7 @@ namespace Greenshot.Base.Core
     public static class ImageIO
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ImageIO));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly int PROPERTY_TAG_SOFTWARE_USED = 0x0131;
         private static readonly Cache<string, string> TmpFileCache = new Cache<string, string>(10 * 60 * 60, RemoveExpiredTmpFile);
 

@@ -54,7 +54,7 @@ namespace Greenshot.Base.Core
     public static class NetworkHelper
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(NetworkHelper));
-        private static readonly CoreConfiguration Config = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration Config = IniConfig.GetIniSection<ICoreConfiguration>();
 
         static NetworkHelper()
         {

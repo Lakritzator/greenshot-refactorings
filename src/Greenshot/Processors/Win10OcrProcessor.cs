@@ -33,7 +33,7 @@ namespace Greenshot.Processors
     /// </summary>
     public class Win10OcrProcessor : AbstractProcessor
     {
-        private static readonly Win10Configuration Win10Configuration = IniConfig.GetIniSection<Win10Configuration>();
+        private static readonly IWin10Configuration Win10Configuration = IniConfig.GetIniSection<IWin10Configuration>();
         public override string Designation => "Windows10OcrProcessor";
 
         public override string Description => "Windows OCR";

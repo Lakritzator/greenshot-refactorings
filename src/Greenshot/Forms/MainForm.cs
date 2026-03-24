@@ -73,7 +73,7 @@ namespace Greenshot.Forms
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(MainForm));
         private static ResourceMutex _applicationMutex;
-        private static CoreConfiguration _conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static ICoreConfiguration _conf = IniConfig.GetIniSection<ICoreConfiguration>();
 
         public static void Start(string[] arguments)
         {

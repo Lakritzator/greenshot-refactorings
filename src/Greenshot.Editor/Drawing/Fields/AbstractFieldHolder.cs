@@ -38,7 +38,7 @@ namespace Greenshot.Editor.Drawing.Fields
     public abstract class AbstractFieldHolder : IFieldHolder
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(AbstractFieldHolder));
-        private static readonly EditorConfiguration EditorConfig = IniConfig.GetIniSection<EditorConfiguration>();
+        private static readonly IEditorConfiguration EditorConfig = IniConfig.GetIniSection<IEditorConfiguration>();
         [NonSerialized] private IDictionary<IField, PropertyChangedEventHandler> _handlers = new Dictionary<IField, PropertyChangedEventHandler>();
 
         /// <summary>

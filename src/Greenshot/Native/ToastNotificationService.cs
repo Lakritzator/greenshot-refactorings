@@ -39,7 +39,7 @@ namespace Greenshot.Plugin.Win10
     public class ToastNotificationService : INotificationService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ToastNotificationService));
-        private static readonly CoreConfiguration CoreConfiguration = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
 
         private readonly string _imageFilePath;
 

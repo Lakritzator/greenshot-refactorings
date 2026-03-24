@@ -37,7 +37,7 @@ namespace Greenshot.Plugin.Jira.Forms;
 public partial class JiraForm : Form
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(JiraForm));
-    private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+    private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
     private readonly JiraConnector _jiraConnector;
     private IssueV2 _selectedIssue;
     private readonly GreenshotColumnSorter _columnSorter;

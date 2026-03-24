@@ -41,7 +41,7 @@ namespace Greenshot.Destinations
     public class FileDestination : AbstractDestination
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileDestination));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
 
         public override string Designation => nameof(WellKnownDestinations.FileNoDialog);
 

@@ -41,7 +41,7 @@ namespace Greenshot.Base.Controls
     public class GreenshotForm : Form, IGreenshotLanguageBindable
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(GreenshotForm));
-        protected static CoreConfiguration coreConfiguration;
+        protected static ICoreConfiguration coreConfiguration;
         private static readonly IDictionary<Type, FieldInfo[]> reflectionCache = new Dictionary<Type, FieldInfo[]>();
 #if DEBUG
         private IComponentChangeService m_changeService;
@@ -58,7 +58,7 @@ namespace Greenshot.Base.Controls
             if (!IsInDesignMode)
             {
 #endif
-                coreConfiguration = IniConfig.GetIniSection<CoreConfiguration>();
+                coreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
 #if DEBUG
             }
 #endif

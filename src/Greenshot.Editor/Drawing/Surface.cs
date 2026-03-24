@@ -57,7 +57,7 @@ namespace Greenshot.Editor.Drawing
     public sealed class Surface : Control, ISurface, INotifyPropertyChanged
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(Surface));
-        private static readonly CoreConfiguration conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration conf = IniConfig.GetIniSection<ICoreConfiguration>();
 
         // Property to identify the Surface ID
         private Guid _uniqueId = Guid.NewGuid();

@@ -50,7 +50,7 @@ namespace Greenshot.Base.Core
         }); //"MS-SDIa"
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(WindowDetails));
-        private static readonly CoreConfiguration Conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration Conf = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly IList<IntPtr> IgnoreHandles = new List<IntPtr>();
         private static readonly IList<string> ExcludeProcessesFromFreeze = new List<string>();
         private static readonly IAppVisibility AppVisibility;

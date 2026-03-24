@@ -40,7 +40,7 @@ namespace Greenshot.Editor.Destinations
     public class EditorDestination : AbstractDestination
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(EditorDestination));
-        private static readonly EditorConfiguration editorConfiguration = IniConfig.GetIniSection<EditorConfiguration>();
+        private static readonly IEditorConfiguration editorConfiguration = IniConfig.GetIniSection<IEditorConfiguration>();
         public const string DESIGNATION = "Editor";
         private readonly IImageEditor editor;
         private static readonly Image greenshotIcon = GreenshotResources.GetGreenshotIcon().ToBitmap();

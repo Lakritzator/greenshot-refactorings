@@ -38,7 +38,7 @@ namespace Greenshot.Base.Core
     public static class PluginUtils
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PluginUtils));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly IDictionary<string, Image> ExeIconCache = new Dictionary<string, Image>();
         private const string PathKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\";
         

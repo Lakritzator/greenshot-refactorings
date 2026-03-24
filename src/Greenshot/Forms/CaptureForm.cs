@@ -57,7 +57,7 @@ namespace Greenshot.Forms
         };
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(CaptureForm));
-        private static readonly CoreConfiguration Conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration Conf = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly Brush GreenOverlayBrush;
         private static readonly Pen OverlayPen;
         private static CaptureForm _currentForm;

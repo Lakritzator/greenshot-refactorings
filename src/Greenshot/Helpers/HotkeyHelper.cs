@@ -39,7 +39,7 @@ namespace Greenshot.Helpers;
 internal static class HotkeyHelper
 {
     private static readonly ILog LOG = LogManager.GetLogger(typeof(ApplicationStartupHelper));
-    private static readonly CoreConfiguration config = IniConfig.GetIniSection<CoreConfiguration>();
+    private static readonly ICoreConfiguration config = IniConfig.GetIniSection<ICoreConfiguration>();
     
     /// <summary>
     /// Registers all hotkeys as configured, displaying a dialog in case of hotkey conflicts with other tools.

@@ -32,7 +32,7 @@ namespace Greenshot.Base.Controls
     /// </summary>
     public partial class QualityDialog : GreenshotForm
     {
-        private static readonly CoreConfiguration conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration conf = IniConfig.GetIniSection<ICoreConfiguration>();
         public SurfaceOutputSettings Settings { get; set; }
 
         public QualityDialog(SurfaceOutputSettings outputSettings)

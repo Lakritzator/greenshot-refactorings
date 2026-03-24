@@ -29,7 +29,7 @@ namespace Greenshot.Plugin.ExternalCommand;
 
 public static class IconCache
 {
-    private static readonly ExternalCommandConfiguration config = IniConfig.GetIniSection<ExternalCommandConfiguration>();
+    private static readonly IExternalCommandConfiguration config = IniConfig.GetIniSection<IExternalCommandConfiguration>();
     private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(IconCache));
 
     public static Image IconForCommand(string commandName)

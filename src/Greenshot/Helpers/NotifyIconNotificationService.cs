@@ -34,7 +34,7 @@ namespace Greenshot.Helpers
     public class NotifyIconNotificationService : INotificationService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(NotifyIconNotificationService));
-        private static readonly CoreConfiguration CoreConfiguration = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
         private readonly NotifyIcon _notifyIcon;
 
         public NotifyIconNotificationService()

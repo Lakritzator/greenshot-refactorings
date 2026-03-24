@@ -42,9 +42,9 @@ namespace Greenshot.Plugin.Jira;
 public sealed class JiraConnector : IDisposable
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(JiraConnector));
-    private static readonly JiraConfiguration JiraConfig = IniConfig.GetIniSection<JiraConfiguration>();
+    private static readonly IJiraConfiguration JiraConfig = IniConfig.GetIniSection<IJiraConfiguration>();
 
-    private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+    private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
 
     // Used to remove the wsdl information from the old SOAP Uri
     public const string DefaultPostfix = "/rpc/soap/jirasoapservice-v2?wsdl";

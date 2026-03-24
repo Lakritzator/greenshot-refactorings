@@ -34,7 +34,7 @@ namespace Greenshot.Helpers
     internal static class ApplicationStartupHelper
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(ApplicationStartupHelper));
-        private static readonly CoreConfiguration config = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration config = IniConfig.GetIniSection<ICoreConfiguration>();
 
         /// <summary>
         /// Performs initialization tasks for the application's first launch and displays an informational message to the user.

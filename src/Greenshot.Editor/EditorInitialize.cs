@@ -28,7 +28,7 @@ namespace Greenshot.Editor
 {
     public static class EditorInitialize
     {
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
 
         public static void Initialize()
         {

@@ -43,7 +43,7 @@ namespace Greenshot.Editor.Forms
     /// </summary>
     public partial class TextObfuscationForm : EditorForm
     {
-        private static readonly EditorConfiguration EditorConfig = IniConfig.GetIniSection<EditorConfiguration>();
+        private static readonly IEditorConfiguration EditorConfig = IniConfig.GetIniSection<IEditorConfiguration>();
         
         private readonly ISurface _surface;
         private readonly OcrInformation _ocrInfo;

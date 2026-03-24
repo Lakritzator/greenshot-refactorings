@@ -29,7 +29,7 @@ namespace Greenshot.Base.Interfaces.Plugin
 {
     public class SurfaceOutputSettings
     {
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private bool _reduceColors;
         private bool _disableReduceColors;
 

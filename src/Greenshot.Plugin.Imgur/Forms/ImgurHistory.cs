@@ -37,7 +37,7 @@ public sealed partial class ImgurHistory : ImgurForm
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ImgurHistory));
     private readonly GreenshotColumnSorter _columnSorter;
     private static readonly object Lock = new object();
-    private static readonly ImgurConfiguration Config = IniConfig.GetIniSection<ImgurConfiguration>();
+    private static readonly IImgurConfiguration Config = IniConfig.GetIniSection<IImgurConfiguration>();
     private static ImgurHistory _instance;
 
     public static void ShowHistory()

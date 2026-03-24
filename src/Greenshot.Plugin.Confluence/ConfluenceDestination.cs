@@ -41,8 +41,8 @@ namespace Greenshot.Plugin.Confluence;
 public class ConfluenceDestination : AbstractDestination
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ConfluenceDestination));
-    private static readonly ConfluenceConfiguration ConfluenceConfig = IniConfig.GetIniSection<ConfluenceConfiguration>();
-    private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+    private static readonly IConfluenceConfiguration ConfluenceConfig = IniConfig.GetIniSection<IConfluenceConfiguration>();
+    private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
     private static readonly Image ConfluenceIcon;
     private readonly Page _page;
 

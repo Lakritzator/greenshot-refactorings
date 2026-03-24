@@ -39,7 +39,7 @@ namespace Greenshot.Helpers
     public static class SoundHelper
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SoundHelper));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static GCHandle? _gcHandle;
         private static byte[] _soundBuffer;
 

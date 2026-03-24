@@ -58,7 +58,7 @@ namespace Greenshot.Helpers
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CaptureHelper));
 
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         
         private List<WindowDetails> _windows = new();
         private WindowDetails _selectedCaptureWindow;

@@ -35,7 +35,7 @@ namespace Greenshot.Plugin.Box;
 public static class BoxUtils
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(BoxUtils));
-    private static readonly BoxConfiguration Config = IniConfig.GetIniSection<BoxConfiguration>();
+    private static readonly IBoxConfiguration Config = IniConfig.GetIniSection<IBoxConfiguration>();
     private const string UploadFileUri = "https://upload.box.com/api/2.0/files/content";
     private const string FilesUri = "https://www.box.com/api/2.0/files/{0}";
 

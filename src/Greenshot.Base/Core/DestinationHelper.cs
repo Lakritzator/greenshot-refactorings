@@ -31,7 +31,7 @@ namespace Greenshot.Base.Core
     /// </summary>
     public static class DestinationHelper
     {
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
 
         /// <summary>
         /// Method to get all the destinations from the plugins

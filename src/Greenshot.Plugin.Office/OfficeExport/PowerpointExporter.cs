@@ -35,7 +35,7 @@ namespace Greenshot.Plugin.Office.OfficeExport
     public class PowerpointExporter
     {
         private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(PowerpointExporter));
-        private static readonly OfficeConfiguration _officeConfiguration = IniConfig.GetIniSection<OfficeConfiguration>();
+        private static readonly IOfficeConfiguration _officeConfiguration = IniConfig.GetIniSection<IOfficeConfiguration>();
 
         private Version _powerpointVersion;
 

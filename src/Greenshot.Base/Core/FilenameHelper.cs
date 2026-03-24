@@ -48,7 +48,7 @@ namespace Greenshot.Base.Core
 
         private static readonly Regex SplitRegexp = new Regex(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", RegexOptions.Compiled);
         private const int MaxTitleLength = 80;
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private const string UnsafeReplacement = "_";
         private static readonly Random RandomNumberGen = new Random();
         private static readonly Regex RandRegexp = new Regex("^R+$", RegexOptions.Compiled);

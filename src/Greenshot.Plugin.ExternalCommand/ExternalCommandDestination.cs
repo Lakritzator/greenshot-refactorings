@@ -45,7 +45,7 @@ public class ExternalCommandDestination : AbstractDestination
         new Regex(
             @"((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)");
 
-    private static readonly ExternalCommandConfiguration config = IniConfig.GetIniSection<ExternalCommandConfiguration>();
+    private static readonly IExternalCommandConfiguration config = IniConfig.GetIniSection<IExternalCommandConfiguration>();
     private readonly string _presetCommand;
 
     public ExternalCommandDestination(string commando)

@@ -37,7 +37,7 @@ namespace Greenshot.Editor.Forms
     /// </summary>
     public partial class ColorDialog : EditorForm
     {
-        private static readonly EditorConfiguration EditorConfig = IniConfig.GetIniSection<EditorConfiguration>();
+        private static readonly IEditorConfiguration EditorConfig = IniConfig.GetIniSection<IEditorConfiguration>();
         private static ColorDialog _instance;
 
         public ColorDialog()

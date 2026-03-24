@@ -35,7 +35,7 @@ namespace Greenshot.Controls
     /// </summary>
     public sealed class ToolStripMenuSelectList : ToolStripMenuItem
     {
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private readonly bool _multiCheckAllowed;
         private readonly IProvideDeviceDpi _provideDeviceDpi;
         private bool _updateInProgress;

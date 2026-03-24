@@ -42,7 +42,7 @@ namespace Greenshot.Plugin.Jira;
 public class JiraDestination : AbstractDestination
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(JiraDestination));
-    private static readonly JiraConfiguration Config = IniConfig.GetIniSection<JiraConfiguration>();
+    private static readonly IJiraConfiguration Config = IniConfig.GetIniSection<IJiraConfiguration>();
     private readonly IssueV2 _jiraIssue;
 
     public JiraDestination(IssueV2 jiraIssue = null)

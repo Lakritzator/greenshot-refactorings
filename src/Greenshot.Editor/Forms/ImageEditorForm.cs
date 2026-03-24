@@ -66,8 +66,8 @@ namespace Greenshot.Editor.Forms
     public partial class ImageEditorForm : EditorForm, IImageEditor
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ImageEditorForm));
-        private static readonly EditorConfiguration EditorConfiguration = IniConfig.GetIniSection<EditorConfiguration>();
-        private static readonly CoreConfiguration CoreConfiguration = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly IEditorConfiguration EditorConfiguration = IniConfig.GetIniSection<IEditorConfiguration>();
+        private static readonly ICoreConfiguration CoreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
 
         private static readonly List<string> IgnoreDestinations = new()
         {

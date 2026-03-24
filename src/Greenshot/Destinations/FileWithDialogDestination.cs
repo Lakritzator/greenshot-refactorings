@@ -34,7 +34,7 @@ namespace Greenshot.Destinations
     /// </summary>
     public class FileWithDialogDestination : AbstractDestination
     {
-        private static readonly CoreConfiguration conf = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration conf = IniConfig.GetIniSection<ICoreConfiguration>();
 
         public override string Designation => nameof(WellKnownDestinations.FileDialog);
 

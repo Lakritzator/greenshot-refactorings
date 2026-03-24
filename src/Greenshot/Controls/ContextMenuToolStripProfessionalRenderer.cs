@@ -35,7 +35,7 @@ namespace Greenshot.Controls
     public class ContextMenuToolStripProfessionalRenderer : ToolStripProfessionalRenderer
     {
         private readonly IProvideDeviceDpi _provideDeviceDpi;
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static Image _scaledCheckbox;
 
         public ContextMenuToolStripProfessionalRenderer(IProvideDeviceDpi provideDeviceDpi)

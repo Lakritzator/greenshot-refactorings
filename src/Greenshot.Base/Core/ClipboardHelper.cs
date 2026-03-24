@@ -53,7 +53,7 @@ namespace Greenshot.Base.Core
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ClipboardHelper));
         private static readonly object ClipboardLockObject = new object();
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly string FORMAT_FILECONTENTS = "FileContents";
         private static readonly string FORMAT_HTML = "text/html";
         private static readonly string FORMAT_PNG = "PNG";

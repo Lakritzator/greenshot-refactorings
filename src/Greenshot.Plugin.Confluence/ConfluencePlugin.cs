@@ -149,14 +149,11 @@ public class ConfluencePlugin : IGreenshotPlugin
     /// </summary>
     public void Configure()
     {
-        ConfluenceConfiguration clonedConfig = _config.Clone();
-        ConfluenceConfigurationForm configForm = new ConfluenceConfigurationForm(clonedConfig);
+        ConfluenceConfigurationForm configForm = new ConfluenceConfigurationForm(_config);
         string url = _config.Url;
         bool? dialogResult = configForm.ShowDialog();
         if (dialogResult.HasValue && dialogResult.Value)
         {
-            // copy the new object to the old...
-            clonedConfig.CloneTo(_config);
             IniConfig.Save();
             if (_confluenceConnector != null)
             {
@@ -170,6 +167,11 @@ public class ConfluencePlugin : IGreenshotPlugin
                     _confluenceConnector = null;
                 }
             }
+        }
+        else
+        {
+            // User cancelled — reload to discard any changes made by the form binding.
+            IniConfig.Reload();
         }
     }
 }

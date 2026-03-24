@@ -47,7 +47,7 @@ namespace Greenshot.Base.Core
     public static class WindowCapture
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(WindowCapture));
-        private static readonly CoreConfiguration Configuration = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration Configuration = IniConfig.GetIniSection<ICoreConfiguration>();
 
         /// <summary>
         /// Retrieves the cursor location safely, accounting for DPI settings in Vista/Windows 7. This implementation

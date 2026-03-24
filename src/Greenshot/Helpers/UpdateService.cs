@@ -39,7 +39,7 @@ namespace Greenshot.Helpers
     public class UpdateService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(UpdateService));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
         private static readonly Uri UpdateFeed = new Uri("https://getgreenshot.org/update-feed.json");
         private static readonly Uri Downloads = new Uri("https://getgreenshot.org/downloads");
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();

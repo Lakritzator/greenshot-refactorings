@@ -39,7 +39,7 @@ namespace Greenshot.Base.Core
     public abstract class AbstractDestination : IDestination
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(AbstractDestination));
-        private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
 
         public virtual int CompareTo(object obj)
         {

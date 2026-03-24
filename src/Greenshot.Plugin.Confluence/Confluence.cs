@@ -39,7 +39,7 @@ namespace Greenshot.Plugin.Confluence;
 public class ConfluenceConnector : IDisposable
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ConfluenceConnector));
-    private static readonly ConfluenceConfiguration Config = IniConfig.GetIniSection<ConfluenceConfiguration>();
+    private static readonly IConfluenceConfiguration Config = IniConfig.GetIniSection<IConfluenceConfiguration>();
     private DateTime _loggedInTime = DateTime.Now;
     private bool _loggedIn;
     private IConfluenceClient _confluence;

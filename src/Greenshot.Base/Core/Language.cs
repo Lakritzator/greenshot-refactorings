@@ -117,7 +117,7 @@ namespace Greenshot.Base.Core
                 Log.Warn("Couldn't read the installed language groups.", e);
             }
 
-            var coreConfig = IniConfig.GetIniSection<CoreConfiguration>();
+            var coreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
             ScanFiles();
             if (!string.IsNullOrEmpty(coreConfig.Language))
             {

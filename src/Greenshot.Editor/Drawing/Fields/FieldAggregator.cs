@@ -47,7 +47,7 @@ namespace Greenshot.Editor.Drawing.Fields
         private readonly IDrawableContainerList _boundContainers;
         private bool _internalUpdateRunning;
 
-        private static readonly EditorConfiguration EditorConfig = IniConfig.GetIniSection<EditorConfiguration>();
+        private static readonly IEditorConfiguration EditorConfig = IniConfig.GetIniSection<IEditorConfiguration>();
 
         public FieldAggregator(ISurface parent)
         {

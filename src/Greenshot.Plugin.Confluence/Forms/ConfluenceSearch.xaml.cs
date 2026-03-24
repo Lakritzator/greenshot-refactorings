@@ -30,7 +30,7 @@ namespace Greenshot.Plugin.Confluence.Forms;
 
 public partial class ConfluenceSearch
 {
-    private static readonly ConfluenceConfiguration ConfluenceConfig = IniConfig.GetIniSection<ConfluenceConfiguration>();
+    private static readonly IConfluenceConfiguration ConfluenceConfig = IniConfig.GetIniSection<IConfluenceConfiguration>();
     private readonly ConfluenceUpload _confluenceUpload;
 
     public IEnumerable<Space> Spaces => _confluenceUpload.Spaces;
