@@ -56,11 +56,11 @@ public interface IBoxConfiguration : IIniSection, IAfterLoad
     [Description("Box authorization refresh Token")]
     string RefreshToken { get; set; }
 
-    /// <summary>Runtime-only token — never written to disk, reset to default on every reload.</summary>
+    /// <summary>Runtime-only token - never written to disk, reset to default on every reload.</summary>
     [IniValue(RuntimeOnly = true)]
     string AccessToken { get; set; }
 
-    /// <summary>Runtime-only token expiry — never written to disk, reset to default on every reload.</summary>
+    /// <summary>Runtime-only token expiry - never written to disk, reset to default on every reload.</summary>
     [IniValue(RuntimeOnly = true)]
     DateTimeOffset AccessTokenExpires { get; set; }
 }

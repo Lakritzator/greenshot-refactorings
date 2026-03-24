@@ -45,7 +45,7 @@ public interface IImgurConfiguration : IIniSection
     [Description("Imgur upload history (ImgurUploadHistory.hash=deleteHash)")]
     Dictionary<string, string> ImgurUploadHistory { get; set; }
 
-    /// <summary>Runtime-only upload history details — never written to disk, reset to default on every reload.</summary>
+    /// <summary>Runtime-only upload history details - never written to disk, reset to default on every reload.</summary>
     [IniValue(RuntimeOnly = true)]
     Dictionary<string, ImgurInfo> RuntimeImgurHistory { get; set; }
 }
