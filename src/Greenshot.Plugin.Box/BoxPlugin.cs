@@ -29,6 +29,7 @@ using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
+using Greenshot.Plugin.Box.Forms;
 
 namespace Greenshot.Plugin.Box;
 
@@ -123,12 +124,21 @@ public class BoxPlugin : IGreenshotPlugin
     /// </summary>
     public void Configure()
     {
-        _config.ShowConfigDialog();
+        ShowConfigDialog();
     }
 
     public void ConfigMenuClick(object sender, EventArgs eventArgs)
     {
-        _config.ShowConfigDialog();
+        ShowConfigDialog();
+    }
+
+    /// <summary>
+    /// Opens the Box settings dialog.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
+    private bool ShowConfigDialog()
+    {
+        return new SettingsForm().ShowDialog() == DialogResult.OK;
     }
 
     /// <summary>

@@ -19,14 +19,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.ComponentModel;
 using Dapplo.Ini;
 
 namespace Greenshot.Configuration
 {
-    [IniSection("Win10", Description = "Greenshot Windows Plugin configuration")]
+    [IniSection("Win10")]
+    [Description("Greenshot Windows Plugin configuration")]
     public interface IWin10Configuration : IIniSection
     {
-        [IniValue(Description = "Determines if OCR is run automatically on every capture", DefaultValue = "False")]
+        [Description("Determines if OCR is run automatically on every capture")]
+        [DefaultValue(false)]
         bool AlwaysRunOCROnCapture { get; set; }
     }
 }

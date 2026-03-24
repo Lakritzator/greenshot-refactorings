@@ -20,47 +20,47 @@
  */
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Dapplo.Ini;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.Box;
 
-[IniSection("Box", Description = "Greenshot Box Plugin configuration")]
+[IniSection("Box")]
+[Description("Greenshot Box Plugin configuration")]
 public interface IBoxConfiguration : IIniSection, IAfterLoad
 {
-    [IniValue(Description = "What file type to use for uploading", DefaultValue = "png")]
+    [Description("What file type to use for uploading")]
+    [DefaultValue("png")]
     OutputFormat UploadFormat { get; set; }
 
-    [IniValue(Description = "JPEG file save quality in %.", DefaultValue = "80")]
+    [Description("JPEG file save quality in %.")]
+    [DefaultValue(80)]
+    [Range(0, 100, ErrorMessage = "JPEG quality must be between 0 and 100.")]
     int UploadJpegQuality { get; set; }
 
-    [IniValue(Description = "After upload send Box link to clipboard.", DefaultValue = "true")]
+    [Description("After upload send Box link to clipboard.")]
+    [DefaultValue(true)]
     bool AfterUploadLinkToClipBoard { get; set; }
 
-    [IniValue(Description = "Use the shared link, instead of the private, on the clipboard", DefaultValue = "True")]
+    [Description("Use the shared link, instead of the private, on the clipboard")]
+    [DefaultValue(true)]
     bool UseSharedLink { get; set; }
 
-    [IniValue(Description = "Folder ID to upload to, only change if you know what you are doing!", DefaultValue = "0")]
+    [Description("Folder ID to upload to, only change if you know what you are doing!")]
+    [DefaultValue("0")]
     string FolderId { get; set; }
 
     // TODO: Consider adding encryption via custom converter
-    [IniValue(Description = "Box authorization refresh Token")]
+    [Description("Box authorization refresh Token")]
     string RefreshToken { get; set; }
 
-    /// <summary>
-    /// Runtime-only: not persisted to the ini file
-    /// </summary>
+    /// <summary>Runtime-only token — never written to disk, reset to default on every reload.</summary>
+    [IniValue(RuntimeOnly = true)]
     string AccessToken { get; set; }
 
-    /// <summary>
-    /// Runtime-only: not persisted to the ini file
-    /// </summary>
+    /// <summary>Runtime-only token expiry — never written to disk, reset to default on every reload.</summary>
+    [IniValue(RuntimeOnly = true)]
     DateTimeOffset AccessTokenExpires { get; set; }
-
-    /// <summary>
-    /// Opens the Box settings dialog.
-    /// Implemented in <see cref="BoxConfigurationImpl"/>.
-    /// </summary>
-    /// <returns>true if OK was pressed; false if cancelled</returns>
-    bool ShowConfigDialog();
 }

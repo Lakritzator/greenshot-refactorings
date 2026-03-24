@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Dapplo.Ini;
 using Greenshot.Base.Core.Enums;
 
@@ -27,20 +29,27 @@ namespace Greenshot.Plugin.Jira;
 /// <summary>
 /// Description of IJiraConfiguration.
 /// </summary>
-[IniSection("Jira", Description = "Greenshot Jira Plugin configuration")]
+[IniSection("Jira")]
+[Description("Greenshot Jira Plugin configuration")]
 public interface IJiraConfiguration : IIniSection
 {
     const string DefaultPrefix = "https://";
 
-    [IniValue(Description = "Base url to Jira system, without anything else", DefaultValue = "https://jira")]
+    [Description("Base url to Jira system, without anything else")]
+    [DefaultValue("https://jira")]
+    [Required(ErrorMessage = "Jira URL is required.")]
     string Url { get; set; }
 
-    [IniValue(Description = "What file type to use for uploading", DefaultValue = "png")]
+    [Description("What file type to use for uploading")]
+    [DefaultValue("png")]
     OutputFormat UploadFormat { get; set; }
 
-    [IniValue(Description = "JPEG file save quality in %.", DefaultValue = "80")]
+    [Description("JPEG file save quality in %.")]
+    [DefaultValue(80)]
+    [Range(0, 100, ErrorMessage = "JPEG quality must be between 0 and 100.")]
     int UploadJpegQuality { get; set; }
 
-    [IniValue(Description = "Reduce color amount of the uploaded image to 256", DefaultValue = "False")]
+    [Description("Reduce color amount of the uploaded image to 256")]
+    [DefaultValue(false)]
     bool UploadReduceColors { get; set; }
 }

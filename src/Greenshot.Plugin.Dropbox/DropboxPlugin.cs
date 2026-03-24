@@ -28,6 +28,7 @@ using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
+using Greenshot.Plugin.Dropbox.Forms;
 
 namespace Greenshot.Plugin.Dropbox;
 
@@ -120,12 +121,21 @@ public class DropboxPlugin : IGreenshotPlugin
     /// </summary>
     public void Configure()
     {
-        _config.ShowConfigDialog();
+        ShowConfigDialog();
     }
 
     public void ConfigMenuClick(object sender, EventArgs eventArgs)
     {
-        _config.ShowConfigDialog();
+        ShowConfigDialog();
+    }
+
+    /// <summary>
+    /// Opens the Dropbox settings dialog.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
+    private bool ShowConfigDialog()
+    {
+        return new SettingsForm().ShowDialog() == DialogResult.OK;
     }
 
     /// <summary>

@@ -21,7 +21,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Runtime.Serialization;
 using Dapplo.Ini;
 using Dapplo.Windows.Common.Structs;
 using Dapplo.Windows.User32.Enums;
@@ -31,76 +34,98 @@ using Greenshot.Base.Interfaces.Drawing;
 
 namespace Greenshot.Editor.Configuration
 {
-    [IniSection("Editor", Description = "Greenshot editor configuration")]
+    [IniSection("Editor")]
+    [Description("Greenshot editor configuration")]
     public interface IEditorConfiguration : IIniSection, IAfterLoad
     {
-        [IniValue(Description = "Last used colors")]
+        [Description("Last used colors")]
         List<Color> RecentColors { get; set; }
 
-        [IniValue(KeyName = "LastFieldValue", Description = "Field values, make sure the last used settings are reused")]
+        [DataMember(Name = "LastFieldValue")]
+        [Description("Field values, make sure the last used settings are reused")]
         Dictionary<string, object> LastUsedFieldValues { get; set; }
 
-        [IniValue(Description = "Match the editor window size to the capture", DefaultValue = "True")]
+        [Description("Match the editor window size to the capture")]
+        [DefaultValue(true)]
         bool MatchSizeToCapture { get; set; }
 
-        [IniValue(Description = "Placement flags", DefaultValue = "0")]
+        [Description("Placement flags")]
+        [DefaultValue(0)]
         WindowPlacementFlags WindowPlacementFlags { get; set; }
 
-        [IniValue(Description = "Show command", DefaultValue = "Normal")]
+        [Description("Show command")]
+        [DefaultValue("Normal")]
         ShowWindowCommands ShowWindowCommand { get; set; }
 
-        [IniValue(Description = "Position of minimized window", DefaultValue = "-1,-1")]
+        [Description("Position of minimized window")]
+        [DefaultValue("-1,-1")]
         NativePoint WindowMinPosition { get; set; }
 
-        [IniValue(Description = "Position of maximized window", DefaultValue = "-1,-1")]
+        [Description("Position of maximized window")]
+        [DefaultValue("-1,-1")]
         NativePoint WindowMaxPosition { get; set; }
 
-        [IniValue(Description = "Position of normal window", DefaultValue = "100,100,400,400")]
+        [Description("Position of normal window")]
+        [DefaultValue("100,100,400,400")]
         NativeRect WindowNormalPosition { get; set; }
 
-        [IniValue(Description = "Reuse already open editor", DefaultValue = "false")]
+        [Description("Reuse already open editor")]
+        [DefaultValue(false)]
         bool ReuseEditor { get; set; }
 
-        [IniValue(Description = "The smaller this number, the less smoothing is used. Decrease for detailed drawing, e.g. when using a pen. Increase for smoother lines. e.g. when you want to draw a smooth line. Minimal value is 1, max is 2147483647.", DefaultValue = "3")]
+        [Description("The smaller this number, the less smoothing is used. Decrease for detailed drawing, e.g. when using a pen. Increase for smoother lines. e.g. when you want to draw a smooth line. Minimal value is 1, max is 2147483647.")]
+        [DefaultValue(3)]
+        [Range(1, int.MaxValue, ErrorMessage = "FreehandSensitivity must be at least 1.")]
         int FreehandSensitivity { get; set; }
 
-        [IniValue(Description = "Suppressed the 'do you want to save' dialog when closing the editor.", DefaultValue = "False")]
+        [Description("Suppressed the 'do you want to save' dialog when closing the editor.")]
+        [DefaultValue(false)]
         bool SuppressSaveDialogAtClose { get; set; }
 
-        [IniValue(Description = "Settings for the drop shadow effect.")]
+        [Description("Settings for the drop shadow effect.")]
         DropShadowEffect DropShadowEffectSettings { get; set; }
 
-        [IniValue(Description = "Settings for the torn edge effect.")]
+        [Description("Settings for the torn edge effect.")]
         TornEdgeEffect TornEdgeEffectSettings { get; set; }
 
-        [IniValue(Description = "The size for the editor when it's opened without a capture", DefaultValue = "500,500")]
+        [Description("The size for the editor when it's opened without a capture")]
+        [DefaultValue("500,500")]
         NativeSize DefaultEditorSize { get; set; }
 
-        [IniValue(Description = "Last used search pattern for text obfuscation", DefaultValue = "")]
+        [Description("Last used search pattern for text obfuscation")]
+        [DefaultValue("")]
         string TextObfuscationSearchPattern { get; set; }
 
-        [IniValue(Description = "Use regular expression for text obfuscation search", DefaultValue = "false")]
+        [Description("Use regular expression for text obfuscation search")]
+        [DefaultValue(false)]
         bool TextObfuscationUseRegex { get; set; }
 
-        [IniValue(Description = "Case sensitive search for text obfuscation", DefaultValue = "false")]
+        [Description("Case sensitive search for text obfuscation")]
+        [DefaultValue(false)]
         bool TextObfuscationCaseSensitive { get; set; }
 
-        [IniValue(Description = "Search scope for text obfuscation: 0=Words, 1=Lines", DefaultValue = "0")]
+        [Description("Search scope for text obfuscation: 0=Words, 1=Lines")]
+        [DefaultValue(0)]
         int TextObfuscationSearchScope { get; set; }
 
-        [IniValue(Description = "Effect to apply for text redaction: BLUR, PIXELIZE, TEXT_HIGHTLIGHT, MAGNIFICATION", DefaultValue = "PIXELIZE")]
+        [Description("Effect to apply for text redaction: BLUR, PIXELIZE, TEXT_HIGHTLIGHT, MAGNIFICATION")]
+        [DefaultValue("PIXELIZE")]
         string TextObfuscationEffect { get; set; }
 
-        [IniValue(Description = "Horizontal percentage to grow matched rectangles for text redaction", DefaultValue = "10")]
+        [Description("Horizontal percentage to grow matched rectangles for text redaction")]
+        [DefaultValue(10)]
         int TextObfuscationPaddingHorizontal { get; set; }
 
-        [IniValue(Description = "Vertical percentage to grow matched rectangles for text redaction", DefaultValue = "20")]
+        [Description("Vertical percentage to grow matched rectangles for text redaction")]
+        [DefaultValue(20)]
         int TextObfuscationPaddingVertical { get; set; }
 
-        [IniValue(Description = "Horizontal offset in pixels for matched rectangles", DefaultValue = "0")]
+        [Description("Horizontal offset in pixels for matched rectangles")]
+        [DefaultValue(0)]
         int TextObfuscationOffsetHorizontal { get; set; }
 
-        [IniValue(Description = "Vertical offset in pixels for matched rectangles", DefaultValue = "-5")]
+        [Description("Vertical offset in pixels for matched rectangles")]
+        [DefaultValue(-5)]
         int TextObfuscationOffsetVertical { get; set; }
 
         IField CreateField(Type requestingType, IFieldType fieldType, object preferredDefaultValue);

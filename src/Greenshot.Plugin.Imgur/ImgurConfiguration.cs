@@ -20,34 +20,32 @@
  */
 
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.ComponentModel;
 using Dapplo.Ini;
 using Greenshot.Plugin.Imgur.Forms;
 
 namespace Greenshot.Plugin.Imgur;
 
-[IniSection("Imgur", Description = "Greenshot Imgur Plugin configuration")]
+[IniSection("Imgur")]
+[Description("Greenshot Imgur Plugin configuration")]
 public interface IImgurConfiguration : IIniSection
 {
-    [IniValue(Description = "Url to Imgur system.", DefaultValue = "https://api.imgur.com/3")]
+    [Description("Url to Imgur system.")]
+    [DefaultValue("https://api.imgur.com/3")]
     string ImgurApi3Url { get; set; }
 
-    [IniValue(Description = "Use pagelink instead of direct link on the clipboard", DefaultValue = "False")]
+    [Description("Use pagelink instead of direct link on the clipboard")]
+    [DefaultValue(false)]
     bool UsePageLink { get; set; }
 
-    [IniValue(Description = "Use anonymous access to Imgur", DefaultValue = "true")]
+    [Description("Use anonymous access to Imgur")]
+    [DefaultValue(true)]
     bool AnonymousAccess { get; set; }
 
-    [IniValue(Description = "Imgur upload history (ImgurUploadHistory.hash=deleteHash)")]
+    [Description("Imgur upload history (ImgurUploadHistory.hash=deleteHash)")]
     Dictionary<string, string> ImgurUploadHistory { get; set; }
 
-    // Runtime-only: not persisted to the ini file (no [IniValue] attribute)
+    /// <summary>Runtime-only upload history details — never written to disk, reset to default on every reload.</summary>
+    [IniValue(RuntimeOnly = true)]
     Dictionary<string, ImgurInfo> RuntimeImgurHistory { get; set; }
-
-    /// <summary>
-    /// Opens the Imgur settings dialog.
-    /// Implemented in <see cref="ImgurConfigurationImpl"/>.
-    /// </summary>
-    /// <returns>true if OK was pressed; false if cancelled</returns>
-    bool ShowConfigDialog();
 }

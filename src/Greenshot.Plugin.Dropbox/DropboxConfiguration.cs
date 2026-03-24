@@ -20,41 +20,39 @@
  */
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Dapplo.Ini;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.Dropbox;
 
-[IniSection("Dropbox", Description = "Greenshot Dropbox Plugin configuration")]
+[IniSection("Dropbox")]
+[Description("Greenshot Dropbox Plugin configuration")]
 public interface IDropboxConfiguration : IIniSection, IAfterLoad
 {
-    [IniValue(Description = "What file type to use for uploading", DefaultValue = "png")]
+    [Description("What file type to use for uploading")]
+    [DefaultValue("png")]
     OutputFormat UploadFormat { get; set; }
 
-    [IniValue(Description = "JPEG file save quality in %.", DefaultValue = "80")]
+    [Description("JPEG file save quality in %.")]
+    [DefaultValue(80)]
+    [Range(0, 100, ErrorMessage = "JPEG quality must be between 0 and 100.")]
     int UploadJpegQuality { get; set; }
 
-    [IniValue(Description = "After upload send Dropbox link to clipboard.", DefaultValue = "true")]
+    [Description("After upload send Dropbox link to clipboard.")]
+    [DefaultValue(true)]
     bool AfterUploadLinkToClipBoard { get; set; }
 
     // TODO: Consider adding encryption via custom converter
-    [IniValue(Description = "Dropbox refresh Token")]
+    [Description("Dropbox refresh Token")]
     string RefreshToken { get; set; }
 
-    /// <summary>
-    /// Runtime-only: not persisted to the ini file
-    /// </summary>
+    /// <summary>Runtime-only token — never written to disk, reset to default on every reload.</summary>
+    [IniValue(RuntimeOnly = true)]
     string AccessToken { get; set; }
 
-    /// <summary>
-    /// Runtime-only: not persisted to the ini file
-    /// </summary>
+    /// <summary>Runtime-only token expiry — never written to disk, reset to default on every reload.</summary>
+    [IniValue(RuntimeOnly = true)]
     DateTimeOffset AccessTokenExpires { get; set; }
-
-    /// <summary>
-    /// Opens the Dropbox settings dialog.
-    /// Implemented in <see cref="DropboxConfigurationImpl"/>.
-    /// </summary>
-    /// <returns>true if OK was pressed; false if cancelled</returns>
-    bool ShowConfigDialog();
 }

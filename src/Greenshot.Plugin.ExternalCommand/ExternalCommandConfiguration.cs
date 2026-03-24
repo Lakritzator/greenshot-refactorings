@@ -20,48 +20,58 @@
  */
 
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 using Dapplo.Ini;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.ExternalCommand;
 
-[IniSection("ExternalCommand", Description = "Greenshot ExternalCommand Plugin configuration")]
+[IniSection("ExternalCommand")]
+[Description("Greenshot ExternalCommand Plugin configuration")]
 public interface IExternalCommandConfiguration : IIniSection, IAfterLoad
 {
-    [IniValue(Description = "The commands that are available.")]
+    [Description("The commands that are available.")]
     List<string> Commands { get; set; }
 
-    [IniValue(Description = "Redirect the standard error of all external commands, used to output as warning to the greenshot.log.", DefaultValue = "true")]
+    [Description("Redirect the standard error of all external commands, used to output as warning to the greenshot.log.")]
+    [DefaultValue(true)]
     bool RedirectStandardError { get; set; }
 
-    [IniValue(Description = "Redirect the standard output of all external commands, used for different other functions (more below).", DefaultValue = "true")]
+    [Description("Redirect the standard output of all external commands, used for different other functions (more below).")]
+    [DefaultValue(true)]
     bool RedirectStandardOutput { get; set; }
 
-    [IniValue(Description = "Depends on 'RedirectStandardOutput': Show standard output of all external commands to the Greenshot log, this can be useful for debugging.", DefaultValue = "false")]
+    [Description("Depends on 'RedirectStandardOutput': Show standard output of all external commands to the Greenshot log, this can be useful for debugging.")]
+    [DefaultValue(false)]
     bool ShowStandardOutputInLog { get; set; }
 
-    [IniValue(KeyName = "ParseForUri", Description = "Depends on 'RedirectStandardOutput': Parse the output and take the first found URI, if a URI is found than clicking on the notify bubble goes there.", DefaultValue = "true")]
+    [DataMember(Name = "ParseForUri")]
+    [Description("Depends on 'RedirectStandardOutput': Parse the output and take the first found URI, if a URI is found than clicking on the notify bubble goes there.")]
+    [DefaultValue(true)]
     bool ParseOutputForUri { get; set; }
 
-    [IniValue(Description = "Depends on 'RedirectStandardOutput': Place the standard output on the clipboard.", DefaultValue = "false")]
+    [Description("Depends on 'RedirectStandardOutput': Place the standard output on the clipboard.")]
+    [DefaultValue(false)]
     bool OutputToClipboard { get; set; }
 
-    [IniValue(Description = "Depends on 'RedirectStandardOutput' & 'ParseForUri': If an URI is found in the standard input, place it on the clipboard. (This overwrites the output from OutputToClipboard setting.)", DefaultValue = "true")]
+    [Description("Depends on 'RedirectStandardOutput' & 'ParseForUri': If an URI is found in the standard input, place it on the clipboard. (This overwrites the output from OutputToClipboard setting.)")]
+    [DefaultValue(true)]
     bool UriToClipboard { get; set; }
 
-    [IniValue(Description = "The commandline for the output command.")]
+    [Description("The commandline for the output command.")]
     Dictionary<string, string> Commandline { get; set; }
 
-    [IniValue(Description = "The arguments for the output command.")]
+    [Description("The arguments for the output command.")]
     Dictionary<string, string> Argument { get; set; }
 
-    [IniValue(Description = "The output file format for the output command.")]
+    [Description("The output file format for the output command.")]
     Dictionary<string, OutputFormat> OutputFormat { get; set; }
 
-    [IniValue(Description = "Should the command be started in the background.")]
+    [Description("Should the command be started in the background.")]
     Dictionary<string, bool> RunInbackground { get; set; }
 
-    [IniValue(Description = "If a build in command was deleted manually, it should not be recreated.")]
+    [Description("If a build in command was deleted manually, it should not be recreated.")]
     List<string> DeletedBuildInCommands { get; set; }
 
     /// <summary>

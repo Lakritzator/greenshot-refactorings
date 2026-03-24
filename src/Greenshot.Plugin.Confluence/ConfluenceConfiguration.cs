@@ -19,40 +19,54 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Dapplo.Ini;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.Confluence;
 
-[IniSection("Confluence", Description = "Greenshot Confluence Plugin configuration")]
+[IniSection("Confluence")]
+[Description("Greenshot Confluence Plugin configuration")]
 public interface IConfluenceConfiguration : IIniSection
 {
     const string DefaultPrefix = "https://";
 
-    [IniValue(Description = "Url to Confluence system (e.g., https://confluence.example.com or https://domain.atlassian.net/wiki for Cloud).", DefaultValue = "https://confluence")]
+    [Description("Url to Confluence system (e.g., https://confluence.example.com or https://domain.atlassian.net/wiki for Cloud).")]
+    [DefaultValue("https://confluence")]
+    [Required(ErrorMessage = "Confluence URL is required.")]
     string Url { get; set; }
 
-    [IniValue(Description = "Session timeout in minutes", DefaultValue = "30")]
+    [Description("Session timeout in minutes")]
+    [DefaultValue(30)]
+    [Range(1, 1440, ErrorMessage = "Session timeout must be between 1 and 1440 minutes.")]
     int Timeout { get; set; }
 
-    [IniValue(Description = "What file type to use for uploading", DefaultValue = "png")]
+    [Description("What file type to use for uploading")]
+    [DefaultValue("png")]
     OutputFormat UploadFormat { get; set; }
 
-    [IniValue(Description = "JPEG file save quality in %.", DefaultValue = "80")]
+    [Description("JPEG file save quality in %.")]
+    [DefaultValue(80)]
+    [Range(0, 100, ErrorMessage = "JPEG quality must be between 0 and 100.")]
     int UploadJpegQuality { get; set; }
 
-    [IniValue(Description = "Reduce color amount of the uploaded image to 256", DefaultValue = "False")]
+    [Description("Reduce color amount of the uploaded image to 256")]
+    [DefaultValue(false)]
     bool UploadReduceColors { get; set; }
 
-    [IniValue(Description = "Open the page where the picture is uploaded after upload", DefaultValue = "True")]
+    [Description("Open the page where the picture is uploaded after upload")]
+    [DefaultValue(true)]
     bool OpenPageAfterUpload { get; set; }
 
-    [IniValue(Description = "Copy the Wikimarkup for the recently uploaded image to the Clipboard", DefaultValue = "True")]
+    [Description("Copy the Wikimarkup for the recently uploaded image to the Clipboard")]
+    [DefaultValue(true)]
     bool CopyWikiMarkupForImageToClipboard { get; set; }
 
-    [IniValue(Description = "Key of last space that was searched for")]
+    [Description("Key of last space that was searched for")]
     string SearchSpaceKey { get; set; }
 
-    [IniValue(Description = "Include personal spaces in the search & browse spaces list", DefaultValue = "False")]
+    [Description("Include personal spaces in the search & browse spaces list")]
+    [DefaultValue(false)]
     bool IncludePersonSpaces { get; set; }
 }

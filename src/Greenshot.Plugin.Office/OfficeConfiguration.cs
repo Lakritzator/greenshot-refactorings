@@ -19,40 +19,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.ComponentModel;
 using Dapplo.Ini;
 using Greenshot.Plugin.Office.OfficeInterop;
 using Microsoft.Office.Interop.PowerPoint;
 
 namespace Greenshot.Plugin.Office
 {
-    [IniSection("Office", Description = "Greenshot Office configuration")]
+    [IniSection("Office")]
+    [Description("Greenshot Office configuration")]
     public interface IOfficeConfiguration : IIniSection
     {
-        [IniValue(Description = "Default type for emails. (Text, HTML)", DefaultValue = "HTML")]
+        [Description("Default type for emails. (Text, HTML)")]
+        [DefaultValue("HTML")]
         EmailFormat OutlookEmailFormat { get; set; }
 
-        [IniValue(Description = "Email subject pattern, works like the OutputFileFilenamePattern", DefaultValue = "${title}")]
+        [Description("Email subject pattern, works like the OutputFileFilenamePattern")]
+        [DefaultValue("${title}")]
         string EmailSubjectPattern { get; set; }
 
-        [IniValue(Description = "Default value for the to in emails that are created", DefaultValue = "")]
+        [Description("Default value for the to in emails that are created")]
+        [DefaultValue("")]
         string EmailTo { get; set; }
 
-        [IniValue(Description = "Default value for the CC in emails that are created", DefaultValue = "")]
+        [Description("Default value for the CC in emails that are created")]
+        [DefaultValue("")]
         string EmailCC { get; set; }
 
-        [IniValue(Description = "Default value for the BCC in emails that are created", DefaultValue = "")]
+        [Description("Default value for the BCC in emails that are created")]
+        [DefaultValue("")]
         string EmailBCC { get; set; }
 
-        [IniValue(Description = "For Outlook: Allow export in meeting items", DefaultValue = "False")]
+        [Description("For Outlook: Allow export in meeting items")]
+        [DefaultValue(false)]
         bool OutlookAllowExportInMeetings { get; set; }
 
-        [IniValue(Description = "For Word: Lock the aspect ratio of the image", DefaultValue = "True")]
+        [Description("For Word: Lock the aspect ratio of the image")]
+        [DefaultValue(true)]
         bool WordLockAspectRatio { get; set; }
 
-        [IniValue(Description = "For Powerpoint: Lock the aspect ratio of the image", DefaultValue = "True")]
+        [Description("For Powerpoint: Lock the aspect ratio of the image")]
+        [DefaultValue(true)]
         bool PowerpointLockAspectRatio { get; set; }
 
-        [IniValue(Description = "For Powerpoint: Slide layout, changing this to a wrong value will fallback on ppLayoutBlank!!", DefaultValue = "ppLayoutPictureWithCaption")]
+        [Description("For Powerpoint: Slide layout, changing this to a wrong value will fallback on ppLayoutBlank!!")]
+        [DefaultValue("ppLayoutPictureWithCaption")]
         PpSlideLayout PowerpointSlideLayout { get; set; }
     }
 }

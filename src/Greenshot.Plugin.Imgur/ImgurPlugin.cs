@@ -27,6 +27,7 @@ using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
+using Greenshot.Plugin.Imgur.Forms;
 
 namespace Greenshot.Plugin.Imgur;
 
@@ -103,7 +104,7 @@ public class ImgurPlugin : IGreenshotPlugin
         };
 
         _itemPlugInConfig = new ToolStripMenuItem(Language.GetString("imgur", LangKey.configure));
-        _itemPlugInConfig.Click += delegate { _config.ShowConfigDialog(); };
+        _itemPlugInConfig.Click += delegate { ShowConfigDialog(); };
         itemPlugInRoot.DropDownItems.Add(_itemPlugInConfig);
 
         PluginUtils.AddToContextMenu(itemPlugInRoot);
@@ -171,6 +172,15 @@ public class ImgurPlugin : IGreenshotPlugin
     /// </summary>
     public virtual void Configure()
     {
-        _config.ShowConfigDialog();
+        ShowConfigDialog();
+    }
+
+    /// <summary>
+    /// Opens the Imgur settings dialog.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
+    private bool ShowConfigDialog()
+    {
+        return new SettingsForm().ShowDialog() == DialogResult.OK;
     }
 }

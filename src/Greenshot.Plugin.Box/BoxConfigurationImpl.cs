@@ -19,37 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Windows.Forms;
-using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
-using Greenshot.Plugin.Box.Forms;
 
 namespace Greenshot.Plugin.Box;
 
 public partial class BoxConfigurationImpl
 {
-    private string _accessToken;
-    private DateTimeOffset _accessTokenExpires;
-
-    public string AccessToken
-    {
-        get => _accessToken;
-        set => _accessToken = value;
-    }
-
-    public DateTimeOffset AccessTokenExpires
-    {
-        get => _accessTokenExpires;
-        set => _accessTokenExpires = value;
-    }
-
-    public bool ShowConfigDialog()
-    {
-        DialogResult result = new SettingsForm().ShowDialog();
-        return result == DialogResult.OK;
-    }
-
     public void OnAfterLoad()
     {
         var coreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
