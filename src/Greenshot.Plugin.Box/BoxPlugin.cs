@@ -38,7 +38,7 @@ namespace Greenshot.Plugin.Box;
 public class BoxPlugin : IGreenshotPlugin
 {
     private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(BoxPlugin));
-    private static BoxConfiguration _config;
+    private static IBoxConfiguration _config;
     private ComponentResourceManager _resources;
     private ToolStripMenuItem _itemPlugInConfig;
 
@@ -69,14 +69,27 @@ public class BoxPlugin : IGreenshotPlugin
     }
 
     /// <summary>
-    /// Implementation of the IGreenshotPlugin.Initialize
+    /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public bool Initialize()
+    public void RegisterConfiguration()
     {
-        // Register configuration (don't need the configuration itself)
-        _config = IniConfig.GetIniSection<BoxConfiguration>();
+        _config = IniConfig.GetIniSection<IBoxConfiguration>();
+    }
+
+    /// <summary>
+    /// Implementation of RegisterServices phase: register DI services after config is loaded.
+    /// </summary>
+    public void RegisterServices()
+    {
         _resources = new ComponentResourceManager(typeof(BoxPlugin));
         SimpleServiceProvider.Current.AddService<IDestination>(new BoxDestination(this));
+    }
+
+    /// <summary>
+    /// Implementation of the IGreenshotPlugin.Start
+    /// </summary>
+    public bool Start()
+    {
         _itemPlugInConfig = new ToolStripMenuItem
         {
             Image = (Image) _resources.GetObject("Box"),

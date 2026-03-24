@@ -132,12 +132,26 @@ namespace Greenshot.Plugin.Office
 
 
         /// <summary>
-        /// Implementation of the IGreenshotPlugin.Initialize
+        /// Implementation of RegisterConfiguration phase: no configuration to register for Office plugin.
         /// </summary>
-        /// <returns>true if plugin is initialized, false if not (doesn't show)</returns>
-        public bool Initialize()
+        public void RegisterConfiguration()
+        {
+        }
+
+        /// <summary>
+        /// Implementation of RegisterServices phase: register DI services after config is loaded.
+        /// </summary>
+        public void RegisterServices()
         {
             SimpleServiceProvider.Current.AddService(Destinations());
+        }
+
+        /// <summary>
+        /// Implementation of the IGreenshotPlugin.Start
+        /// </summary>
+        /// <returns>true if plugin is initialized, false if not (doesn't show)</returns>
+        public bool Start()
+        {
             return true;
         }
 

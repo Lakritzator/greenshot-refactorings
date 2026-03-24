@@ -35,7 +35,7 @@ namespace Greenshot.Plugin.Imgur;
 public class ImgurPlugin : IGreenshotPlugin
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ImgurPlugin));
-    private static ImgurConfiguration _config;
+    private static IImgurConfiguration _config;
     private ComponentResourceManager _resources;
     private ToolStripMenuItem _historyMenuItem;
     private ToolStripMenuItem _itemPlugInConfig;
@@ -73,15 +73,27 @@ public class ImgurPlugin : IGreenshotPlugin
     public bool IsConfigurable => true;
 
     /// <summary>
-    /// Implementation of the IGreenshotPlugin.Initialize
+    /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
+    /// </summary>
+    public void RegisterConfiguration()
+    {
+        _config = IniConfig.GetIniSection<IImgurConfiguration>();
+    }
+
+    /// <summary>
+    /// Implementation of RegisterServices phase: register DI services after config is loaded.
+    /// </summary>
+    public void RegisterServices()
+    {
+        _resources = new ComponentResourceManager(typeof(ImgurPlugin));
+    }
+
+    /// <summary>
+    /// Implementation of the IGreenshotPlugin.Start
     /// </summary>
     /// <returns>true if plugin is initialized, false if not (doesn't show)</returns>
-    public bool Initialize()
+    public bool Start()
     {
-        // Get configuration
-        _config = IniConfig.GetIniSection<ImgurConfiguration>();
-        _resources = new ComponentResourceManager(typeof(ImgurPlugin));
-
         ToolStripMenuItem itemPlugInRoot = new ToolStripMenuItem("Imgur")
         {
             Image = (Image) _resources.GetObject("Imgur")
@@ -94,7 +106,6 @@ public class ImgurPlugin : IGreenshotPlugin
         PluginUtils.AddToContextMenu(itemPlugInRoot);
         Language.LanguageChanged += OnLanguageChanged;
 
-        // Enable history if there are items available
         UpdateHistoryMenuItem();
         return true;
     }

@@ -37,7 +37,7 @@ public class ConfluencePlugin : IGreenshotPlugin
 {
     private static readonly log4net.ILog LOG = log4net.LogManager.GetLogger(typeof(ConfluencePlugin));
     private static ConfluenceConnector _confluenceConnector;
-    private static ConfluenceConfiguration _config;
+    private static IConfluenceConfiguration _config;
 
     public void Dispose()
     {
@@ -99,28 +99,33 @@ public class ConfluencePlugin : IGreenshotPlugin
     }
 
     /// <summary>
-    /// Implementation of the IGreenshotPlugin.Initialize
+    /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public bool Initialize()
+    public void RegisterConfiguration()
     {
-        // Register configuration (don't need the configuration itself)
-        _config = IniConfig.GetIniSection<ConfluenceConfiguration>();
-        if (_config.IsDirty)
-        {
-            IniConfig.Save();
-        }
+        _config = IniConfig.GetIniSection<IConfluenceConfiguration>();
+    }
 
+    /// <summary>
+    /// Implementation of RegisterServices phase: register DI services after config is loaded.
+    /// </summary>
+    public void RegisterServices()
+    {
         try
         {
             TranslationManager.Instance.TranslationProvider = new LanguageXMLTranslationProvider();
-            //resources = new ComponentResourceManager(typeof(ConfluencePlugin));
         }
         catch (Exception ex)
         {
-            LOG.ErrorFormat("Problem in ConfluencePlugin.Initialize: {0}", ex.Message);
-            return false;
+            LOG.ErrorFormat("Problem registering Confluence services: {0}", ex.Message);
         }
+    }
 
+    /// <summary>
+    /// Implementation of the IGreenshotPlugin.Start
+    /// </summary>
+    public bool Start()
+    {
         if (ConfluenceDestination.IsInitialized)
         {
             SimpleServiceProvider.Current.AddService<IDestination>(new ConfluenceDestination());

@@ -37,7 +37,7 @@ namespace Greenshot.Plugin.Dropbox;
 public class DropboxPlugin : IGreenshotPlugin
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(DropboxPlugin));
-    private static DropboxConfiguration _config;
+    private static IDropboxConfiguration _config;
     private ComponentResourceManager _resources;
     private ToolStripMenuItem _itemPlugInConfig;
 
@@ -66,14 +66,27 @@ public class DropboxPlugin : IGreenshotPlugin
     public bool IsConfigurable => true;
 
     /// <summary>
-    /// Implementation of the IGreenshotPlugin.Initialize
+    /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public bool Initialize()
+    public void RegisterConfiguration()
     {
-        // Register configuration (don't need the configuration itself)
-        _config = IniConfig.GetIniSection<DropboxConfiguration>();
+        _config = IniConfig.GetIniSection<IDropboxConfiguration>();
+    }
+
+    /// <summary>
+    /// Implementation of RegisterServices phase: register DI services after config is loaded.
+    /// </summary>
+    public void RegisterServices()
+    {
         _resources = new ComponentResourceManager(typeof(DropboxPlugin));
         SimpleServiceProvider.Current.AddService<IDestination>(new DropboxDestination(this));
+    }
+
+    /// <summary>
+    /// Implementation of the IGreenshotPlugin.Start
+    /// </summary>
+    public bool Start()
+    {
         _itemPlugInConfig = new ToolStripMenuItem
         {
             Text = Language.GetString("dropbox", LangKey.Configure),

@@ -38,8 +38,8 @@ namespace Greenshot.Plugin.ExternalCommand;
 public class ExternalCommandPlugin : IGreenshotPlugin
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ExternalCommandPlugin));
-    private static readonly CoreConfiguration CoreConfig = IniConfig.GetIniSection<CoreConfiguration>();
-    private static readonly ExternalCommandConfiguration ExternalCommandConfig = IniConfig.GetIniSection<ExternalCommandConfiguration>();
+    private static ICoreConfiguration CoreConfig;
+    private static IExternalCommandConfiguration ExternalCommandConfig;
     private ToolStripMenuItem _itemPlugInRoot;
 
     public void Dispose()
@@ -120,14 +120,20 @@ public class ExternalCommandPlugin : IGreenshotPlugin
     }
 
     /// <summary>
-    /// Implementation of the IGreenshotPlugin.Initialize
+    /// Implementation of RegisterConfiguration phase: register INI sections before file is loaded.
     /// </summary>
-    public virtual bool Initialize()
+    public void RegisterConfiguration()
     {
-        Log.DebugFormat("Initialize called");
+        CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+        ExternalCommandConfig = IniConfig.GetIniSection<IExternalCommandConfiguration>();
+    }
 
+    /// <summary>
+    /// Implementation of RegisterServices phase: register DI services after config is loaded.
+    /// </summary>
+    public void RegisterServices()
+    {
         var commandsToDelete = new List<string>();
-        // Check configuration
         foreach (string command in ExternalCommandConfig.Commands)
         {
             if (!IsCommandValid(command))
@@ -136,14 +142,19 @@ public class ExternalCommandPlugin : IGreenshotPlugin
             }
         }
 
-        // cleanup
         foreach (string command in commandsToDelete)
         {
             ExternalCommandConfig.Delete(command);
         }
 
         SimpleServiceProvider.Current.AddService(Destinations());
+    }
 
+    /// <summary>
+    /// Implementation of the IGreenshotPlugin.Start
+    /// </summary>
+    public bool Start()
+    {
         _itemPlugInRoot = new ToolStripMenuItem();
         _itemPlugInRoot.Click += ConfigMenuClick;
         OnIconSizeChanged(this, new PropertyChangedEventArgs("IconSize"));
