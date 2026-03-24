@@ -109,6 +109,11 @@ namespace Greenshot.Base.IniFile
             _configName = configName;
             _loaded = false;
 
+            // Register custom value converters before building any IniConfig instance.
+            // This ensures types not natively supported by Dapplo.Ini (NativeRect, Color, etc.)
+            // can be serialised/deserialised correctly.
+            IniValueConverters.Register();
+
             var writeLocation = CreateIniLocation(configName + IniExtension, false);
             var writeDir = Path.GetDirectoryName(writeLocation) ?? ".";
             var fileName = Path.GetFileName(writeLocation);
