@@ -44,5 +44,10 @@ public interface IImgurConfiguration : IIniSection
     // Runtime-only: not persisted to the ini file (no [IniValue] attribute)
     Dictionary<string, ImgurInfo> RuntimeImgurHistory { get; set; }
 
+    /// <summary>
+    /// Opens the Imgur settings dialog.
+    /// Implemented in <see cref="ImgurConfigurationImpl"/>.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
     bool ShowConfigDialog();
 }

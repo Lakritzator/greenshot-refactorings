@@ -65,8 +65,9 @@ public interface IExternalCommandConfiguration : IIniSection, IAfterLoad
     List<string> DeletedBuildInCommands { get; set; }
 
     /// <summary>
-    /// Delete the configuration for the specified command
+    /// Deletes the configuration for the specified command.
+    /// Implemented in <see cref="ExternalCommandConfigurationImpl"/>.
     /// </summary>
-    /// <param name="command">string with command</param>
+    /// <param name="command">Name of the command to delete</param>
     void Delete(string command);
 }

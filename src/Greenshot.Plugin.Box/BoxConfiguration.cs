@@ -57,5 +57,10 @@ public interface IBoxConfiguration : IIniSection, IAfterLoad
     /// </summary>
     DateTimeOffset AccessTokenExpires { get; set; }
 
+    /// <summary>
+    /// Opens the Box settings dialog.
+    /// Implemented in <see cref="BoxConfigurationImpl"/>.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
     bool ShowConfigDialog();
 }

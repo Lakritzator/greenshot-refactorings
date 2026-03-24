@@ -51,5 +51,10 @@ public interface IDropboxConfiguration : IIniSection, IAfterLoad
     /// </summary>
     DateTimeOffset AccessTokenExpires { get; set; }
 
+    /// <summary>
+    /// Opens the Dropbox settings dialog.
+    /// Implemented in <see cref="DropboxConfigurationImpl"/>.
+    /// </summary>
+    /// <returns>true if OK was pressed; false if cancelled</returns>
     bool ShowConfigDialog();
 }
