@@ -138,12 +138,20 @@ namespace Greenshot.Base.IniFile
                 builder.AddConstantsFile(fixedFile);
             }
 
+            // Resolve the assembly version for metadata (e.g. "1.4.123.0").
+            // Fall back to "1.4" when the entry assembly is not available (unit tests, designer).
+            var entryAssembly = Assembly.GetEntryAssembly();
+            var assemblyVersion = entryAssembly?.GetName().Version?.ToString() ?? "1.4";
+
             // Register the core host section so it is always present when plugins add theirs.
             // AutoSaveInterval ensures that any pending changes are flushed automatically,
             // so callers do not need to invoke Save() explicitly after modifying values.
+            // EnableMetadata writes a [__metadata__] section to the INI file on every save so
+            // that IAfterLoad hooks can apply version-gated migration steps.
             _iniConfig = builder
                 .RegisterSection(new CoreConfigurationImpl())
                 .AutoSaveInterval(TimeSpan.FromSeconds(2))
+                .EnableMetadata(version: assemblyVersion, applicationName: _applicationName)
                 .Create();
         }
 
