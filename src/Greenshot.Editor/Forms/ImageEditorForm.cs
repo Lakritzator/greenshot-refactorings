@@ -174,17 +174,17 @@ namespace Greenshot.Editor.Forms
 
             // Make sure the editor is placed on the same location as the last editor was on close
             // But only if this still exists, else it will be reset (BUG-1812)
-            WindowPlacement editorWindowPlacement = EditorConfiguration.GetEditorPlacement();
+            WindowPlacement editorWindowPlacement = EditorConfigurationHelper.GetEditorPlacement(EditorConfiguration);
             NativeRect screenBounds = DisplayInfo.ScreenBounds;
             if (!screenBounds.Contains(editorWindowPlacement.NormalPosition))
             {
-                EditorConfiguration.ResetEditorPlacement();
+                EditorConfigurationHelper.ResetEditorPlacement(EditorConfiguration);
             }
 
             // ReSharper disable once UnusedVariable
             WindowDetails thisForm = new(Handle)
             {
-                WindowPlacement = EditorConfiguration.GetEditorPlacement()
+                WindowPlacement = EditorConfigurationHelper.GetEditorPlacement(EditorConfiguration)
             };
 
             // init surface
@@ -1041,7 +1041,7 @@ namespace Greenshot.Editor.Forms
             }
 
             // persist our geometry string.
-            EditorConfiguration.SetEditorPlacement(new WindowDetails(Handle).WindowPlacement);
+            EditorConfigurationHelper.SetEditorPlacement(EditorConfiguration, new WindowDetails(Handle).WindowPlacement);
             IniConfig.Save();
 
             // remove from the editor list

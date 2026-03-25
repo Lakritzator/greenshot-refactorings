@@ -19,14 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Dapplo.Windows.Common.Structs;
-using Dapplo.Windows.User32.Enums;
-using Dapplo.Windows.User32.Structs;
-using Greenshot.Base.Interfaces.Drawing;
-using Greenshot.Editor.Drawing.Fields;
 
 namespace Greenshot.Editor.Configuration
 {
@@ -40,84 +34,6 @@ namespace Greenshot.Editor.Configuration
             {
                 FreehandSensitivity = 1;
             }
-        }
-
-        /// <param name="requestingType">Type of the class for which to create the field</param>
-        /// <param name="fieldType">FieldType of the field to construct</param>
-        /// <param name="preferredDefaultValue"></param>
-        /// <returns>a new Field of the given fieldType, with the scope of it's value being restricted to the Type scope</returns>
-        public IField CreateField(Type requestingType, IFieldType fieldType, object preferredDefaultValue)
-        {
-            string requestingTypeName = requestingType.Name;
-            string requestedField = requestingTypeName + "." + fieldType.Name;
-            object fieldValue = preferredDefaultValue;
-
-            LastUsedFieldValues ??= new Dictionary<string, object>();
-
-            if (LastUsedFieldValues.ContainsKey(requestedField))
-            {
-                if (LastUsedFieldValues[requestedField] != null)
-                {
-                    fieldValue = LastUsedFieldValues[requestedField];
-                }
-                else
-                {
-                    LastUsedFieldValues[requestedField] = fieldValue;
-                }
-            }
-            else
-            {
-                LastUsedFieldValues.Add(requestedField, fieldValue);
-            }
-
-            return new Field(fieldType, requestingType)
-            {
-                Value = fieldValue
-            };
-        }
-
-        public void UpdateLastFieldValue(IField field)
-        {
-            string requestedField = field.Scope + "." + field.FieldType.Name;
-            LastUsedFieldValues ??= new Dictionary<string, object>();
-
-            if (LastUsedFieldValues.ContainsKey(requestedField))
-            {
-                LastUsedFieldValues[requestedField] = field.Value;
-            }
-            else
-            {
-                LastUsedFieldValues.Add(requestedField, field.Value);
-            }
-        }
-
-        public void ResetEditorPlacement()
-        {
-            WindowNormalPosition = new NativeRect(100, 100, 400, 400);
-            WindowMaxPosition = new NativePoint(-1, -1);
-            WindowMinPosition = new NativePoint(-1, -1);
-            WindowPlacementFlags = 0;
-            ShowWindowCommand = ShowWindowCommands.Normal;
-        }
-
-        public WindowPlacement GetEditorPlacement()
-        {
-            WindowPlacement placement = WindowPlacement.Create();
-            placement.NormalPosition = WindowNormalPosition;
-            placement.MaxPosition = WindowMaxPosition;
-            placement.MinPosition = WindowMinPosition;
-            placement.ShowCmd = ShowWindowCommand;
-            placement.Flags = WindowPlacementFlags;
-            return placement;
-        }
-
-        public void SetEditorPlacement(WindowPlacement placement)
-        {
-            WindowNormalPosition = placement.NormalPosition;
-            WindowMaxPosition = placement.MaxPosition;
-            WindowMinPosition = placement.MinPosition;
-            ShowWindowCommand = placement.ShowCmd;
-            WindowPlacementFlags = placement.Flags;
         }
     }
 }

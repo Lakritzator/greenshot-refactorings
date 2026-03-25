@@ -216,7 +216,7 @@ namespace Greenshot.Editor.Drawing.Fields
 
                 drawableContainerField.Value = field.Value;
                 // update last used from DC field, so that scope is honored
-                EditorConfig.UpdateLastFieldValue(drawableContainerField);
+                EditorConfigurationHelper.UpdateLastFieldValue(EditorConfig, drawableContainerField);
             }
         }
     }

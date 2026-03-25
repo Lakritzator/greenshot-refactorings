@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -28,9 +27,7 @@ using System.Runtime.Serialization;
 using Dapplo.Ini;
 using Dapplo.Windows.Common.Structs;
 using Dapplo.Windows.User32.Enums;
-using Dapplo.Windows.User32.Structs;
 using Greenshot.Base.Effects;
-using Greenshot.Base.Interfaces.Drawing;
 
 namespace Greenshot.Editor.Configuration
 {
@@ -127,15 +124,5 @@ namespace Greenshot.Editor.Configuration
         [Description("Vertical offset in pixels for matched rectangles")]
         [DefaultValue(-5)]
         int TextObfuscationOffsetVertical { get; set; }
-
-        IField CreateField(Type requestingType, IFieldType fieldType, object preferredDefaultValue);
-
-        void UpdateLastFieldValue(IField field);
-
-        void ResetEditorPlacement();
-
-        WindowPlacement GetEditorPlacement();
-
-        void SetEditorPlacement(WindowPlacement placement);
     }
 }

@@ -73,7 +73,7 @@ namespace Greenshot.Editor.Drawing.Fields
 
         public void AddField(Type requestingType, IFieldType fieldType, object fieldValue)
         {
-            AddField(EditorConfig.CreateField(requestingType, fieldType, fieldValue));
+            AddField(EditorConfigurationHelper.CreateField(EditorConfig, requestingType, fieldType, fieldValue));
         }
 
         public virtual void AddField(IField field)
