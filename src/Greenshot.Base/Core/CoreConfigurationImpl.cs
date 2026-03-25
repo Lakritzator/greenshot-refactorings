@@ -104,7 +104,7 @@ namespace Greenshot.Base.Core
             {
                 try
                 {
-                    LastSaveWithVersion = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+                    SetRawValue(nameof(LastSaveWithVersion), Assembly.GetEntryAssembly()?.GetName().Version.ToString());
                 }
                 catch
                 {
@@ -272,7 +272,7 @@ namespace Greenshot.Base.Core
         {
             try
             {
-                LastSaveWithVersion = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+                SetRawValue(nameof(LastSaveWithVersion), Assembly.GetEntryAssembly()?.GetName().Version.ToString());
             }
             catch
             {

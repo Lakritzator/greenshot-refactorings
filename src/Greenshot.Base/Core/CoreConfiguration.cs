@@ -348,7 +348,7 @@ namespace Greenshot.Base.Core
         string OptimizePNGCommandArguments { get; set; }
 
         [Description("Version of Greenshot which created this .ini")]
-        string LastSaveWithVersion { get; set; }
+        string LastSaveWithVersion { get; }
 
         [Description("When reading images from files or clipboard, use the EXIF information to correct the orientation")]
         [DefaultValue(true)]

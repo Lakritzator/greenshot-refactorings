@@ -146,11 +146,14 @@ namespace Greenshot.Base.IniFile
             // Register the core host section so it is always present when plugins add theirs.
             // AutoSaveInterval ensures that any pending changes are flushed automatically,
             // so callers do not need to invoke Save() explicitly after modifying values.
+            // LockFile holds the INI file open exclusively for the process lifetime, preventing
+            // external edits while Greenshot is running.
             // EnableMetadata writes a [__metadata__] section to the INI file on every save so
             // that IAfterLoad hooks can apply version-gated migration steps.
             _iniConfig = builder
                 .RegisterSection(new CoreConfigurationImpl())
                 .AutoSaveInterval(TimeSpan.FromSeconds(2))
+                .LockFile()
                 .EnableMetadata(version: assemblyVersion, applicationName: _applicationName)
                 .Create();
         }
