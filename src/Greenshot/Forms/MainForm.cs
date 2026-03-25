@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Threading;
+using Dapplo.Ini.Interfaces;
 using Dapplo.Windows.Common.Structs;
 using Dapplo.Windows.DesktopWindowsManager;
 using Dapplo.Windows.Dpi;
@@ -1028,8 +1029,10 @@ namespace Greenshot.Forms
                 return;
             }
 
+            var coreSection = IniConfig.GetIniSection("Core");
+
             // Only add if the value is not fixed
-            if (!_conf.Values["CaptureMousepointer"].IsFixed)
+            if (coreSection == null || !coreSection.IsConstant("CaptureMousepointer"))
             {
                 // For the capture mouse-cursor option
                 ToolStripMenuSelectListItem captureMouseItem = new ToolStripMenuSelectListItem
@@ -1044,7 +1047,7 @@ namespace Greenshot.Forms
             }
 
             ToolStripMenuSelectList selectList;
-            if (!_conf.Values["Destinations"].IsFixed)
+            if (coreSection == null || !coreSection.IsConstant("Destinations"))
             {
                 // screenshot destination
                 selectList = new ToolStripMenuSelectList("destinations", true, this)
@@ -1061,7 +1064,7 @@ namespace Greenshot.Forms
                 contextmenu_quicksettings.DropDownItems.Add(selectList);
             }
 
-            if (!_conf.Values["WindowCaptureMode"].IsFixed)
+            if (coreSection == null || !coreSection.IsConstant("WindowCaptureMode"))
             {
                 // Capture Modes
                 selectList = new ToolStripMenuSelectList("capturemodes", false, this)
@@ -1084,18 +1087,15 @@ namespace Greenshot.Forms
                 Text = Language.GetString(LangKey.settings_printoptions)
             };
 
-            IniValue iniValue;
-            foreach (string propertyName in _conf.Values.Keys)
-            {
-                if (propertyName.StartsWith("OutputPrint"))
-                {
-                    iniValue = _conf.Values[propertyName];
-                    if (iniValue.Attributes.LanguageKey != null && !iniValue.IsFixed)
-                    {
-                        selectList.AddItem(Language.GetString(iniValue.Attributes.LanguageKey), iniValue, (bool) iniValue.Value);
-                    }
-                }
-            }
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintPromptOptions", "settings_alwaysshowprintoptionsdialog", v => _conf.OutputPrintPromptOptions = v, _conf.OutputPrintPromptOptions);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowRotate", "printoptions_allowrotate", v => _conf.OutputPrintAllowRotate = v, _conf.OutputPrintAllowRotate);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowEnlarge", "printoptions_allowenlarge", v => _conf.OutputPrintAllowEnlarge = v, _conf.OutputPrintAllowEnlarge);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintAllowShrink", "printoptions_allowshrink", v => _conf.OutputPrintAllowShrink = v, _conf.OutputPrintAllowShrink);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintCenter", "printoptions_allowcenter", v => _conf.OutputPrintCenter = v, _conf.OutputPrintCenter);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintInverted", "printoptions_inverted", v => _conf.OutputPrintInverted = v, _conf.OutputPrintInverted);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintGrayscale", "printoptions_printgrayscale", v => _conf.OutputPrintGrayscale = v, _conf.OutputPrintGrayscale);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintMonochrome", "printoptions_printmonochrome", v => _conf.OutputPrintMonochrome = v, _conf.OutputPrintMonochrome);
+            AddBoolMenuItem(selectList, coreSection, "OutputPrintFooter", "printoptions_timestamp", v => _conf.OutputPrintFooter = v, _conf.OutputPrintFooter);
 
             if (selectList.DropDownItems.Count > 0)
             {
@@ -1109,17 +1109,8 @@ namespace Greenshot.Forms
                 Text = Language.GetString(LangKey.settings_visualization)
             };
 
-            iniValue = _conf.Values["PlayCameraSound"];
-            if (!iniValue.IsFixed)
-            {
-                selectList.AddItem(Language.GetString(iniValue.Attributes.LanguageKey), iniValue, (bool) iniValue.Value);
-            }
-
-            iniValue = _conf.Values["ShowTrayNotification"];
-            if (!iniValue.IsFixed)
-            {
-                selectList.AddItem(Language.GetString(iniValue.Attributes.LanguageKey), iniValue, (bool) iniValue.Value);
-            }
+            AddBoolMenuItem(selectList, coreSection, "PlayCameraSound", "settings_playsound", v => _conf.PlayCameraSound = v, _conf.PlayCameraSound);
+            AddBoolMenuItem(selectList, coreSection, "ShowTrayNotification", "settings_shownotify", v => _conf.ShowTrayNotification = v, _conf.ShowTrayNotification);
 
             if (selectList.DropDownItems.Count > 0)
             {
@@ -1138,12 +1129,32 @@ namespace Greenshot.Forms
             }
         }
 
+        /// <summary>
+        /// Adds a bool menu item to a <see cref="ToolStripMenuSelectList"/> for a config property,
+        /// skipping it when the property is marked as constant (admin-enforced).
+        /// </summary>
+        private static void AddBoolMenuItem(
+            ToolStripMenuSelectList list,
+            IIniSection section,
+            string propertyName,
+            string langKey,
+            Action<bool> setter,
+            bool currentValue)
+        {
+            if (section != null && section.IsConstant(propertyName))
+            {
+                return;
+            }
+
+            list.AddItem(Language.GetString(langKey), setter, currentValue);
+        }
+
         private void QuickSettingBoolItemChanged(object sender, EventArgs e)
         {
             ToolStripMenuSelectListItem item = ((ItemCheckedChangedEventArgs) e).Item;
-            if (item.Data is IniValue iniValue)
+            if (item.Data is Action<bool> setter)
             {
-                iniValue.Value = item.Checked;
+                setter(item.Checked);
                 IniConfig.Save();
             }
         }

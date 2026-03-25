@@ -249,6 +249,35 @@ namespace Greenshot.Base.IniFile
             }
         }
 
+        /// <summary>
+        /// Returns the <see cref="IIniSection"/> registered under the given INI section name,
+        /// or <c>null</c> when no section with that name has been registered.
+        /// </summary>
+        /// <remarks>
+        /// This is used by form-binding infrastructure (<c>GreenshotForm</c>) that must look up
+        /// sections by the string name stored on <c>IGreenshotConfigBindable</c> controls.
+        /// The lookup accesses Dapplo.Ini's internal sections dictionary via reflection so that
+        /// sections registered by plugins (which bypass the static wrapper) are also found.
+        /// </remarks>
+        public static IIniSection GetIniSection(string sectionName)
+        {
+            EnsureInitialized();
+
+            var sectionsField = typeof(Dapplo.Ini.IniConfig).GetField(
+                "Sections", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (sectionsField?.GetValue(_iniConfig) is System.Collections.Generic.Dictionary<Type, IIniSection> sections)
+            {
+                foreach (var section in sections.Values)
+                {
+                    if (string.Equals(section.SectionName, sectionName, StringComparison.OrdinalIgnoreCase))
+                        return section;
+                }
+            }
+
+            return null;
+        }
+
         // ── Helpers ──────────────────────────────────────────────────────────
 
         /// <summary>

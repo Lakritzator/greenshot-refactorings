@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using Dapplo.Ini.Interfaces;
 using Greenshot.Base.Core;
 using Greenshot.Base.IniFile;
 using log4net;
@@ -418,11 +419,11 @@ namespace Greenshot.Base.Controls
             // Repopulate the combox boxes
             if (applyTo is not (IGreenshotConfigBindable configBindable and GreenshotComboBox comboxBox)) return;
             if (string.IsNullOrEmpty(configBindable.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) return;
-            IniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+            IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
             if (section == null) return;
-            // Only update the language, so get the actual value and than repopulate
+            // Only update the language, so get the actual value and then repopulate
             Enum currentValue = comboxBox.GetSelectedEnum();
-            comboxBox.Populate(section.Values[configBindable.PropertyName].ValueType);
+            comboxBox.Populate(GetSectionPropertyType(section, configBindable.PropertyName));
             comboxBox.SetValue(currentValue);
         }
 
@@ -440,6 +441,19 @@ namespace Greenshot.Base.Controls
             }
 
             return fields;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Type"/> of the named property on the given INI section,
+        /// or <c>null</c> when the property does not exist.
+        /// Used to populate <see cref="GreenshotComboBox"/> controls with enum values on a
+        /// language change without having to know the concrete section type at compile time.
+        /// </summary>
+        private static Type GetSectionPropertyType(IIniSection section, string propertyName)
+        {
+            return section.GetType()
+                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
+                ?.PropertyType;
         }
 
         /// <summary>
@@ -545,26 +559,30 @@ namespace Greenshot.Base.Controls
                 IGreenshotConfigBindable configBindable = controlObject as IGreenshotConfigBindable;
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+                IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
                 if (section == null) continue;
 
-                if (!section.Values.TryGetValue(configBindable.PropertyName, out var iniValue))
+                var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo == null)
                 {
                     LOG.DebugFormat("Wrong property '{0}' configured for field '{1}'", configBindable.PropertyName, field.Name);
                     continue;
                 }
 
+                var propertyValue = propertyInfo.GetValue(section);
+                bool isFixed = section.IsConstant(configBindable.PropertyName);
+
                 if (controlObject is CheckBox checkBox)
                 {
-                    checkBox.Checked = (bool) iniValue.Value;
-                    checkBox.Enabled = !iniValue.IsFixed;
+                    checkBox.Checked = (bool) propertyValue;
+                    checkBox.Enabled = !isFixed;
                     continue;
                 }
 
                 if (controlObject is RadioButton radíoButton)
                 {
-                    radíoButton.Checked = (bool) iniValue.Value;
-                    radíoButton.Enabled = !iniValue.IsFixed;
+                    radíoButton.Checked = (bool) propertyValue;
+                    radíoButton.Enabled = !isFixed;
                     continue;
                 }
 
@@ -572,26 +590,26 @@ namespace Greenshot.Base.Controls
                 {
                     if (controlObject is HotkeyControl hotkeyControl)
                     {
-                        string hotkeyValue = (string) iniValue.Value;
+                        string hotkeyValue = propertyValue as string;
                         if (!string.IsNullOrEmpty(hotkeyValue))
                         {
                             hotkeyControl.SetHotkey(hotkeyValue);
-                            hotkeyControl.Enabled = !iniValue.IsFixed;
+                            hotkeyControl.Enabled = !isFixed;
                         }
 
                         continue;
                     }
 
-                    textBox.Text = iniValue.ToString();
-                    textBox.Enabled = !iniValue.IsFixed;
+                    textBox.Text = propertyValue?.ToString() ?? string.Empty;
+                    textBox.Enabled = !isFixed;
                     continue;
                 }
 
                 if (controlObject is GreenshotComboBox comboxBox)
                 {
-                    comboxBox.Populate(iniValue.ValueType);
-                    comboxBox.SetValue((Enum) iniValue.Value);
-                    comboxBox.Enabled = !iniValue.IsFixed;
+                    comboxBox.Populate(propertyInfo.PropertyType);
+                    comboxBox.SetValue((Enum) propertyValue);
+                    comboxBox.Enabled = !isFixed;
                 }
             }
 
@@ -615,24 +633,25 @@ namespace Greenshot.Base.Controls
 
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+                IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
                 if (section == null) continue;
 
-                if (!section.Values.TryGetValue(configBindable.PropertyName, out var iniValue))
+                var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo == null || !propertyInfo.CanWrite)
                 {
                     continue;
                 }
 
                 if (controlObject is CheckBox checkBox)
                 {
-                    iniValue.Value = checkBox.Checked;
+                    propertyInfo.SetValue(section, checkBox.Checked);
                     iniDirty = true;
                     continue;
                 }
 
                 if (controlObject is RadioButton radioButton)
                 {
-                    iniValue.Value = radioButton.Checked;
+                    propertyInfo.SetValue(section, radioButton.Checked);
                     iniDirty = true;
                     continue;
                 }
@@ -641,19 +660,21 @@ namespace Greenshot.Base.Controls
                 {
                     if (controlObject is HotkeyControl hotkeyControl)
                     {
-                        iniValue.Value = hotkeyControl.ToString();
+                        propertyInfo.SetValue(section, hotkeyControl.ToString());
                         iniDirty = true;
                         continue;
                     }
 
-                    iniValue.UseValueOrDefault(textBox.Text);
+                    // Use SetRawValue so Dapplo.Ini handles type conversion from the text string.
+                    // Passing null resets to the property's DefaultValue (equivalent to old UseValueOrDefault(null)).
+                    section.SetRawValue(configBindable.PropertyName, string.IsNullOrEmpty(textBox.Text) ? null : textBox.Text);
                     iniDirty = true;
                     continue;
                 }
 
                 if (controlObject is GreenshotComboBox comboxBox)
                 {
-                    iniValue.Value = comboxBox.GetSelectedEnum();
+                    propertyInfo.SetValue(section, comboxBox.GetSelectedEnum());
                     iniDirty = true;
                 }
             }

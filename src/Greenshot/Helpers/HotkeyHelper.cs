@@ -95,10 +95,7 @@ internal static class HotkeyHelper
             else
             {
                 // if failures have been ignored, the config has probably been updated
-                if (config.IsDirty)
-                {
-                    IniConfig.Save();
-                }
+                IniConfig.Save();
             }
         }
 
@@ -107,8 +104,7 @@ internal static class HotkeyHelper
 
     private static bool RegisterWrapper(StringBuilder failedKeys, string functionName, string configurationKey, Action handler, bool ignoreFailedRegistration)
     {
-        IniValue hotkeyValue = config.Values[configurationKey];
-        var hotkeyStringValue = hotkeyValue.Value?.ToString();
+        var hotkeyStringValue = config.GetRawValue(configurationKey);
         if (string.IsNullOrEmpty(hotkeyStringValue))
         {
             return true;
@@ -120,8 +116,8 @@ internal static class HotkeyHelper
             if (!success && ignoreFailedRegistration)
             {
                 LOG.DebugFormat("Ignoring failed hotkey registration for {0}, with value '{1}', resetting to 'None'.", functionName, hotkeyStringValue);
-                config.Values[configurationKey].Value = Keys.None.ToString();
-                config.IsDirty = true;
+                config.SetRawValue(configurationKey, Keys.None.ToString());
+                IniConfig.Save();
             }
 
             return success;
@@ -129,10 +125,10 @@ internal static class HotkeyHelper
         catch (Exception ex)
         {
             LOG.Warn(ex);
-            LOG.WarnFormat("Restoring default hotkey for {0}, stored under {1} from '{2}' to '{3}'", functionName, configurationKey, hotkeyStringValue, hotkeyValue.Attributes.DefaultValue);
-            // when getting an exception the key wasn't found: reset the hotkey value
-            hotkeyValue.UseValueOrDefault(null);
-            hotkeyValue.ContainingIniSection.IsDirty = true;
+            LOG.WarnFormat("Hotkey registration failed for {0} (key '{1}', value '{2}'); clearing the stored value so it will not be retried.", functionName, configurationKey, hotkeyStringValue);
+            // Clear the hotkey so it won't be attempted on next startup.
+            config.SetRawValue(configurationKey, null);
+            IniConfig.Save();
             return RegisterHotkey(failedKeys, functionName, hotkeyStringValue, handler);
         }
     }
