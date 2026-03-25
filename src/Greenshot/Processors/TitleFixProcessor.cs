@@ -57,8 +57,6 @@ namespace Greenshot.Processors
                 config.TitleFixMatcher.Remove(corruptKey);
                 config.TitleFixReplacer.Remove(corruptKey);
             }
-
-            IniConfig.Save();
         }
 
         public override string Designation => "TitleFix";

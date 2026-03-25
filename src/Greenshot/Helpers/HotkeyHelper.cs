@@ -95,7 +95,6 @@ internal static class HotkeyHelper
             else
             {
                 // if failures have been ignored, the config has probably been updated
-                IniConfig.Save();
             }
         }
 
@@ -117,7 +116,6 @@ internal static class HotkeyHelper
             {
                 LOG.DebugFormat("Ignoring failed hotkey registration for {0}, with value '{1}', resetting to 'None'.", functionName, hotkeyStringValue);
                 config.SetRawValue(configurationKey, Keys.None.ToString());
-                IniConfig.Save();
             }
 
             return success;
@@ -128,7 +126,6 @@ internal static class HotkeyHelper
             LOG.WarnFormat("Hotkey registration failed for {0} (key '{1}', value '{2}'); clearing the stored value so it will not be retried.", functionName, configurationKey, hotkeyStringValue);
             // Clear the hotkey so it won't be attempted on next startup.
             config.SetRawValue(configurationKey, null);
-            IniConfig.Save();
             return RegisterHotkey(failedKeys, functionName, hotkeyStringValue, handler);
         }
     }

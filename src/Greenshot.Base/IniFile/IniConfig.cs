@@ -139,8 +139,11 @@ namespace Greenshot.Base.IniFile
             }
 
             // Register the core host section so it is always present when plugins add theirs.
+            // AutoSaveInterval ensures that any pending changes are flushed automatically,
+            // so callers do not need to invoke Save() explicitly after modifying values.
             _iniConfig = builder
                 .RegisterSection(new CoreConfigurationImpl())
+                .AutoSaveInterval(TimeSpan.FromSeconds(2))
                 .Create();
         }
 

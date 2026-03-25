@@ -125,7 +125,6 @@ public static class BoxUtils
             Config.RefreshToken = settings.RefreshToken;
             Config.AccessToken = settings.AccessToken;
             Config.AccessTokenExpires = settings.AccessTokenExpires;
-            IniConfig.Save();
         }
     }
 }

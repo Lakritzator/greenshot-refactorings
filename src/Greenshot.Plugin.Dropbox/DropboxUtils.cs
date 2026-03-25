@@ -105,7 +105,6 @@ public class DropboxUtils
             DropboxConfig.RefreshToken = oauth2Settings.RefreshToken;
             DropboxConfig.AccessToken = oauth2Settings.AccessToken;
             DropboxConfig.AccessTokenExpires = oauth2Settings.AccessTokenExpires;
-            IniConfig.Save();
         }
     }
 }
