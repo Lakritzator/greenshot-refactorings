@@ -21,7 +21,8 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using Dapplo.Ini;
+using Dapplo.Ini.Attributes;
+using Dapplo.Ini.Interfaces;
 using Greenshot.Plugin.Imgur.Forms;
 
 namespace Greenshot.Plugin.Imgur;

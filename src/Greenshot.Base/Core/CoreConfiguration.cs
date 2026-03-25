@@ -25,7 +25,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Runtime.Serialization;
-using Dapplo.Ini;
+using Dapplo.Ini.Attributes;
+using Dapplo.Ini.Interfaces;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Base.Core.Enums;
 

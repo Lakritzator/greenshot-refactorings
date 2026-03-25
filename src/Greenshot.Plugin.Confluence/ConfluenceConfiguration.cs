@@ -21,7 +21,8 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Dapplo.Ini;
+using Dapplo.Ini.Attributes;
+using Dapplo.Ini.Interfaces;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.Confluence;

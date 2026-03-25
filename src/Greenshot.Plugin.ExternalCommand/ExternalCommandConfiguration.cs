@@ -22,7 +22,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Dapplo.Ini;
+using Dapplo.Ini.Attributes;
+using Dapplo.Ini.Interfaces;
 using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.ExternalCommand;
