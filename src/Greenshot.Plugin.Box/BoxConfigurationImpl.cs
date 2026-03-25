@@ -23,7 +23,7 @@ using Greenshot.Base.IniFile;
 
 namespace Greenshot.Plugin.Box;
 
-public partial class BoxConfigurationImpl
+public partial class BoxConfigurationImpl : IBoxConfiguration
 {
     public void OnAfterLoad()
     {

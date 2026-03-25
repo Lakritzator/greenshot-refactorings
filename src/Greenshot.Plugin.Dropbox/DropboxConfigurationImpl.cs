@@ -23,7 +23,7 @@ using Greenshot.Base.IniFile;
 
 namespace Greenshot.Plugin.Dropbox;
 
-public partial class DropboxConfigurationImpl
+public partial class DropboxConfigurationImpl : IDropboxConfiguration
 {
     public void OnAfterLoad()
     {

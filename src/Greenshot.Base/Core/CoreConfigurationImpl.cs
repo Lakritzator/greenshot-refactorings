@@ -31,7 +31,7 @@ using log4net;
 
 namespace Greenshot.Base.Core
 {
-    public partial class CoreConfigurationImpl
+    public partial class CoreConfigurationImpl : ICoreConfiguration
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CoreConfigurationImpl));
 

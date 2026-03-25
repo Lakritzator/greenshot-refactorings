@@ -24,7 +24,7 @@ using System.Drawing;
 
 namespace Greenshot.Editor.Configuration
 {
-    public partial class EditorConfigurationImpl
+    public partial class EditorConfigurationImpl : IEditorConfiguration
     {
         public void OnAfterLoad()
         {

@@ -27,7 +27,7 @@ using Greenshot.Base.Core.Enums;
 
 namespace Greenshot.Plugin.ExternalCommand;
 
-public partial class ExternalCommandConfigurationImpl
+public partial class ExternalCommandConfigurationImpl : IExternalCommandConfiguration
 {
     private const string MsPaint = "MS Paint";
     private static readonly string PaintPath;
