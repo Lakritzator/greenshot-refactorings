@@ -28,7 +28,7 @@ using Dapplo.HttpExtensions.WinForms.ContentConverter;
 using Dapplo.Jira.SvgWinForms.Converters;
 using Dapplo.Log;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using Greenshot.Plugin.Jira.Forms;

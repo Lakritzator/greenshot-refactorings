@@ -26,7 +26,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Greenshot.Base.Core.Enums;
-using Greenshot.Base.IniFile;
 using log4net;
 
 namespace Greenshot.Base.Core
@@ -45,7 +44,7 @@ namespace Greenshot.Base.Core
 
         private string CreateOutputFilePath()
         {
-            if (IniConfig.IsPortable)
+            if (GreenshotEnvironment.IsPortable)
             {
                 string pafOutputFilePath = Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots");
                 if (!Directory.Exists(pafOutputFilePath))
@@ -90,7 +89,7 @@ namespace Greenshot.Base.Core
             var outputFilePath = Path.GetDirectoryName(OutputFileAsFullpath);
             if (outputFilePath == null || (!File.Exists(OutputFileAsFullpath) && !Directory.Exists(outputFilePath)))
             {
-                OutputFileAsFullpath = IniConfig.IsPortable
+                OutputFileAsFullpath = GreenshotEnvironment.IsPortable
                     ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots\dummy.png")
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "dummy.png");
             }
@@ -241,7 +240,7 @@ namespace Greenshot.Base.Core
 
             if (string.IsNullOrEmpty(OutputFileAsFullpath))
             {
-                OutputFileAsFullpath = IniConfig.IsPortable
+                OutputFileAsFullpath = GreenshotEnvironment.IsPortable
                     ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots\dummy.png")
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "dummy.png");
             }

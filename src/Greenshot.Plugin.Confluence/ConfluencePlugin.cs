@@ -22,7 +22,7 @@
 using System;
 using System.Windows;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using Greenshot.Plugin.Confluence.Forms;
@@ -156,7 +156,6 @@ public class ConfluencePlugin : IGreenshotPlugin
         bool? dialogResult = configForm.ShowDialog();
         if (dialogResult.HasValue && dialogResult.Value)
         {
-            IniConfig.Save();
             if (_confluenceConnector != null)
             {
                 if (!url.Equals(_config.Url))
@@ -173,7 +172,7 @@ public class ConfluencePlugin : IGreenshotPlugin
         else
         {
             // User cancelled — reload to discard any changes made by the form binding.
-            IniConfig.Reload();
+            IniConfigRegistry.Get().Reload();
         }
     }
 }

@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Threading;
+using Dapplo.Ini;
 using Dapplo.Ini.Interfaces;
 using Dapplo.Windows.Common.Structs;
 using Dapplo.Windows.DesktopWindowsManager;
@@ -44,10 +45,8 @@ using Dapplo.Windows.User32;
 using Greenshot.Base;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
-using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Greenshot.Base.Help;
-using Greenshot.Base.IniFile;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Ocr;
 using Greenshot.Configuration;
@@ -74,9 +73,14 @@ namespace Greenshot.Forms
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(MainForm));
         private static ResourceMutex _applicationMutex;
-        private static ICoreConfiguration _conf = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static ICoreConfiguration _conf = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
-        public static void Start(string[] arguments)
+        /// <summary>
+        /// Application entry-point, called from <see cref="GreenshotMain"/> after the
+        /// <see cref="IniConfigRegistry"/> has been set up and command-line arguments
+        /// have been parsed.
+        /// </summary>
+        public static void Start(CommandLineOptions options)
         {
             try
             {
@@ -85,26 +89,6 @@ namespace Greenshot.Forms
                 _applicationMutex = ResourceMutex.Create("F48E86D3-E34C-4DB7-8F8F-9A0EA55F0D08", "Greenshot", false);
 
                 var isAlreadyRunning = !_applicationMutex.IsLocked;
-
-                if (arguments.Length > 0 && Log.IsDebugEnabled)
-                {
-                    var argumentString = new StringBuilder();
-                    foreach (string argument in arguments)
-                    {
-                        argumentString.Append("[").Append(argument).Append("] ");
-                    }
-
-                    Log.Debug("Greenshot arguments: " + argumentString);
-                }
-
-                // Parse command line arguments using System.CommandLine.
-                // Returns null when --help was shown or a parse error occurred (application should exit).
-                var options = GreenshotCommandLine.Parse(arguments);
-                if (options == null)
-                {
-                    FreeMutex();
-                    return;
-                }
 
                 if (options.Exit)
                 {
@@ -144,12 +128,6 @@ namespace Greenshot.Forms
                 if (options.Language != null)
                 {
                     _conf.Language = options.Language;
-                    IniConfig.Save();
-                }
-
-                if (options.IniDirectory != null)
-                {
-                    IniConfig.IniDirectory = options.IniDirectory;
                 }
 
                 if (isAlreadyRunning)
@@ -246,8 +224,6 @@ namespace Greenshot.Forms
 
                 Application.ApplicationExit += Application_ApplicationExit;
 
-                // force saving ini on every start because some init functions could change/fix the configuration. i.e. loading plugins
-                IniConfig.Save();
                 Application.Run(new MainForm(options));
             }
             catch (Exception ex)
@@ -1029,7 +1005,7 @@ namespace Greenshot.Forms
                 return;
             }
 
-            var coreSection = IniConfig.GetIniSection("Core");
+            var coreSection = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
             // Only add if the value is not fixed
             if (coreSection == null || !coreSection.IsConstant("CaptureMousepointer"))
@@ -1155,7 +1131,6 @@ namespace Greenshot.Forms
             if (item.Data is Action<bool> setter)
             {
                 setter(item.Checked);
-                IniConfig.Save();
             }
         }
 
@@ -1196,8 +1171,6 @@ namespace Greenshot.Forms
             {
                 _conf.OutputDestinations.Add(nameof(WellKnownDestinations.Picker));
             }
-
-            IniConfig.Save();
 
             // Rebuild the quick settings menu with the new settings.
             InitializeQuickSettingsMenu();
@@ -1428,16 +1401,6 @@ namespace Greenshot.Forms
             }
 
             ImageIO.RemoveTmpFiles();
-
-            // Store any open configuration changes
-            try
-            {
-                IniConfig.Save();
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error storing configuration!", e);
-            }
 
             // Remove the application mutex
             FreeMutex();

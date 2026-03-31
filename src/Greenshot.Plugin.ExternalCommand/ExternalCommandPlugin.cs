@@ -26,7 +26,7 @@ using System.IO;
 using System.Windows.Forms;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 
@@ -135,7 +135,7 @@ public class ExternalCommandPlugin : IGreenshotPlugin
     /// </summary>
     public void RegisterServices(IServiceLocator serviceLocator)
     {
-        CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+        CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
         var commandsToDelete = new List<string>();
         foreach (string command in ExternalCommandConfig.Commands)
         {

@@ -25,7 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Plugin.ExternalCommand;
 
@@ -35,8 +35,8 @@ namespace Greenshot.Plugin.ExternalCommand;
 public partial class SettingsFormDetail : ExternalCommandForm
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(SettingsFormDetail));
-    private static readonly IExternalCommandConfiguration ExternalCommandConfig = IniConfig.GetIniSection<IExternalCommandConfiguration>();
-    private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+    private static readonly IExternalCommandConfiguration ExternalCommandConfig = IniConfigRegistry.GetSection<IExternalCommandConfiguration>();
+    private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
     private readonly string _commando;
     private readonly int _commandIndex;

@@ -25,7 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Plugin.Imgur.Forms;
 
@@ -37,7 +37,7 @@ public sealed partial class ImgurHistory : ImgurForm
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ImgurHistory));
     private readonly GreenshotColumnSorter _columnSorter;
     private static readonly object Lock = new object();
-    private static readonly IImgurConfiguration Config = IniConfig.GetIniSection<IImgurConfiguration>();
+    private static readonly IImgurConfiguration Config = IniConfigRegistry.GetSection<IImgurConfiguration>();
     private static ImgurHistory _instance;
 
     public static void ShowHistory()
@@ -209,7 +209,6 @@ public sealed partial class ImgurHistory : ImgurForm
         {
             Config.RuntimeImgurHistory.Clear();
             Config.ImgurUploadHistory.Clear();
-            IniConfig.Save();
             Redraw();
         }
     }

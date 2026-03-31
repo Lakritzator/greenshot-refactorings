@@ -22,7 +22,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using log4net;
 
@@ -34,7 +34,7 @@ namespace Greenshot.Processors
     public class TitleFixProcessor : AbstractProcessor
     {
         private static readonly ILog LOG = LogManager.GetLogger(typeof(TitleFixProcessor));
-        private static readonly ICoreConfiguration config = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration config = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
         public TitleFixProcessor()
         {

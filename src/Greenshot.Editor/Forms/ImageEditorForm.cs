@@ -43,7 +43,7 @@ using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Effects;
 using Greenshot.Base.Help;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Base.Interfaces.Forms;
@@ -66,8 +66,8 @@ namespace Greenshot.Editor.Forms
     public partial class ImageEditorForm : EditorForm, IImageEditor
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ImageEditorForm));
-        private static readonly IEditorConfiguration EditorConfiguration = IniConfig.GetIniSection<IEditorConfiguration>();
-        private static readonly ICoreConfiguration CoreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly IEditorConfiguration EditorConfiguration = IniConfigRegistry.GetSection<IEditorConfiguration>();
+        private static readonly ICoreConfiguration CoreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
         private static readonly List<string> IgnoreDestinations = new()
         {
@@ -1042,7 +1042,6 @@ namespace Greenshot.Editor.Forms
 
             // persist our geometry string.
             EditorConfigurationHelper.SetEditorPlacement(EditorConfiguration, new WindowDetails(Handle).WindowPlacement);
-            IniConfig.Save();
 
             // remove from the editor list
             lock (_editorListLock)

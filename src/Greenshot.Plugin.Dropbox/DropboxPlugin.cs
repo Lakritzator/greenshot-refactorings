@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using Greenshot.Plugin.Dropbox.Forms;

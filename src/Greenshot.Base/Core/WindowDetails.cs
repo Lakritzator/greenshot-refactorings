@@ -24,7 +24,7 @@ using Dapplo.Windows.User32;
 using Dapplo.Windows.User32.Enums;
 using Dapplo.Windows.User32.Structs;
 using Greenshot.Base.Core.Enums;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interop;
 using log4net;
@@ -50,7 +50,7 @@ namespace Greenshot.Base.Core
         }); //"MS-SDIa"
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(WindowDetails));
-        private static readonly ICoreConfiguration Conf = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration Conf = IniConfigRegistry.GetSection<ICoreConfiguration>();
         private static readonly IList<IntPtr> IgnoreHandles = new List<IntPtr>();
         private static readonly IList<string> ExcludeProcessesFromFreeze = new List<string>();
         private static readonly IAppVisibility AppVisibility;

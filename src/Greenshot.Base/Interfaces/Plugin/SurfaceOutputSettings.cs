@@ -23,13 +23,13 @@ using System.Collections.Generic;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Effects;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Base.Interfaces.Plugin
 {
     public class SurfaceOutputSettings
     {
-        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
         private bool _reduceColors;
         private bool _disableReduceColors;
 

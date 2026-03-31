@@ -26,7 +26,7 @@ using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using log4net;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -39,7 +39,7 @@ namespace Greenshot.Plugin.Win10
     public class ToastNotificationService : INotificationService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ToastNotificationService));
-        private static readonly ICoreConfiguration CoreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
         private readonly string _imageFilePath;
 

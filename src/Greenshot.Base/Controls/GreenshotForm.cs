@@ -29,9 +29,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using Dapplo.Ini;
 using Dapplo.Ini.Interfaces;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
 using log4net;
 
 namespace Greenshot.Base.Controls
@@ -59,7 +59,7 @@ namespace Greenshot.Base.Controls
             if (!IsInDesignMode)
             {
 #endif
-                coreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
+                coreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
 #if DEBUG
             }
 #endif
@@ -419,7 +419,7 @@ namespace Greenshot.Base.Controls
             // Repopulate the combox boxes
             if (applyTo is not (IGreenshotConfigBindable configBindable and GreenshotComboBox comboxBox)) return;
             if (string.IsNullOrEmpty(configBindable.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) return;
-            IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+            IIniSection section = GetIniSectionByName(configBindable.SectionName);
             if (section == null) return;
             // Only update the language, so get the actual value and then repopulate
             Enum currentValue = comboxBox.GetSelectedEnum();
@@ -430,6 +430,35 @@ namespace Greenshot.Base.Controls
         /// <summary>
         /// Helper method to cache the fieldinfo values, so we don't need to reflect all the time!
         /// </summary>
+        /// <summary>
+        /// Looks up a registered <see cref="IIniSection"/> by its INI section name (e.g. "Core", "Editor").
+        /// Used by form-binding infrastructure to resolve sections referenced by
+        /// <see cref="IGreenshotConfigBindable.SectionName"/> at runtime.
+        /// </summary>
+        private static IIniSection GetIniSectionByName(string sectionName)
+        {
+            var iniConfig = IniConfigRegistry.Get();
+            if (iniConfig == null) return null;
+
+            // Access the sections dictionary via the private _sections backing field.
+            // Dapplo.Ini stores all registered sections there as Dictionary<Type, IIniSection>.
+            var sectionsField = iniConfig.GetType().GetField("_sections",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            if (sectionsField?.GetValue(iniConfig) is System.Collections.IDictionary sectionsDict)
+            {
+                foreach (System.Collections.DictionaryEntry entry in sectionsDict)
+                {
+                    if (entry.Value is IIniSection sec &&
+                        string.Equals(sec.SectionName, sectionName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return sec;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         /// <param name="typeToGetFieldsFor"></param>
         /// <returns></returns>
         private static FieldInfo[] GetCachedFields(Type typeToGetFieldsFor)
@@ -559,7 +588,7 @@ namespace Greenshot.Base.Controls
                 IGreenshotConfigBindable configBindable = controlObject as IGreenshotConfigBindable;
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+                IIniSection section = GetIniSectionByName(configBindable.SectionName);
                 if (section == null) continue;
 
                 var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -625,7 +654,6 @@ namespace Greenshot.Base.Controls
         /// </summary>
         protected void StoreFields()
         {
-            bool iniDirty = false;
             foreach (FieldInfo field in GetCachedFields(GetType()))
             {
                 var controlObject = field.GetValue(this);
@@ -633,7 +661,7 @@ namespace Greenshot.Base.Controls
 
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IIniSection section = IniConfig.GetIniSection(configBindable.SectionName);
+                IIniSection section = GetIniSectionByName(configBindable.SectionName);
                 if (section == null) continue;
 
                 var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -645,14 +673,12 @@ namespace Greenshot.Base.Controls
                 if (controlObject is CheckBox checkBox)
                 {
                     propertyInfo.SetValue(section, checkBox.Checked);
-                    iniDirty = true;
                     continue;
                 }
 
                 if (controlObject is RadioButton radioButton)
                 {
                     propertyInfo.SetValue(section, radioButton.Checked);
-                    iniDirty = true;
                     continue;
                 }
 
@@ -661,27 +687,19 @@ namespace Greenshot.Base.Controls
                     if (controlObject is HotkeyControl hotkeyControl)
                     {
                         propertyInfo.SetValue(section, hotkeyControl.ToString());
-                        iniDirty = true;
                         continue;
                     }
 
                     // Use SetRawValue so Dapplo.Ini handles type conversion from the text string.
                     // Passing null resets to the property's DefaultValue (equivalent to old UseValueOrDefault(null)).
                     section.SetRawValue(configBindable.PropertyName, string.IsNullOrEmpty(textBox.Text) ? null : textBox.Text);
-                    iniDirty = true;
                     continue;
                 }
 
                 if (controlObject is GreenshotComboBox comboxBox)
                 {
                     propertyInfo.SetValue(section, comboxBox.GetSelectedEnum());
-                    iniDirty = true;
                 }
-            }
-
-            if (iniDirty)
-            {
-                IniConfig.Save();
             }
         }
     }

@@ -22,14 +22,14 @@
 using System.ComponentModel;
 using System.Drawing;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 
 namespace Greenshot.Plugin.Dropbox;
 
 internal class DropboxDestination : AbstractDestination
 {
-    private static readonly IDropboxConfiguration DropboxConfig = IniConfig.GetIniSection<IDropboxConfiguration>();
+    private static readonly IDropboxConfiguration DropboxConfig = IniConfigRegistry.GetSection<IDropboxConfiguration>();
 
     private readonly DropboxPlugin _plugin;
 

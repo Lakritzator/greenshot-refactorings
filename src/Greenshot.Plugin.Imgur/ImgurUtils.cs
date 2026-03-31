@@ -24,7 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 
 namespace Greenshot.Plugin.Imgur;
@@ -36,7 +36,7 @@ public static class ImgurUtils
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(ImgurUtils));
     private const string SmallUrlPattern = "https://i.imgur.com/{0}s.jpg";
-    private static readonly IImgurConfiguration Config = IniConfig.GetIniSection<IImgurConfiguration>();
+    private static readonly IImgurConfiguration Config = IniConfigRegistry.GetSection<IImgurConfiguration>();
 
     /// <summary>
     /// Check if we need to load the history
@@ -123,7 +123,6 @@ public static class ImgurUtils
         if (saveNeeded)
         {
             // Save needed changes
-            IniConfig.Save();
         }
     }
 

@@ -25,7 +25,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.OAuth;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Plugin.Box;
 
@@ -35,7 +35,7 @@ namespace Greenshot.Plugin.Box;
 public static class BoxUtils
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(BoxUtils));
-    private static readonly IBoxConfiguration Config = IniConfig.GetIniSection<IBoxConfiguration>();
+    private static readonly IBoxConfiguration Config = IniConfigRegistry.GetSection<IBoxConfiguration>();
     private const string UploadFileUri = "https://upload.box.com/api/2.0/files/content";
     private const string FilesUri = "https://www.box.com/api/2.0/files/{0}";
 

@@ -25,7 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Configuration;
 using Greenshot.Editor.Destinations;
 using Greenshot.Forms;
@@ -39,7 +39,7 @@ namespace Greenshot.Helpers;
 internal static class HotkeyHelper
 {
     private static readonly ILog LOG = LogManager.GetLogger(typeof(ApplicationStartupHelper));
-    private static readonly ICoreConfiguration config = IniConfig.GetIniSection<ICoreConfiguration>();
+    private static readonly ICoreConfiguration config = IniConfigRegistry.GetSection<ICoreConfiguration>();
     
     /// <summary>
     /// Registers all hotkeys as configured, displaying a dialog in case of hotkey conflicts with other tools.

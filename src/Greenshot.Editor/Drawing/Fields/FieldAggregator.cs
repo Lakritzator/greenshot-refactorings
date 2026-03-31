@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Drawing;
 using Greenshot.Editor.Configuration;
@@ -47,7 +47,7 @@ namespace Greenshot.Editor.Drawing.Fields
         private readonly IDrawableContainerList _boundContainers;
         private bool _internalUpdateRunning;
 
-        private static readonly IEditorConfiguration EditorConfig = IniConfig.GetIniSection<IEditorConfiguration>();
+        private static readonly IEditorConfiguration EditorConfig = IniConfigRegistry.GetSection<IEditorConfiguration>();
 
         public FieldAggregator(ISurface parent)
         {

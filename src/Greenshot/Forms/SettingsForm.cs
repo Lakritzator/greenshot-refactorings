@@ -33,7 +33,7 @@ using Greenshot.Base;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
 using Greenshot.Base.Core.Enums;
-using Greenshot.Base.IniFile;
+
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using Greenshot.Configuration;
@@ -497,7 +497,7 @@ namespace Greenshot.Forms
 
             numericUpDownWaitTime.Value = coreConfiguration.CaptureDelay >= 0 ? coreConfiguration.CaptureDelay : 0;
             numericUpDownWaitTime.Enabled = !coreConfiguration.IsConstant("CaptureDelay");
-            if (IniConfig.IsPortable)
+            if (GreenshotEnvironment.IsPortable)
             {
                 checkbox_autostartshortcut.Visible = false;
                 checkbox_autostartshortcut.Checked = false;

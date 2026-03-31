@@ -32,7 +32,7 @@ using Dapplo.Jira;
 using Dapplo.Jira.Entities;
 using Dapplo.Jira.SvgWinForms.Converters;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Plugin.Jira;
 
@@ -42,9 +42,9 @@ namespace Greenshot.Plugin.Jira;
 public sealed class JiraConnector : IDisposable
 {
     private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(JiraConnector));
-    private static readonly IJiraConfiguration JiraConfig = IniConfig.GetIniSection<IJiraConfiguration>();
+    private static readonly IJiraConfiguration JiraConfig = IniConfigRegistry.GetSection<IJiraConfiguration>();
 
-    private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+    private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
     // Used to remove the wsdl information from the old SOAP Uri
     public const string DefaultPostfix = "/rpc/soap/jirasoapservice-v2?wsdl";

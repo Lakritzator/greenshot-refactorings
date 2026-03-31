@@ -26,8 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Dapplo.Ini;
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
 using Greenshot.Base.Interfaces;
 using Greenshot.Base.Interfaces.Plugin;
 using log4net;
@@ -41,7 +41,7 @@ namespace Greenshot.Helpers
     public class PluginHelper : IGreenshotHost
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PluginHelper));
-        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
 
         private static readonly string ApplicationPath = Path.GetDirectoryName(Application.ExecutablePath);
         private static readonly string PafPath = Path.Combine(Application.StartupPath, @"App\Greenshot");
@@ -207,7 +207,7 @@ namespace Greenshot.Helpers
         {
             var pluginFiles = new List<string>();
 
-            if (IniConfig.IsPortable)
+            if (GreenshotEnvironment.IsPortable)
             {
                 pluginFiles.AddRange(FindPluginsOnPath(PafPath));
             }
@@ -257,7 +257,7 @@ namespace Greenshot.Helpers
             }
 
             // ── Phase 1: Register configuration sections (no file I/O) ───────────
-            var activeIniConfig = IniConfig.GetActiveConfig();
+            var activeIniConfig = IniConfigRegistry.Get();
             foreach (var plugin in plugins)
             {
                 try
@@ -272,7 +272,7 @@ namespace Greenshot.Helpers
             }
 
             // ── Single file read (all sections populated at once) ─────────────────
-            IniConfig.Load();
+            IniConfigRegistry.Get().Load();
 
             // ── Phase 2: Register services ────────────────────────────────────────
             foreach (var plugin in plugins)

@@ -20,7 +20,7 @@
  */
 
 using Greenshot.Base.Core;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 
 namespace Greenshot.Plugin.Box;
 
@@ -28,7 +28,7 @@ public partial class BoxConfigurationImpl : IBoxConfiguration
 {
     public void OnAfterLoad()
     {
-        var coreConfiguration = IniConfig.GetIniSection<ICoreConfiguration>();
+        var coreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
         bool isUpgradeFrom12 = coreConfiguration.LastSaveWithVersion?.StartsWith("1.2") ?? false;
         // Clear token when we upgrade from 1.2 to 1.3 as it is no longer valid, discussed in #421
         if (!isUpgradeFrom12) return;

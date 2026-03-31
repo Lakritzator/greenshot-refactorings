@@ -26,7 +26,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Dapplo.Windows.Icons;
-using Greenshot.Base.IniFile;
+using Dapplo.Ini;
 using log4net;
 using Microsoft.Win32;
 
@@ -38,7 +38,7 @@ namespace Greenshot.Base.Core
     public static class PluginUtils
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PluginUtils));
-        private static readonly ICoreConfiguration CoreConfig = IniConfig.GetIniSection<ICoreConfiguration>();
+        private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
         private static readonly IDictionary<string, Image> ExeIconCache = new Dictionary<string, Image>();
         private const string PathKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\";
         

@@ -1,6 +1,6 @@
 /*
  * Greenshot - a free and open source screenshot tool
- * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom, Francis Noel
+ * Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
  *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
@@ -19,22 +19,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Greenshot.Base.Core;
-using Dapplo.Ini;
-
-namespace Greenshot.Plugin.Dropbox;
-
-public partial class DropboxConfigurationImpl : IDropboxConfiguration
+namespace Greenshot.Configuration
 {
-    public void OnAfterLoad()
+    /// <summary>
+    /// Handwritten partial class that pairs with the Dapplo.Ini-generated
+    /// <c>Win10ConfigurationImpl.g.cs</c> to provide the concrete implementation
+    /// of <see cref="IWin10Configuration"/>.
+    /// </summary>
+    public partial class Win10ConfigurationImpl : IWin10Configuration
     {
-        var coreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
-        bool isUpgradeFrom12 = coreConfiguration.LastSaveWithVersion?.StartsWith("1.2") ?? false;
-        // Clear token when we upgrade from 1.2 to 1.3 as it is no longer valid, discussed in #421
-        if (!isUpgradeFrom12) return;
-
-        // We have an upgrade, remove all previous credentials.
-        RefreshToken = null;
-        AccessToken = null;
     }
 }
