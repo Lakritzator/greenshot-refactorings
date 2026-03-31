@@ -20,9 +20,10 @@
     <Deterministic>true</Deterministic>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <!-- Emit Roslyn source-generator output to disk so Visual Studio IntelliSense can see
-         the Dapplo.Ini-generated property implementations in *Impl.cs partial classes. -->
+         the Dapplo.Ini-generated property implementations in *Impl.cs partial classes.
+         The output path is inside obj/ so the auto-glob (**/*.cs) does NOT pick it up. -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)generated</CompilerGeneratedFilesOutputPath>
+    <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/obj/generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' != 'Debug' And !$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
@@ -61,6 +62,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <!-- Dapplo.Ini.Generator is a Roslyn IIncrementalGenerator but is packaged in lib/ instead of
+       analyzers/dotnet/cs/, so MSBuild does not discover it automatically. Reference it explicitly.
+       The Compile Remove guards against the generated/ folder accidentally being included twice
+       if the path ever shifts back into the project source tree. -->
+  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('Greenshot'))">
+    <Analyzer Include="$(NuGetPackageRoot)dapplo.ini.generator/1.0.71/lib/netstandard2.0/Dapplo.Ini.Generator.dll"
+              Condition="Exists('$(NuGetPackageRoot)dapplo.ini.generator/1.0.71/lib/netstandard2.0/Dapplo.Ini.Generator.dll')" />
+    <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>

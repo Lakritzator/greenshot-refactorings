@@ -34,8 +34,6 @@ namespace Greenshot.Plugin.Jira;
 [Description("Greenshot Jira Plugin configuration")]
 public interface IJiraConfiguration : IIniSection
 {
-    const string DefaultPrefix = "https://";
-
     [Description("Base url to Jira system, without anything else")]
     [DefaultValue("https://jira")]
     [Required(ErrorMessage = "Jira URL is required.")]

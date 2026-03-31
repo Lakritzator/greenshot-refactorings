@@ -377,5 +377,11 @@ namespace Greenshot.Base.Core
         [DefaultValue(100)]
         [Range(1, int.MaxValue, ErrorMessage = "WebRequestReadWriteTimeout must be at least 1 second.")]
         int WebRequestReadWriteTimeout { get; set; }
+
+        /// <summary>Validates <see cref="OutputFilePath"/>; resets it to the default output folder when the path no longer exists.</summary>
+        void ValidateAndCorrectOutputFilePath();
+
+        /// <summary>Validates <see cref="OutputFileAsFullpath"/>; resets it to a default full-path dummy when the directory no longer exists.</summary>
+        void ValidateAndCorrectOutputFileAsFullpath();
     }
 }

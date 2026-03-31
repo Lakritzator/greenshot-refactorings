@@ -31,8 +31,6 @@ namespace Greenshot.Plugin.Confluence;
 [Description("Greenshot Confluence Plugin configuration")]
 public interface IConfluenceConfiguration : IIniSection
 {
-    const string DefaultPrefix = "https://";
-
     [Description("Url to Confluence system (e.g., https://confluence.example.com or https://domain.atlassian.net/wiki for Cloud).")]
     [DefaultValue("https://confluence")]
     [Required(ErrorMessage = "Confluence URL is required.")]

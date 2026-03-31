@@ -233,7 +233,7 @@ namespace Greenshot.Base.Core
             IntPtr iconSmall2 = new IntPtr(2);
 
             IntPtr iconHandle;
-            if (Conf.UseLargeIcons)
+            if (Conf.IconSize.Width >= 32 || Conf.IconSize.Height >= 32)
             {
                 iconHandle = User32Api.SendMessage(hWnd, WindowsMessages.WM_GETICON, iconBig, IntPtr.Zero);
                 if (iconHandle == IntPtr.Zero)

@@ -35,8 +35,6 @@ namespace Greenshot.Base.Core
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CoreConfigurationImpl));
 
-        public bool UseLargeIcons => IconSize.Width >= 32 || IconSize.Height >= 32;
-
         /// <summary>
         /// Returns true if the supplied experimental feature is enabled
         /// </summary>
