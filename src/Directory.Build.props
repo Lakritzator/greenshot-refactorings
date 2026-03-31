@@ -19,6 +19,10 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Deterministic>true</Deterministic>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <!-- Emit Roslyn source-generator output to disk so Visual Studio IntelliSense can see
+         the Dapplo.Ini-generated property implementations in *Impl.cs partial classes. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' != 'Debug' And !$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
