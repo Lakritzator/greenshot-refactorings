@@ -29,6 +29,7 @@ using Dapplo.Ini.Attributes;
 using Dapplo.Ini.Interfaces;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Base.Core.Enums;
+using Greenshot.Base.Interfaces;
 
 namespace Greenshot.Base.Core
 {
