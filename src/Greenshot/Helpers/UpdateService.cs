@@ -82,7 +82,6 @@ namespace Greenshot.Helpers
             JsonNetJsonSerializer.RegisterGlobally();
             var version = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location);
             LatestReleaseVersion = CurrentVersion = new Version(version.FileMajorPart, version.FileMinorPart, version.FileBuildPart);
-            CoreConfig.LastSaveWithVersion = CurrentVersion.ToString();
         }
 
         /// <summary>
