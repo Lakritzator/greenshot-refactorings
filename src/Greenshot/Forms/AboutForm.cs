@@ -153,7 +153,7 @@ namespace Greenshot.Forms
             _bitmap = ImageHelper.CreateEmpty(90, 90, PixelFormat.Format24bppRgb, BackColor, 96, 96);
             pictureBox1.Image = _bitmap;
 
-            lblTitle.Text = $@"Greenshot {EnvironmentInfo.GetGreenshotVersion()} {(IniConfig.IsPortable ? " Portable" : "")} ({OsInfo.Bits} bit)";
+            lblTitle.Text = $@"Greenshot {EnvironmentInfo.GetGreenshotVersion()} {(IniConfig.IsPortable ? " Portable" : "")} ({OsInfo.Bits} bit) {(coreConfiguration.IsBetaTester ? "-IsBetaTester-":"")}";
 
             // Number of frames the pixel animation takes
             int frames = FramesForMillis(2000);
@@ -341,21 +341,21 @@ namespace Greenshot.Forms
                     case Keys.L:
                         try
                         {
-                            if (File.Exists(MainForm.LogFileLocation))
+                            if (File.Exists(GreenshotMain.LogFileLocation))
                             {
-                                using (Process.Start("\"" + MainForm.LogFileLocation + "\""))
+                                using (Process.Start("\"" + GreenshotMain.LogFileLocation + "\""))
                                 {
                                     // nothing to do, just using dispose to cleanup
                                 }
                             }
                             else
                             {
-                                MessageBox.Show(@"Greenshot can't find the logfile, it should have been here: " + MainForm.LogFileLocation);
+                                MessageBox.Show(@"Greenshot can't find the logfile, it should have been here: " + GreenshotMain.LogFileLocation);
                             }
                         }
                         catch (Exception)
                         {
-                            MessageBox.Show(@"Couldn't open the greenshot.log, it's located here: " + MainForm.LogFileLocation, @"Error opening greenshot.log",
+                            MessageBox.Show(@"Couldn't open the greenshot.log, it's located here: " + GreenshotMain.LogFileLocation, @"Error opening greenshot.log",
                                 MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                         }
 
@@ -384,6 +384,14 @@ namespace Greenshot.Forms
             }
 
             return true;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (!WndProcDefaults.TryHandleMessage(ref m))
+            {
+                base.WndProc(ref m);
+            }
         }
     }
 }

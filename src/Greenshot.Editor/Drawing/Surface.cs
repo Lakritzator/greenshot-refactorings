@@ -32,6 +32,9 @@ using System.ServiceModel.Security;
 using System.Windows.Forms;
 using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
+using Dapplo.Windows.Gdi32;
+using Dapplo.Windows.Icons;
+using Dapplo.Windows.User32;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
 using Greenshot.Base.Effects;
@@ -312,7 +315,7 @@ namespace Greenshot.Editor.Drawing
         private IFieldAggregator _fieldAggregator;
 
         /// <summary>
-        /// the cursor container, needed with serialization as we need a direct acces to it.
+        /// the cursor container, needed with serialization as we need a direct access to it.
         /// </summary>
         private IDrawableContainer _cursorContainer;
 
@@ -487,6 +490,7 @@ namespace Greenshot.Editor.Drawing
         /// </summary>
         public Surface()
         {
+            CaptureDetails = new CaptureDetails();
             _fieldAggregator = new FieldAggregator(this);
             _elements = new DrawableContainerList(_uniqueId);
             selectedElements = new DrawableContainerList(_uniqueId);
@@ -542,7 +546,7 @@ namespace Greenshot.Editor.Drawing
         }
 
         /// <summary>
-        /// Surface contructor with a capture
+        /// Surface constructor with a capture
         /// </summary>
         /// <param name="capture"></param>
         public Surface(ICapture capture) : this(capture.Image)
@@ -555,7 +559,7 @@ namespace Greenshot.Editor.Drawing
                 // check if cursor is on the capture, otherwise we leave it out.
                 if (cursorRect.IntersectsWith(captureRect))
                 {
-                    _cursorContainer = AddImageContainer(capture.Cursor, capture.CursorLocation.X, capture.CursorLocation.Y);
+                    _cursorContainer = AddCursorContainer(capture.Cursor.Clone(), capture.CursorLocation.X, capture.CursorLocation.Y);
                     SelectElement(_cursorContainer);
                 }
             }
@@ -844,6 +848,7 @@ namespace Greenshot.Editor.Drawing
                 Left = x,
                 Top = y
             };
+            bitmapContainer.ResetToDefaultSize();
             AddElement(bitmapContainer);
             return bitmapContainer;
         }
@@ -854,6 +859,7 @@ namespace Greenshot.Editor.Drawing
             bitmapContainer.Load(filename);
             bitmapContainer.Left = x;
             bitmapContainer.Top = y;
+            bitmapContainer.ResetToDefaultSize();
             AddElement(bitmapContainer);
             return bitmapContainer;
         }
@@ -866,6 +872,7 @@ namespace Greenshot.Editor.Drawing
                 Left = x,
                 Top = y
             };
+            iconContainer.ResetToDefaultSize();
             AddElement(iconContainer);
             return iconContainer;
         }
@@ -876,6 +883,7 @@ namespace Greenshot.Editor.Drawing
             iconContainer.Load(filename);
             iconContainer.Left = x;
             iconContainer.Top = y;
+            iconContainer.ResetToDefaultSize();
             AddElement(iconContainer);
             return iconContainer;
         }
@@ -889,7 +897,7 @@ namespace Greenshot.Editor.Drawing
             return iconContainer;
         }
 
-        public ICursorContainer AddCursorContainer(Cursor cursor, int x, int y)
+        public ICursorContainer AddCursorContainer(CapturedCursor cursor, int x, int y)
         {
             CursorContainer cursorContainer = new CursorContainer(this)
             {
@@ -897,6 +905,7 @@ namespace Greenshot.Editor.Drawing
                 Left = x,
                 Top = y
             };
+            cursorContainer.ResetToDefaultSize();
             AddElement(cursorContainer);
             return cursorContainer;
         }
@@ -907,6 +916,7 @@ namespace Greenshot.Editor.Drawing
             cursorContainer.Load(filename);
             cursorContainer.Left = x;
             cursorContainer.Top = y;
+            cursorContainer.ResetToDefaultSize();
             AddElement(cursorContainer);
             return cursorContainer;
         }
