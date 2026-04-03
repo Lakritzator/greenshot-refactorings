@@ -136,9 +136,6 @@ public class GreenshotMain
 
         var iniConfig = builder.Create();
 
-        // Expose the resolved INI file path and portable flag for the rest of the application.
-        GreenshotEnvironment.ConfigLocation = iniConfig.LoadedFromPath;
-
         // Log the startup
         LOG.Info("Starting: " + EnvironmentInfo.EnvironmentToString(false));
 

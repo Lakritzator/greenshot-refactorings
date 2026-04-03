@@ -36,8 +36,9 @@ namespace Greenshot.Base.Core
 
         /// <summary>
         /// Gets the full path of the active <c>greenshot.ini</c> configuration file.
-        /// Set after <see cref="Dapplo.Ini.IniConfigRegistry"/> is initialised.
+        /// Resolved lazily from <see cref="Dapplo.Ini.IniConfigRegistry"/> so that
+        /// it is correct even when read before the initial <c>Load()</c> call completes.
         /// </summary>
-        public static string ConfigLocation { get; set; }
+        public static string ConfigLocation => Dapplo.Ini.IniConfigRegistry.Get()?.LoadedFromPath ?? string.Empty;
     }
 }

@@ -440,9 +440,9 @@ namespace Greenshot.Base.Controls
             var iniConfig = IniConfigRegistry.Get();
             if (iniConfig == null) return null;
 
-            // Access the sections dictionary via the private _sections backing field.
-            // Dapplo.Ini stores all registered sections there as Dictionary<Type, IIniSection>.
-            var sectionsField = iniConfig.GetType().GetField("_sections",
+            // Access the sections dictionary via the private "Sections" backing field.
+            // Dapplo.Ini stores all registered sections as Dictionary<Type, IIniSection>.
+            var sectionsField = iniConfig.GetType().GetField("Sections",
                 BindingFlags.NonPublic | BindingFlags.Instance);
             if (sectionsField?.GetValue(iniConfig) is System.Collections.IDictionary sectionsDict)
             {
