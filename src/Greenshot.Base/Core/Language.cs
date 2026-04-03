@@ -64,7 +64,7 @@ namespace Greenshot.Base.Core
                 // Design-mode or test fallback: create a minimal registry so GetSection<ICoreConfiguration>() works.
                 IniConfigRegistry.ForFile("greenshot.ini")
                     .AddAppDataPath("Greenshot")
-                    .RegisterSection(new CoreConfigurationImpl())
+                    .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
                     .Create();
             }
 

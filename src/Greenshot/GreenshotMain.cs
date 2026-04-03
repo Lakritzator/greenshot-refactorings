@@ -126,17 +126,18 @@ public class GreenshotMain
 
         builder.AddDefaultsFile("greenshot-defaults.ini")
                .AddConstantsFile("greenshot-fixed.ini")
-               .RegisterSection(new CoreConfigurationImpl())
-               .RegisterSection(new EditorConfigurationImpl())
-               .RegisterSection(new Win10ConfigurationImpl())
+               .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
+               .RegisterSection<IEditorConfiguration>(new EditorConfigurationImpl())
+               .RegisterSection<IWin10Configuration>(new Win10ConfigurationImpl())
                .AutoSaveInterval(TimeSpan.FromSeconds(2))
+               .EmptyWhenNull()
                .LockFile()
                .EnableMetadata(version: assemblyVersion, applicationName: "Greenshot");
 
         var iniConfig = builder.Create();
 
         // Expose the resolved INI file path and portable flag for the rest of the application.
-        GreenshotEnvironment.ConfigLocation = iniConfig.FullPath;
+        GreenshotEnvironment.ConfigLocation = iniConfig.LoadedFromPath;
 
         // Log the startup
         LOG.Info("Starting: " + EnvironmentInfo.EnvironmentToString(false));

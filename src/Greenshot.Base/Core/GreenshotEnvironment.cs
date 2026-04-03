@@ -32,12 +32,12 @@ namespace Greenshot.Base.Core
         /// Set to <c>true</c> when the standard PortableApp directory structure
         /// (<c>App\Greenshot</c> next to the executable) is detected at startup.
         /// </summary>
-        public static bool IsPortable { get; internal set; }
+        public static bool IsPortable { get; set; }
 
         /// <summary>
         /// Gets the full path of the active <c>greenshot.ini</c> configuration file.
         /// Set after <see cref="Dapplo.Ini.IniConfigRegistry"/> is initialised.
         /// </summary>
-        public static string ConfigLocation { get; internal set; }
+        public static string ConfigLocation { get; set; }
     }
 }

@@ -45,6 +45,7 @@ using Dapplo.Windows.User32;
 using Greenshot.Base;
 using Greenshot.Base.Controls;
 using Greenshot.Base.Core;
+using Greenshot.Base.Core.Enums;
 using Greenshot.Base.Core.FileFormatHandlers;
 using Greenshot.Base.Help;
 using Greenshot.Base.Interfaces;
@@ -57,7 +58,6 @@ using Greenshot.Editor.Destinations;
 using Greenshot.Editor.Drawing;
 using Greenshot.Editor.Forms;
 using Greenshot.Helpers;
-using Greenshot.Native;
 using Greenshot.Plugin.Win10;
 using Greenshot.Processors;
 using log4net;
@@ -214,14 +214,6 @@ namespace Greenshot.Forms
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                // if language is not set, show language dialog
-                if (string.IsNullOrEmpty(_conf.Language))
-                {
-                    LanguageDialog languageDialog = LanguageDialog.GetInstance();
-                    languageDialog.ShowDialog();
-                    _conf.Language = languageDialog.SelectedLanguage;
-                }
-
                 Application.ApplicationExit += Application_ApplicationExit;
 
                 Application.Run(new MainForm(options));
@@ -335,6 +327,22 @@ namespace Greenshot.Forms
             // Make the notify icon available
             SimpleServiceProvider.Current.AddService(notifyIcon);
 
+            // Load all the plugins, and while doing to load the configuration
+            PluginHelper.Instance.LoadPlugins();
+
+            // This forces the registration of all destinations inside Greenshot itself.
+            RegisterInternalDestinations();
+            // This forces the registration of all processors inside Greenshot itself.
+            RegisterInternalProcessors();
+
+            // if language is not set, show language dialog
+            if (string.IsNullOrEmpty(_conf.Language))
+            {
+                LanguageDialog languageDialog = LanguageDialog.GetInstance();
+                languageDialog.ShowDialog();
+                _conf.Language = languageDialog.SelectedLanguage;
+            }
+
             // Disable access to the settings, for feature #3521446
             contextmenu_settings.Visible = !_conf.DisableSettings;
 
@@ -343,14 +351,6 @@ namespace Greenshot.Forms
             new ToolTip();
 
             UpdateUi();
-
-            // This forces the registration of all destinations inside Greenshot itself.
-            RegisterInternalDestinations();
-            // This forces the registration of all processors inside Greenshot itself.
-            RegisterInternalProcessors();
-
-            // Load all the plugins
-            PluginHelper.Instance.LoadPlugins();
 
             // Check to see if there is already another INotificationService
             if (!SimpleServiceProvider.Current.GetAllInstances<INotificationService>().Any())
