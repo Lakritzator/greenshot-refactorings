@@ -107,15 +107,6 @@ public class GreenshotMain
         var pafAppPath = Path.Combine(startupPath, @"App\Greenshot");
         GreenshotEnvironment.IsPortable = Directory.Exists(pafAppPath);
 
-        // Resolve version for [__metadata__] on every save.
-        // Prefer AssemblyInformationalVersion (Nerdbank.GitVersioning sets this to e.g. "1.4.193-gbe35e7cab3")
-        // over the bare 4-part numeric version returned by GetName().Version (which is always "1.4.0.0" here).
-        var entryAssembly = Assembly.GetEntryAssembly();
-        var informationalVersion = entryAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        var assemblyVersion = !string.IsNullOrEmpty(informationalVersion)
-            ? informationalVersion
-            : entryAssembly?.GetName().Version?.ToString() ?? "1.4";
-
         // Build the IniConfigRegistry:
         //   AddAppDataPath  → %APPDATA%\Greenshot
         //   AddSearchPath   → installation / startup directory
@@ -137,7 +128,7 @@ public class GreenshotMain
                .AutoSaveInterval(TimeSpan.FromSeconds(2))
                .EmptyWhenNull()
                .LockFile()
-               .EnableMetadata(version: assemblyVersion, applicationName: "Greenshot");
+               .EnableMetadata(applicationName: "Greenshot");
 
         var iniConfig = builder.Create();
 

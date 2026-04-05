@@ -365,7 +365,6 @@ namespace Greenshot.Base.Core
         [DataMember(Name = "BaseIconSize")]
         [Description("Defines the base size of the icons (e.g. for the buttons in the editor), default value 16,16 and it's scaled to the current DPI")]
         [DefaultValue("16,16")]
-        [IniValue(NotifyPropertyChanged = true)]
         NativeSize IconSize { get; set; }
 
         [Description("The connect timeout value for web requests, these are seconds")]
