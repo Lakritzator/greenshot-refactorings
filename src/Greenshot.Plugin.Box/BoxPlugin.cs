@@ -76,6 +76,7 @@ public class BoxPlugin : IGreenshotPlugin
     {
         var section = new BoxConfigurationImpl();
         iniConfig.AddSection(section);
+        GreenshotEnvironment.TrackSection(section);
         _config = section;
     }
 

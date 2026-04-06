@@ -105,6 +105,7 @@ public class ConfluencePlugin : IGreenshotPlugin
     {
         var section = new ConfluenceConfigurationImpl();
         iniConfig.AddSection(section);
+        GreenshotEnvironment.TrackSection(section);
         _config = section;
     }
 

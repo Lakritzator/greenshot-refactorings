@@ -31,10 +31,31 @@ public partial class DropboxConfigurationImpl : IDropboxConfiguration
         var coreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
         bool isUpgradeFrom12 = coreConfiguration.LastSaveWithVersion?.StartsWith("1.2") ?? false;
         // Clear token when we upgrade from 1.2 to 1.3 as it is no longer valid, discussed in #421
-        if (!isUpgradeFrom12) return;
+        if (isUpgradeFrom12)
+        {
+            // We have an upgrade, remove all previous credentials.
+            RefreshToken = null;
+            AccessToken = null;
+            return;
+        }
 
-        // We have an upgrade, remove all previous credentials.
-        RefreshToken = null;
-        AccessToken = null;
+        // Decrypt the refresh token that was stored encrypted on disk.
+        // If the value was stored as plain text (old format), Decrypt returns it unchanged
+        // (backward compatible).
+        if (!string.IsNullOrEmpty(RefreshToken))
+        {
+            RefreshToken = RefreshToken.Decrypt();
+        }
+    }
+
+    public bool OnBeforeSave()
+    {
+        // Encrypt the refresh token before it is written to disk.
+        if (!string.IsNullOrEmpty(RefreshToken))
+        {
+            SetRawValue(nameof(RefreshToken), RefreshToken.Encrypt());
+        }
+
+        return true;
     }
 }

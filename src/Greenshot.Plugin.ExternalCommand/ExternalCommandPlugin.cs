@@ -126,6 +126,7 @@ public class ExternalCommandPlugin : IGreenshotPlugin
     {
         var externalCommandSection = new ExternalCommandConfigurationImpl();
         iniConfig.AddSection(externalCommandSection);
+        GreenshotEnvironment.TrackSection(externalCommandSection);
         ExternalCommandConfig = externalCommandSection;
         // CoreConfiguration is registered by the host; retrieve it after Load() in RegisterServices.
     }

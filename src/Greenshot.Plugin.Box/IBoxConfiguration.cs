@@ -30,7 +30,7 @@ namespace Greenshot.Plugin.Box;
 
 [IniSection("Box")]
 [Description("Greenshot Box Plugin configuration")]
-public interface IBoxConfiguration : IIniSection, IAfterLoad
+public interface IBoxConfiguration : IIniSection, IAfterLoad, IBeforeSave
 {
     [Description("What file type to use for uploading")]
     [DefaultValue("png")]
@@ -53,8 +53,7 @@ public interface IBoxConfiguration : IIniSection, IAfterLoad
     [DefaultValue("0")]
     string FolderId { get; set; }
 
-    // TODO: Consider adding encryption via custom converter
-    [Description("Box authorization refresh Token")]
+    [Description("Box authorization refresh Token (stored encrypted)")]
     string RefreshToken { get; set; }
 
     /// <summary>Runtime-only token - never written to disk, reset to default on every reload.</summary>

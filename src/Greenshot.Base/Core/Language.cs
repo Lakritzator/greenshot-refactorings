@@ -66,6 +66,7 @@ namespace Greenshot.Base.Core
                     .AddAppDataPath("Greenshot")
                     .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
                     .Create();
+                GreenshotEnvironment.TrackSection(IniConfigRegistry.GetSection<ICoreConfiguration>());
             }
 
             if (!LogHelper.IsInitialized)

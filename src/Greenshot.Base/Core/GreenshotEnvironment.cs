@@ -19,6 +19,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Concurrent;
+using Dapplo.Ini.Interfaces;
+
 namespace Greenshot.Base.Core
 {
     /// <summary>
@@ -40,5 +43,36 @@ namespace Greenshot.Base.Core
         /// it is correct even when read before the initial <c>Load()</c> call completes.
         /// </summary>
         public static string ConfigLocation => Dapplo.Ini.IniConfigRegistry.Get()?.LoadedFromPath ?? string.Empty;
+
+        // ── Section registry ─────────────────────────────────────────────────────────
+        // Dapplo.Ini 1.0.91+ no longer exposes a public Sections enumerable on IniConfig.
+        // We maintain our own registry so that GreenshotForm's form-binding can look up
+        // sections by the string SectionName stored in IGreenshotConfigBindable controls.
+
+        private static readonly ConcurrentDictionary<string, IIniSection> s_sections =
+            new ConcurrentDictionary<string, IIniSection>(System.StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Registers an INI section so that the form-binding infrastructure can look it
+        /// up by <see cref="IIniSection.SectionName"/>.  Call this immediately after
+        /// registering or adding a section with Dapplo.Ini.
+        /// </summary>
+        public static void TrackSection(IIniSection section)
+        {
+            if (section != null)
+            {
+                s_sections[section.SectionName] = section;
+            }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="IIniSection"/> whose <see cref="IIniSection.SectionName"/>
+        /// matches <paramref name="sectionName"/> (case-insensitive), or <c>null</c> if no
+        /// such section has been registered.
+        /// </summary>
+        public static IIniSection GetSectionByName(string sectionName)
+        {
+            return s_sections.TryGetValue(sectionName, out var sec) ? sec : null;
+        }
     }
 }

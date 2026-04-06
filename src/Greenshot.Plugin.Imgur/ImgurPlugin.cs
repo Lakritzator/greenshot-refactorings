@@ -81,6 +81,7 @@ public class ImgurPlugin : IGreenshotPlugin
     {
         var section = new ImgurConfigurationImpl();
         iniConfig.AddSection(section);
+        GreenshotEnvironment.TrackSection(section);
         _config = section;
     }
 

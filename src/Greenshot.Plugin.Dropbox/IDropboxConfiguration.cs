@@ -30,7 +30,7 @@ namespace Greenshot.Plugin.Dropbox;
 
 [IniSection("Dropbox")]
 [Description("Greenshot Dropbox Plugin configuration")]
-public interface IDropboxConfiguration : IIniSection, IAfterLoad
+public interface IDropboxConfiguration : IIniSection, IAfterLoad, IBeforeSave
 {
     [Description("What file type to use for uploading")]
     [DefaultValue("png")]
@@ -45,8 +45,7 @@ public interface IDropboxConfiguration : IIniSection, IAfterLoad
     [DefaultValue(true)]
     bool AfterUploadLinkToClipBoard { get; set; }
 
-    // TODO: Consider adding encryption via custom converter
-    [Description("Dropbox refresh Token")]
+    [Description("Dropbox refresh Token (stored encrypted)")]
     string RefreshToken { get; set; }
 
     /// <summary>Runtime-only token - never written to disk, reset to default on every reload.</summary>
