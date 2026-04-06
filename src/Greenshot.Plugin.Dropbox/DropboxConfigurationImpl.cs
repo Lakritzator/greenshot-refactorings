@@ -51,6 +51,9 @@ public partial class DropboxConfigurationImpl : IDropboxConfiguration
     public bool OnBeforeSave()
     {
         // Encrypt the refresh token before it is written to disk.
+        // SetRawValue writes only to the serialization buffer; the in-memory property
+        // (RefreshToken) is intentionally left as plain text so OAuth code can keep
+        // using it without extra decryption.
         if (!string.IsNullOrEmpty(RefreshToken))
         {
             SetRawValue(nameof(RefreshToken), RefreshToken.Encrypt());
