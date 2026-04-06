@@ -147,6 +147,8 @@ namespace Greenshot.Base.Core
             if (OutputDestinations.Count == 0)
             {
                 OutputDestinations.Add("Editor");
+                // Re-assign to trigger SetRawValue dirty tracking for the in-place Add
+                OutputDestinations = OutputDestinations;
             }
 
             // Prevent both settings at once, bug #3435056
@@ -182,6 +184,9 @@ namespace Greenshot.Base.Core
                 {
                     NoGDICaptureForProduct[i] = NoGDICaptureForProduct[i].ToLower();
                 }
+
+                // Re-assign to trigger SetRawValue dirty tracking for the in-place mutations above
+                NoGDICaptureForProduct = NoGDICaptureForProduct;
             }
 
             if (NoDWMCaptureForProduct != null)
@@ -200,6 +205,9 @@ namespace Greenshot.Base.Core
                 {
                     NoDWMCaptureForProduct[i] = NoDWMCaptureForProduct[i].ToLower();
                 }
+
+                // Re-assign to trigger SetRawValue dirty tracking for the in-place mutations above
+                NoDWMCaptureForProduct = NoDWMCaptureForProduct;
             }
 
             if (AutoCropDifference < 0)
