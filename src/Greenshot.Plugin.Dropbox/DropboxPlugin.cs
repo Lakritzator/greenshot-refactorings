@@ -73,7 +73,6 @@ public class DropboxPlugin : IGreenshotPlugin
     {
         var section = new DropboxConfigurationImpl();
         iniConfig.AddSection(section);
-        GreenshotEnvironment.TrackSection(section);
         _config = section;
     }
 

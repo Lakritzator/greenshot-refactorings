@@ -437,7 +437,7 @@ namespace Greenshot.Base.Controls
         /// </summary>
         private static IIniSection GetIniSectionByName(string sectionName)
         {
-            return GreenshotEnvironment.GetSectionByName(sectionName);
+            return IniConfigRegistry.Get()?.GetSection(sectionName);
         }
 
         /// <param name="typeToGetFieldsFor"></param>

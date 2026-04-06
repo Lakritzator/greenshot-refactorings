@@ -132,12 +132,6 @@ public class GreenshotMain
 
         var iniConfig = builder.Create();
 
-        // Register sections with GreenshotEnvironment so that form-binding can look them
-        // up by section name (Dapplo.Ini 1.0.91+ no longer exposes a public Sections enumerator).
-        GreenshotEnvironment.TrackSection(IniConfigRegistry.GetSection<ICoreConfiguration>());
-        GreenshotEnvironment.TrackSection(IniConfigRegistry.GetSection<IEditorConfiguration>());
-        GreenshotEnvironment.TrackSection(IniConfigRegistry.GetSection<IWin10Configuration>());
-
         // Log the startup
         LOG.Info("Starting: " + EnvironmentInfo.EnvironmentToString(false));
 

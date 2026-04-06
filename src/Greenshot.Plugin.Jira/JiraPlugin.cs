@@ -74,7 +74,6 @@ public class JiraPlugin : IGreenshotPlugin
     {
         var section = new JiraConfigurationImpl();
         iniConfig.AddSection(section);
-        GreenshotEnvironment.TrackSection(section);
         _config = section;
     }
 
