@@ -440,22 +440,11 @@ namespace Greenshot.Base.Controls
             var iniConfig = IniConfigRegistry.Get();
             if (iniConfig == null) return null;
 
-            // Dapplo.Ini 1.0.91 stores sections in a private field named "Sections"
-            // (Dictionary<Type, IIniSection>). There is no public API to look up a
-            // section by its INI section name string. If this field name changes in a
-            // future Dapplo.Ini release, GetField() will return null and the method
-            // will safely return null (form bindings will stop updating silently).
-            var sectionsField = iniConfig.GetType().GetField("Sections",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            if (sectionsField?.GetValue(iniConfig) is System.Collections.IDictionary sectionsDict)
+            foreach (var sec in iniConfig.Sections)
             {
-                foreach (System.Collections.DictionaryEntry entry in sectionsDict)
+                if (string.Equals(sec.SectionName, sectionName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (entry.Value is IIniSection sec &&
-                        string.Equals(sec.SectionName, sectionName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return sec;
-                    }
+                    return sec;
                 }
             }
 
