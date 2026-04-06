@@ -85,6 +85,7 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
                 DeletedBuildInCommands = DeletedBuildInCommands;
             }
         }
+        MarkAsDirty();
     }
 
     public void OnAfterLoad()
@@ -108,6 +109,7 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
             Commandline = Commandline;
             Argument = Argument;
             RunInbackground = RunInbackground;
+            MarkAsDirty();
         }
 
         // Check if we need to add Paint.NET
@@ -122,6 +124,7 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
             Commandline = Commandline;
             Argument = Argument;
             RunInbackground = RunInbackground;
+            MarkAsDirty();
         }
     }
 }
