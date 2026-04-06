@@ -135,8 +135,9 @@ namespace Greenshot.Plugin.Office
         /// <summary>
         /// Implementation of RegisterConfiguration phase: no configuration to register for Office plugin.
         /// </summary>
-        public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
+        public void RegisterConfiguration(IniConfig iniConfig)
         {
+            iniConfig.AddSection(new OfficeConfigurationImpl());
         }
 
         /// <summary>

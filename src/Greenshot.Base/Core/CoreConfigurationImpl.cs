@@ -177,7 +177,6 @@ namespace Greenshot.Base.Core
                     {
                         NoGDICaptureForProduct.RemoveRange(0, 2);
                         NoGDICaptureForProduct.Add("Intellij Idea");
-                        MarkAsDirty();
                     }
                 }
 
@@ -186,8 +185,7 @@ namespace Greenshot.Base.Core
                     NoGDICaptureForProduct[i] = NoGDICaptureForProduct[i].ToLower();
                 }
 
-                // Re-assign to trigger SetRawValue dirty tracking for the in-place mutations above
-                NoGDICaptureForProduct = NoGDICaptureForProduct;
+                MarkAsDirty();
             }
 
             if (NoDWMCaptureForProduct != null)
@@ -199,7 +197,6 @@ namespace Greenshot.Base.Core
                     {
                         NoDWMCaptureForProduct.RemoveRange(0, 3);
                         NoDWMCaptureForProduct.Add("Citrix ICA Client");
-                        MarkAsDirty();
                     }
                 }
 
@@ -208,8 +205,7 @@ namespace Greenshot.Base.Core
                     NoDWMCaptureForProduct[i] = NoDWMCaptureForProduct[i].ToLower();
                 }
 
-                // Re-assign to trigger SetRawValue dirty tracking for the in-place mutations above
-                NoDWMCaptureForProduct = NoDWMCaptureForProduct;
+                MarkAsDirty();
             }
 
             if (AutoCropDifference < 0)

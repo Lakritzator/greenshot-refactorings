@@ -70,7 +70,7 @@ public class JiraPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI section before file is loaded.
     /// </summary>
-    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
+    public void RegisterConfiguration(IniConfig iniConfig)
     {
         var section = new JiraConfigurationImpl();
         iniConfig.AddSection(section);

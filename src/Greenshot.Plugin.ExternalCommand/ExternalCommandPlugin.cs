@@ -122,7 +122,7 @@ public class ExternalCommandPlugin : IGreenshotPlugin
     /// <summary>
     /// Implementation of RegisterConfiguration phase: register INI sections before file is loaded.
     /// </summary>
-    public void RegisterConfiguration(Dapplo.Ini.IniConfig iniConfig)
+    public void RegisterConfiguration(IniConfig iniConfig)
     {
         var externalCommandSection = new ExternalCommandConfigurationImpl();
         iniConfig.AddSection(externalCommandSection);
