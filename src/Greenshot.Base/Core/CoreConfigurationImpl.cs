@@ -177,6 +177,7 @@ namespace Greenshot.Base.Core
                     {
                         NoGDICaptureForProduct.RemoveRange(0, 2);
                         NoGDICaptureForProduct.Add("Intellij Idea");
+                        MarkAsDirty();
                     }
                 }
 
@@ -198,6 +199,7 @@ namespace Greenshot.Base.Core
                     {
                         NoDWMCaptureForProduct.RemoveRange(0, 3);
                         NoDWMCaptureForProduct.Add("Citrix ICA Client");
+                        MarkAsDirty();
                     }
                 }
 
