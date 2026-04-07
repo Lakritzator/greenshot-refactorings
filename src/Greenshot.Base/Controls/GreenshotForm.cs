@@ -419,25 +419,12 @@ namespace Greenshot.Base.Controls
             // Repopulate the combox boxes
             if (applyTo is not (IGreenshotConfigBindable configBindable and GreenshotComboBox comboxBox)) return;
             if (string.IsNullOrEmpty(configBindable.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) return;
-            IIniSection section = GetIniSectionByName(configBindable.SectionName);
+            IIniSection section = IniConfigRegistry.Get()?.GetSection(configBindable.SectionName);
             if (section == null) return;
             // Only update the language, so get the actual value and then repopulate
             Enum currentValue = comboxBox.GetSelectedEnum();
             comboxBox.Populate(GetSectionPropertyType(section, configBindable.PropertyName));
             comboxBox.SetValue(currentValue);
-        }
-
-        /// <summary>
-        /// Helper method to cache the fieldinfo values, so we don't need to reflect all the time!
-        /// </summary>
-        /// <summary>
-        /// Looks up a registered <see cref="IIniSection"/> by its INI section name (e.g. "Core", "Editor").
-        /// Used by form-binding infrastructure to resolve sections referenced by
-        /// <see cref="IGreenshotConfigBindable.SectionName"/> at runtime.
-        /// </summary>
-        private static IIniSection GetIniSectionByName(string sectionName)
-        {
-            return IniConfigRegistry.Get()?.GetSection(sectionName);
         }
 
         /// <param name="typeToGetFieldsFor"></param>
@@ -569,7 +556,7 @@ namespace Greenshot.Base.Controls
                 IGreenshotConfigBindable configBindable = controlObject as IGreenshotConfigBindable;
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IIniSection section = GetIniSectionByName(configBindable.SectionName);
+                IIniSection section = IniConfigRegistry.Get()?.GetSection(configBindable.SectionName);
                 if (section == null) continue;
 
                 var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -642,7 +629,7 @@ namespace Greenshot.Base.Controls
 
                 if (string.IsNullOrEmpty(configBindable?.SectionName) || string.IsNullOrEmpty(configBindable.PropertyName)) continue;
 
-                IIniSection section = GetIniSectionByName(configBindable.SectionName);
+                IIniSection section = IniConfigRegistry.Get()?.GetSection(configBindable.SectionName);
                 if (section == null) continue;
 
                 var propertyInfo = section.GetType().GetProperty(configBindable.PropertyName, BindingFlags.Public | BindingFlags.Instance);

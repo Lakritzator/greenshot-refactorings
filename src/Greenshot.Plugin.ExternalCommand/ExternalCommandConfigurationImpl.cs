@@ -71,11 +71,7 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
         Commandline.Remove(command);
         Argument.Remove(command);
         RunInbackground.Remove(command);
-        // Re-assign to trigger SetRawValue dirty tracking for the in-place Remove calls
-        Commands = Commands;
-        Commandline = Commandline;
-        Argument = Argument;
-        RunInbackground = RunInbackground;
+
         if (MsPaint.Equals(command) || PaintDotNet.Equals(command))
         {
             if (!DeletedBuildInCommands.Contains(command))
@@ -104,11 +100,6 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
             Commandline.Add(MsPaint, PaintPath);
             Argument.Add(MsPaint, "\"{0}\"");
             RunInbackground.Add(MsPaint, true);
-            // Re-assign to trigger SetRawValue dirty tracking for the in-place Add calls
-            Commands = Commands;
-            Commandline = Commandline;
-            Argument = Argument;
-            RunInbackground = RunInbackground;
             MarkAsDirty();
         }
 
@@ -119,11 +110,6 @@ public partial class ExternalCommandConfigurationImpl : IExternalCommandConfigur
             Commandline.Add(PaintDotNet, PaintDotNetPath);
             Argument.Add(PaintDotNet, "\"{0}\"");
             RunInbackground.Add(PaintDotNet, true);
-            // Re-assign to trigger SetRawValue dirty tracking for the in-place Add calls
-            Commands = Commands;
-            Commandline = Commandline;
-            Argument = Argument;
-            RunInbackground = RunInbackground;
             MarkAsDirty();
         }
     }
