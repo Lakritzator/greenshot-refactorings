@@ -103,6 +103,8 @@ namespace Greenshot.Editor.Forms
 			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.insert_window_toolstripmenuitem = new GreenshotToolStripMenuItem();
 			this.obfuscateTextToolStripMenuItem = new GreenshotToolStripMenuItem();
+			this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+			this.openNewModelEditorToolStripMenuItem = new GreenshotToolStripMenuItem();
 			this.objectToolStripMenuItem = new GreenshotToolStripMenuItem();
 			this.addRectangleToolStripMenuItem = new GreenshotToolStripMenuItem();
 			this.addEllipseToolStripMenuItem = new GreenshotToolStripMenuItem();
@@ -621,7 +623,9 @@ namespace Greenshot.Editor.Forms
 									this.toolStripSeparator12,
 									this.preferencesToolStripMenuItem,
 									this.toolStripSeparator5,
-									this.insert_window_toolstripmenuitem});
+									this.insert_window_toolstripmenuitem,
+									this.toolStripSeparator16,
+									this.openNewModelEditorToolStripMenuItem});
 			this.editToolStripMenuItem.LanguageKey = "editor_edit";
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
@@ -715,6 +719,18 @@ namespace Greenshot.Editor.Forms
 			this.obfuscateTextToolStripMenuItem.LanguageKey = "editor_obfuscate_text";
 			this.obfuscateTextToolStripMenuItem.Name = "obfuscateTextToolStripMenuItem";
 			this.obfuscateTextToolStripMenuItem.Click += new System.EventHandler(this.ObfuscateTextToolStripMenuItemClick);
+			// 
+			// toolStripSeparator16
+			// 
+			this.toolStripSeparator16.Name = "toolStripSeparator16";
+			this.toolStripSeparator16.Size = new System.Drawing.Size(177, 6);
+			// 
+			// openNewModelEditorToolStripMenuItem
+			// 
+			this.openNewModelEditorToolStripMenuItem.Name = "openNewModelEditorToolStripMenuItem";
+			this.openNewModelEditorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openNewModelEditorToolStripMenuItem.Text = "Open New Model Editor (Beta)";
+			this.openNewModelEditorToolStripMenuItem.Click += new System.EventHandler(this.OpenNewModelEditorToolStripMenuItem_Click);
 			// 
 			// objectToolStripMenuItem
 			// 
@@ -1944,6 +1960,7 @@ namespace Greenshot.Editor.Forms
 		private GreenshotToolStripDropDownButton toolStripSplitButton1;
 		private System.Windows.Forms.ToolStripStatusLabel dimensionsLabel;
 		private GreenshotToolStripMenuItem insert_window_toolstripmenuitem;
+		private GreenshotToolStripMenuItem openNewModelEditorToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private GreenshotToolStripMenuItem grayscaleHighlightMenuItem;
 		private GreenshotToolStripMenuItem areaHighlightMenuItem;
