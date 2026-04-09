@@ -125,5 +125,9 @@ namespace Greenshot.Editor.Configuration
         [Description("Vertical offset in pixels for matched rectangles")]
         [DefaultValue(-5)]
         int TextObfuscationOffsetVertical { get; set; }
+
+        [DefaultValue("🙂")]
+        [Description("Last used emoji")]
+        string RecentEmoji { get; set; }
     }
 }
