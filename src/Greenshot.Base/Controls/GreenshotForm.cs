@@ -423,7 +423,7 @@ namespace Greenshot.Base.Controls
             if (section == null) return;
             // Only update the language, so get the actual value and then repopulate
             Enum currentValue = comboxBox.GetSelectedEnum();
-            comboxBox.Populate(GetSectionPropertyType(section, configBindable.PropertyName));
+            comboxBox.Populate(section.GetPropertyType(configBindable.PropertyName));
             comboxBox.SetValue(currentValue);
         }
 
@@ -438,19 +438,6 @@ namespace Greenshot.Base.Controls
             }
 
             return fields;
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Type"/> of the named property on the given INI section,
-        /// or <c>null</c> when the property does not exist.
-        /// Used to populate <see cref="GreenshotComboBox"/> controls with enum values on a
-        /// language change without having to know the concrete section type at compile time.
-        /// </summary>
-        private static Type GetSectionPropertyType(IIniSection section, string propertyName)
-        {
-            return section.GetType()
-                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
-                ?.PropertyType;
         }
 
         /// <summary>
