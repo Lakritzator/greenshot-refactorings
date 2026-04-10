@@ -130,6 +130,10 @@ public class GreenshotMain
                .LockFile()
                .EnableMetadata(applicationName: "Greenshot");
 
+#if DEBUG
+        builder.AddListener(new Helpers.IniListener());
+#endif
+
         var iniConfig = builder.Create();
 
         // Log the startup
