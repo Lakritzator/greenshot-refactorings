@@ -122,6 +122,7 @@ public class GreenshotMain
 
         builder.AddDefaultsFile("greenshot-defaults.ini")
                .AddConstantsFile("greenshot-fixed.ini")
+               .AssignmentSeparator("=")
                .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
                .RegisterSection<IEditorConfiguration>(new EditorConfigurationImpl())
                .RegisterSection<IWin10Configuration>(new Win10ConfigurationImpl())
