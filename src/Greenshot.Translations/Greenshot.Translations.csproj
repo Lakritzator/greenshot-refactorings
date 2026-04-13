@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net481;net6.0;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Greenshot.Translations</RootNamespace>
+    <AssemblyName>Greenshot.Translations</AssemblyName>
+    <Description>A fast, low-memory, reflection-free translation library for Greenshot, with source-generator support, INI translation files, WPF markup extensions, and Windows Forms helpers.</Description>
+    <PackageTags>localization;translation;i18n;wpf;winforms;avalonia;source-generator</PackageTags>
+  </PropertyGroup>
+
+  <!-- Windows-only references for WPF support -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481' OR '$(TargetFramework)' == 'net6.0-windows' OR '$(TargetFramework)' == 'net8.0-windows'">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+</Project>
