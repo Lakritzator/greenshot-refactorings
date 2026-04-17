@@ -28,6 +28,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dapplo.Ini;
+using Dapplo.Ini.Parsing;
 using Greenshot.Base.Core;
 using Greenshot.Configuration;
 using Greenshot.Editor.Configuration;
@@ -122,7 +123,13 @@ public class GreenshotMain
 
         builder.AddDefaultsFile("greenshot-defaults.ini")
                .AddConstantsFile("greenshot-fixed.ini")
-               .AssignmentSeparator("=")
+               .WithWriterOptions(new IniWriterOptions
+               {
+                   AssignmentSeparator = "=",
+                   QuoteStyle = IniValueQuoteStyle.Auto,
+                   EscapeSequences = true,
+                   WriteComments = true
+               })
                .RegisterSection<ICoreConfiguration>(new CoreConfigurationImpl())
                .RegisterSection<IEditorConfiguration>(new EditorConfigurationImpl())
                .RegisterSection<IWin10Configuration>(new Win10ConfigurationImpl())
