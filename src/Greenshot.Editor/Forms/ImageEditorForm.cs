@@ -307,6 +307,10 @@ namespace Greenshot.Editor.Forms
             // Text obfuscation is only available for beta testers
             obfuscateTextToolStripMenuItem.Visible = CoreConfiguration.IsBetaTester;
 
+            // New model editor is only available for beta testers
+            openNewModelEditorToolStripMenuItem.Visible = CoreConfiguration.IsBetaTester;
+            toolStripSeparator16.Visible = CoreConfiguration.IsBetaTester;
+
             // Make sure Double-buffer is enabled
             SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
@@ -1764,6 +1768,21 @@ namespace Greenshot.Editor.Forms
             using (var dialog = new TextObfuscationForm(_surface, _surface.CaptureDetails.OcrInformation))
             {
                 dialog.ShowDialog(this);
+            }
+        }
+
+        private void OpenNewModelEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Create new model editor from current surface
+                var newModelEditor = NewModelEditorForm.FromSurface(_surface);
+                newModelEditor.Show();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error opening new model editor", ex);
+                MessageBox.Show($"Error opening new model editor: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
