@@ -299,8 +299,6 @@ namespace Greenshot.Forms
             // Set this as IOcrProvider
             SimpleServiceProvider.Current.AddService<IOcrProvider>(new Win10OcrProvider());
 
-            EditorInitialize.Initialize();
-
             // Factory for surface objects
             ISurface SurfaceFactory() => new Surface();
 
@@ -329,6 +327,8 @@ namespace Greenshot.Forms
 
             // Load all the plugins, and while doing to load the configuration
             PluginHelper.Instance.LoadPlugins();
+
+            EditorInitialize.Initialize();
 
             // This forces the registration of all destinations inside Greenshot itself.
             RegisterInternalDestinations();
