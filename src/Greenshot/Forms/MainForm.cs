@@ -1224,7 +1224,7 @@ namespace Greenshot.Forms
         {
             _doubleClickTimer.Elapsed -= NotifyIconSingleClickTest;
             _doubleClickTimer.Stop();
-            Dispatcher.CurrentDispatcher.BeginInvoke(() =>
+            BeginInvoke(() =>
             {
                 NotifyIconClick(_conf.LeftClickAction);
             });
